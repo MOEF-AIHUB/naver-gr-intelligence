@@ -714,90 +714,10 @@ const BMS=['검색광고','커머스','AI클라우드','콘텐츠','핀테크','
 const BMC={'검색광고':'#1C6EF2','커머스':'#03C75A','AI클라우드':'#8B5CF6','콘텐츠':'#EC4899','핀테크':'#E8A838','글로벌자산':'#0EA5E9'};
 
 // ═══ 50개 이슈 ═══
-const ISSUES=[
-  {id:1,predictReason:"야당 단독발의·소위 상정 확정·여당 수정 협상 중",name:'온플법 자사우대 금지',domain:'platform',min:'공정위',cmit:'정무위 법안2소위',risk:9.5,predict:72,ready:65,bm:['검색광고','커머스'],desc:'쇼핑·플레이스 자사 우선 노출 전면 금지.'},
-  {id:2,predictReason:"증명책임 전환은 헌법 논란으로 여당 제동 가능",name:'온플법 증명책임 전환',domain:'platform',min:'공정위',cmit:'정무위 법안2소위',risk:9.0,predict:72,ready:60,bm:['검색광고','커머스'],desc:'위반 의심 시 기업이 무죄 입증. 헌법 논란.'},
-  {id:3,predictReason:"과징금 10% 위헌 논거·여당 반발로 수정 가능성",name:'온플법 과징금 매출 10%',domain:'platform',min:'공정위',cmit:'정무위 법안2소위',risk:9.0,predict:72,ready:55,bm:['검색광고','커머스','AI클라우드'],desc:'10조 기준 최대 1조. 비례원칙 위반 논란.'},
-  {id:4,predictReason:"사전지정제는 EU DMA 선례·여야 이견 좁혀지는 중",name:'온플법 사전지정제',domain:'platform',min:'공정위',cmit:'정무위 법안2소위',risk:8.5,predict:65,ready:60,bm:['검색광고'],desc:'매출 기준 대형 플랫폼 사전 지정.'},
-  {id:5,predictReason:"배달플랫폼 선례 있어 확산 가능성 높음",name:'스마트스토어 수수료 상한제',domain:'platform',min:'공정위',cmit:'정무위',risk:8.0,predict:61,ready:65,bm:['커머스'],desc:'커머스 수수료 법정 상한.'},
-  {id:6,predictReason:"알고리즘 공개 논의 지속·강제화는 시간 필요",name:'쇼핑 알고리즘 투명성',domain:'platform',min:'공정위',cmit:'정무위',risk:7.5,predict:60,ready:70,bm:['검색광고','커머스'],desc:'알고리즘 변수 공개 요구.'},
-  {id:7,predictReason:"수수료 규제 분위기 확산 중·적용 범위 협상 변수",name:'배달플랫폼 수수료 확산',domain:'platform',min:'공정위',cmit:'정무위',risk:7.0,predict:55,ready:60,bm:['커머스'],desc:'배달앱 규제 커머스 확산.'},
-  {id:8,predictReason:"광고 공정성 이슈 공론화 초기 단계",name:'플레이스 광고 공정성',domain:'platform',min:'공정위',cmit:'정무위',risk:7.0,predict:50,ready:70,bm:['검색광고'],desc:'지역 광고 배열 공정성.'},
-  {id:9,predictReason:"끼워팔기 입증 어려워 독립 법안화 가능성 낮음",name:'네이버플러스 끼워팔기',domain:'platform',min:'공정위',cmit:'정무위',risk:6.5,predict:45,ready:70,bm:['커머스','핀테크'],desc:'멤버십 가입 유도 끼워팔기 논란.'},
-  {id:10,predictReason:"직접 증거 부족으로 현재는 조사 단계",name:'브랜드솔루션 BM 규제',domain:'platform',min:'공정위',cmit:'정무위',risk:6.0,predict:40,ready:65,bm:['검색광고','커머스'],desc:'SaaS 가입과 노출 연계 의혹.'},
-  {id:11,predictReason:"최혜대우 금지는 EU 선례로 통과 유력",name:'온플법 최혜대우 금지',domain:'platform',min:'공정위',cmit:'정무위',risk:5.5,predict:65,ready:75,bm:['커머스'],desc:'유리한 조건 강요 금지.'},
-  {id:12,predictReason:"다크패턴 규제는 여야 공감대 형성 중",name:'구독서비스 해지방해',domain:'platform',min:'공정위',cmit:'정무위',risk:5.0,predict:70,ready:75,bm:['커머스','콘텐츠'],desc:'네이버플러스 다크패턴 규제.'},
-  {id:13,predictReason:"멀티호밍 금지는 산업 영향 커 신중론 있음",name:'온플법 멀티호밍 제한 금지',domain:'platform',min:'공정위',cmit:'정무위',risk:5.0,predict:65,ready:80,bm:['커머스'],desc:'타 플랫폼 이용 제한 금지.'},
-  {id:14,predictReason:"EU DMA 직접 적용은 외교·법적 장벽 높음",name:'EU DMA 역외적용',domain:'platform',min:'공정위',cmit:'정무위',risk:4.0,predict:25,ready:55,bm:['검색광고'],desc:'EU 디지털시장법 역외 적용.'},
-  {id:15,predictReason:"고위험 AI 범위 공청회 후 확정 예정·네이버 포함 여부 미정",name:'AI기본법 고위험 AI 지정',domain:'ai',min:'과기정통부',cmit:'과방위',risk:8.5,predict:58,ready:55,bm:['검색광고','AI클라우드','콘텐츠'],desc:'뉴스·검색 추천 고위험 AI 지정 가능성.'},
-  {id:16,predictReason:"영향평가 의무화는 기업 부담 크나 AI기본법 핵심 조항",name:'AI기본법 영향평가 의무',domain:'ai',min:'과기정통부',cmit:'과방위',risk:7.5,predict:58,ready:50,bm:['AI클라우드'],desc:'연간 영향평가 의무화.'},
-  {id:17,predictReason:"설명의무 국제 추세 따라 통과 가능성 있음",name:'AI기본법 설명 의무',domain:'ai',min:'과기정통부',cmit:'과방위',risk:7.0,predict:55,ready:60,bm:['AI클라우드','검색광고'],desc:'알고리즘 결정 설명 의무.'},
-  {id:18,predictReason:"AI 학습 데이터 합법화 산업 요구 강해 진전 중",name:'개인정보 AI학습 적법 근거',domain:'ai',min:'개보위',cmit:'정무위',risk:7.5,predict:75,ready:60,bm:['AI클라우드'],desc:'HyperCLOVAX 학습 데이터 적법성.'},
-  {id:19,predictReason:"딥페이크 삭제권은 여야 초당적 지지",name:'딥페이크 콘텐츠 삭제권',domain:'ai',min:'개보위',cmit:'정무위·과방위',risk:7.0,predict:80,ready:65,bm:['콘텐츠','검색광고'],desc:'합성 콘텐츠 삭제 요구권.'},
-  {id:20,predictReason:"아동 개인정보는 여야 이견 없어 통과 확실",name:'아동 개인정보 강화',domain:'ai',min:'개보위',cmit:'정무위',risk:6.5,predict:85,ready:70,bm:['콘텐츠'],desc:'연령 확인 의무화.'},
-  {id:21,predictReason:"에이전트 규제 프레임 아직 초기 논의 단계",name:'에이전트 서비스 규제',domain:'ai',min:'과기정통부',cmit:'과방위',risk:7.0,predict:40,ready:40,bm:['AI클라우드','검색광고','커머스'],desc:'에이전트N 규제 프레임.'},
-  {id:22,predictReason:"AI 광고 표시제는 소비자 보호 명목으로 통과 유력",name:'AI 광고 표시제',domain:'ai',min:'공정위',cmit:'정무위',risk:6.0,predict:70,ready:70,bm:['검색광고'],desc:'AI 생성 광고 명시 의무.'},
-  {id:23,predictReason:"데이터 로컬라이제이션은 WTO 통상 마찰 우려 있음",name:'데이터 로컬라이제이션',domain:'ai',min:'과기정통부',cmit:'과방위',risk:6.0,predict:35,ready:65,bm:['AI클라우드'],desc:'국내 데이터 해외 이전 제한.'},
-  {id:24,predictReason:"CSAP 요건 강화는 공공 보안 이슈로 추진 중",name:'CSAP 요건 강화',domain:'ai',min:'과기정통부',cmit:'과방위',risk:5.5,predict:60,ready:75,bm:['AI클라우드'],desc:'공공 클라우드 보안 인증 요건.'},
-  {id:25,predictReason:"마이데이터 확대는 금융 당국 주도로 진행 중",name:'마이데이터 금융 확대',domain:'ai',min:'금융위·개보위',cmit:'정무위',risk:4.5,predict:75,ready:70,bm:['핀테크'],desc:'금융 마이데이터 범위 확대.'},
-  {id:26,predictReason:"EU 적정성 결정은 외교 채널로 유지 예상",name:'GDPR 적정성 결정 유지',domain:'ai',min:'개보위',cmit:'정무위',risk:5.0,predict:30,ready:70,bm:['글로벌자산','AI클라우드'],desc:'EU 적정성 결정 유지 필요.'},
-  {id:27,predictReason:"AI 학습 저작권 소송 진행 중·입법화는 판결 후 본격화",name:'AI학습 저작권 TDM',domain:'media',min:'문체부',cmit:'문체위',risk:8.0,predict:50,ready:45,bm:['AI클라우드','콘텐츠'],desc:'한국신문협회 AI 학습 저작권 소송.'},
-  {id:28,predictReason:"인접권은 EU 선례 있으나 국내 언론 생태계 논란",name:'언론사 인접권 도입',domain:'media',min:'문체부',cmit:'문체위',risk:7.5,predict:45,ready:50,bm:['검색광고','AI클라우드'],desc:'EU형 언론사 AI 사용료 청구권.'},
-  {id:29,predictReason:"뉴스 알고리즘 규제는 방통위 추진 의지 있음",name:'뉴스 알고리즘 편집 규제',domain:'media',min:'방통위',cmit:'과방위',risk:7.0,predict:55,ready:65,bm:['검색광고','콘텐츠'],desc:'네이버 뉴스 알고리즘 규제.'},
-  {id:30,predictReason:"아웃링크 전환은 언론사 요구 강하나 포털 반발 심함",name:'아웃링크 전환 의무화',domain:'media',min:'방통위',cmit:'과방위',risk:7.0,predict:45,ready:65,bm:['검색광고','콘텐츠'],desc:'기사 클릭 시 언론사 이동 강제.'},
-  {id:31,predictReason:"허위정보 플랫폼 책임은 선거철 앞두고 주목도 높음",name:'허위조작정보 플랫폼 책임',domain:'media',min:'방통위',cmit:'과방위',risk:7.5,predict:65,ready:60,bm:['콘텐츠','검색광고'],desc:'AI 생성물 표시제, 이차책임.'},
-  {id:32,predictReason:"AI 생성물 표시제는 여야 공감대 형성·통과 유력",name:'AI생성물 표시 의무제',domain:'media',min:'방통위',cmit:'과방위',risk:6.5,predict:72,ready:68,bm:['AI클라우드','콘텐츠'],desc:'AI 생성 콘텐츠 명시.'},
-  {id:33,predictReason:"웹툰 수익배분 창작자 요구 강하나 계약 자율성 논란",name:'웹툰 수익배분 법제화',domain:'media',min:'문체부',cmit:'문체위',risk:6.0,predict:55,ready:65,bm:['콘텐츠'],desc:'웹툰 작가 수익 배분 법정화.'},
-  {id:34,predictReason:"OSP 면책 축소는 법리 논쟁 커 시간 걸림",name:'OSP 면책 범위 축소',domain:'media',min:'문체부',cmit:'문체위',risk:6.5,predict:40,ready:65,bm:['콘텐츠','검색광고'],desc:'OSP 불법 콘텐츠 책임 확대.'},
-  {id:35,predictReason:"댓글 조작 책임은 선거 관련 여야 관심 높음",name:'댓글 조작 플랫폼 책임',domain:'media',min:'방통위',cmit:'과방위',risk:6.0,predict:65,ready:70,bm:['검색광고'],desc:'선거철 댓글 조작 플랫폼 책임.'},
-  {id:36,predictReason:"게임 저작권은 스트리밍 산업 관행 고려 신중론",name:'치지직 게임 저작권',domain:'media',min:'문체부',cmit:'문체위',risk:5.0,predict:40,ready:70,bm:['콘텐츠'],desc:'게임 스트리밍 저작권.'},
-  {id:37,predictReason:"일본 총무성 행정지도·외교 협상 결과에 따라 유동적",name:'라인야후 지배구조 재편',domain:'global',min:'외교부·과기정통부',cmit:'외통위·과방위',risk:9.5,predict:48,ready:35,bm:['글로벌자산'],desc:'일본 총무성 행정지도. 3.31 마감.'},
-  {id:38,predictReason:"구글 반출 허용 시 안보 우려·정부 반대 기조 유지",name:'구글 지도 데이터 반출',domain:'global',min:'과기정통부',cmit:'과방위',risk:8.5,predict:35,ready:70,bm:['검색광고'],desc:'반출 허용 시 플레이스 광고 수천억 위협.'},
-  {id:39,predictReason:"행정지도 위법성 논란·외교 채널 대응 주력",name:'일본 총무성 행정지도',domain:'global',min:'외교부',cmit:'외통위',risk:8.0,predict:45,ready:40,bm:['글로벌자산'],desc:'행정지도 법적 근거 이의.'},
-  {id:40,predictReason:"USTR 압박 강화·한미 협상 의제 포함 가능성",name:'한미 디지털 통상 협상',domain:'global',min:'산업부·외교부',cmit:'외통위',risk:7.0,predict:50,ready:55,bm:['AI클라우드','검색광고'],desc:'USTR 비관세 장벽 문제 제기.'},
-  {id:41,predictReason:"EU AI법 역외 적용은 법적 강제력 약해 대응 여유 있음",name:'EU AI법 역외 적용',domain:'global',min:'과기정통부',cmit:'과방위',risk:6.0,predict:60,ready:55,bm:['AI클라우드'],desc:'EU AI법 역외 적용 가능성.'},
-  {id:42,predictReason:"OECD Pillar 2 국제 합의·이행 거의 확정적",name:'글로벌 최저한세',domain:'global',min:'기재부',cmit:'기재위',risk:5.5,predict:80,ready:60,bm:['AI클라우드','글로벌자산'],desc:'OECD Pillar 2. 15% 최저법인세.'},
-  {id:43,predictReason:"미국 FTC 규제는 포시마크 현지 법무팀 대응 중",name:'포시마크 미국 소비자보호',domain:'global',min:'산업부',cmit:'외통위',risk:4.5,predict:40,ready:55,bm:['커머스','글로벌자산'],desc:'미국 FTC 소비자보호.'},
-  {id:44,predictReason:"북미 저작권 분쟁은 법원 판결 진행 중",name:'웹툰 북미 저작권 분쟁',domain:'global',min:'문체부',cmit:'문체위',risk:4.0,predict:30,ready:60,bm:['콘텐츠','글로벌자산'],desc:'웹툰엔터 북미 IP 저작권.'},
-  {id:45,predictReason:"빅테크 금융 겸업 우려 커지나 혁신 저해 논란 병존",name:'빅테크 금융업 겸업 규제',domain:'fintech',min:'금융위',cmit:'정무위',risk:7.5,predict:55,ready:60,bm:['핀테크'],desc:'네이버파이낸셜 금융업 범위 제한.'},
-  {id:46,predictReason:"간편결제 수수료 상한제는 핀테크 업계 반발 거셈",name:'간편결제 수수료 규제',domain:'fintech',min:'금융위',cmit:'정무위',risk:7.0,predict:50,ready:65,bm:['핀테크','커머스'],desc:'네이버페이 수수료 상한제.'},
-  {id:47,predictReason:"대출비교 플랫폼 금융 당국 관리 강화 기조",name:'대출비교 플랫폼 규제',domain:'fintech',min:'금융위',cmit:'정무위',risk:6.0,predict:60,ready:65,bm:['핀테크'],desc:'금융상품 비교 플랫폼 규제.'},
-  {id:48,predictReason:"선불충전금 규제는 소비자 보호 명목으로 추진 중",name:'선불전자지급수단 규제',domain:'fintech',min:'금융위',cmit:'정무위',risk:5.5,predict:65,ready:70,bm:['핀테크','커머스'],desc:'네이버페이 선불충전금 규제.'},
-  {id:49,predictReason:"마이데이터 활성화는 정책 방향과 일치해 진전 예상",name:'오픈뱅킹·마이데이터',domain:'fintech',min:'금융위',cmit:'정무위',risk:5.0,predict:70,ready:70,bm:['핀테크'],desc:'마이데이터 범위 확대.'},
-  {id:50,predictReason:"두나무 협력 가상자산은 제도화 논의 초기 단계",name:'가상자산 협력 규제',domain:'fintech',min:'금융위',cmit:'정무위',risk:4.5,predict:45,ready:50,bm:['핀테크'],desc:'두나무 협력 가상자산 규제.'},
-];
+let ISSUES = [];
 
 // ═══ 22대 국회의원 GR 핵심 의원 (하드코딩) ═══
-const MEMBERS_DATA=[
-  // 정무위
-  {name:'윤한홍',party:'국힘',cmit:'정무위',role:'위원장',gr:'온플법·수수료규제',rel:3,tel:'02-788-2870',email:''},
-  {name:'강준현',party:'민주',cmit:'정무위',role:'야당 간사',gr:'온플법 핵심',rel:4,tel:'02-788-2622',email:''},
-  {name:'이정문',party:'민주',cmit:'정무위',role:'온플법 대표발의',gr:'자사우대·수수료',rel:3,tel:'02-788-2821',email:''},
-  {name:'김남근',party:'민주',cmit:'정무위',role:'공정거래 전문가',gr:'온플법 공동발의',rel:3,tel:'02-788-2961',email:''},
-  {name:'민병덕',party:'민주',cmit:'정무위',role:'위원',gr:'핀테크·금융',rel:3,tel:'02-788-2831',email:''},
-  {name:'오기형',party:'민주',cmit:'정무위',role:'온플법 공동발의',gr:'플랫폼 규제',rel:3,tel:'02-788-2751',email:''},
-  {name:'박성준',party:'민주',cmit:'정무위',role:'위원',gr:'개인정보·AI',rel:2,tel:'02-788-2793',email:''},
-  {name:'이강일',party:'민주',cmit:'정무위',role:'수수료 규제 발의',gr:'수수료 상한제',rel:3,tel:'02-788-2611',email:''},
-  // 과방위
-  {name:'최민희',party:'민주',cmit:'과방위',role:'위원장',gr:'AI기본법·라인야후',rel:3,tel:'02-788-2741',email:''},
-  {name:'황정아',party:'민주',cmit:'과방위',role:'AI기본법 핵심',gr:'AI기본법·딥페이크',rel:4,tel:'02-788-2711',email:''},
-  {name:'고동진',party:'국힘',cmit:'과방위',role:'삼성 출신 IT전문',gr:'AI기본법·혁신',rel:5,tel:'02-788-2681',email:''},
-  {name:'이해민',party:'조국',cmit:'과방위',role:'구글 출신 ICT전문',gr:'AI기본법·개인정보',rel:4,tel:'02-788-2651',email:''},
-  {name:'박충권',party:'국힘',cmit:'과방위',role:'위원',gr:'AI·플랫폼',rel:3,tel:'02-788-2621',email:''},
-  {name:'조승래',party:'민주',cmit:'과방위',role:'AI기본법 공동발의',gr:'AI기본법',rel:3,tel:'02-788-2591',email:''},
-  {name:'김현',party:'민주',cmit:'과방위',role:'위원',gr:'방송통신·AI',rel:2,tel:'02-788-2561',email:''},
-  // 문체위
-  {name:'이상헌',party:'민주',cmit:'문체위',role:'위원장',gr:'웹툰·저작권',rel:3,tel:'02-788-2531',email:''},
-  {name:'전용기',party:'민주',cmit:'문체위',role:'허위조작정보법 발의',gr:'미디어·저작권',rel:3,tel:'02-788-2501',email:''},
-  {name:'유인촌',party:'국힘',cmit:'문체위',role:'위원',gr:'문화·콘텐츠',rel:2,tel:'02-788-2471',email:''},
-  // 외통위
-  {name:'김영호',party:'민주',cmit:'외통위',role:'위원장',gr:'라인야후·한미통상',rel:3,tel:'02-788-2441',email:''},
-  {name:'태영호',party:'국힘',cmit:'외통위',role:'위원',gr:'한일관계',rel:2,tel:'02-788-2411',email:''},
-  {name:'박성준',party:'민주',cmit:'외통위',role:'위원',gr:'한미통상',rel:2,tel:'02-788-2381',email:''},
-  // 법사위
-  {name:'정청래',party:'민주',cmit:'법사위',role:'위원장',gr:'법안 체계·자구',rel:2,tel:'02-788-2351',email:''},
-  {name:'장동혁',party:'국힘',cmit:'법사위',role:'간사',gr:'법안 심사',rel:2,tel:'02-788-2321',email:''},
-];
+let MEMBERS_DATA = [];
 
 // ═══ 국회 일정 (2026 하드코딩) ═══
 const SCHED_DATA=[
@@ -818,20 +738,7 @@ const SCHED_DATA=[
 ];
 
 // ═══ 언론 보도 데이터 (하드코딩 + 추가 가능) ═══
-const NEWS_DATA=[
-  {id:1,date:'2026.03.22',source:'한겨레',src_color:'#e74c3c',title:'온플법 정무위 법안2소위 24일 상정 확인…이정문·김남근 병합심사',summary:'정무위원회 법안심사제2소위원회가 오는 24일 온라인플랫폼공정화법을 상정해 이정문·김남근 의원안을 병합 심사할 예정. 수수료 조항 완화 여부가 핵심 쟁점으로 부상.',tags:['온플법','정무위','수수료'],impact:'high',issueId:1},
-  {id:2,date:'2026.03.21',source:'이코노미스트',src_color:'#2980b9',title:'일본 총무성, 라인야후에 추가 행정지도 검토…소프트뱅크 주도 전환 요구 구체화',summary:'일본 총무성이 소프트뱅크로의 경영권 이전을 강하게 압박하는 추가 행정지도를 검토 중. 3월 말 협상 시한이 분수령이 될 것으로 전망.',tags:['라인야후','일본','지배구조'],impact:'high',issueId:37},
-  {id:3,date:'2026.03.20',source:'ZDNet Korea',src_color:'#16a085',title:'AI기본법 과방위 4월 공청회 확정…고동진·황정아 의원 "고위험 AI 정의 집중 논의"',summary:'국회 과방위가 AI기본법 공청회를 4월 3일 개최하기로 확정. 고동진·황정아 의원이 공동 주도하며, 고위험 AI 정의 범위와 영향평가 의무화가 핵심 의제.',tags:['AI기본법','과방위','고위험AI'],impact:'high',issueId:15},
-  {id:4,date:'2026.03.19',source:'경향신문',src_color:'#8e44ad',title:'한국신문협회, 네이버 AI 학습 저작권 침해 소송 제기…TDM 분쟁 본격화',summary:'한국신문협회가 네이버의 뉴스 기사 AI 학습 활용에 대해 저작권 침해 소송을 공식 제기. TDM 허용 범위와 인접권 도입 논의가 급물살을 탈 전망.',tags:['저작권','AI학습','언론사'],impact:'high',issueId:27},
-  {id:5,date:'2026.03.18',source:'디지털데일리',src_color:'#2c3e50',title:'공정위, 네이버 쇼핑 알고리즘 2차 조사 착수…자사우대 재판 이후 첫 직권조사',summary:'공정거래위원회가 2024년 대법원 파기환송 이후 처음으로 네이버 쇼핑 알고리즘에 대한 직권 조사에 착수. 온플법 논의와 맞물려 사전지정제 적용 가능성도 언급.',tags:['공정위','알고리즘','자사우대'],impact:'high',issueId:1},
-  {id:6,date:'2026.03.17',source:'조선비즈',src_color:'#c0392b',title:'네이버페이 간편결제 수수료 규제 법안 정무위 상정 예고…"취지는 좋지만 혁신 저해 우려"',summary:'핀테크업계가 간편결제 수수료 상한 규제 법안에 대해 혁신 저해를 우려하며 반발. 정무위 상정 전 업계 의견 수렴 요구.',tags:['핀테크','수수료','네이버페이'],impact:'med',issueId:46},
-  {id:7,date:'2026.03.16',source:'서울경제',src_color:'#e67e22',title:'구글 지도 데이터 반출 재검토 착수…과기정통부 "안보·경제 균형 고려"',summary:'과학기술정보통신부가 구글 지도 데이터 해외 반출 허용 여부를 재검토 중. 국가 안보와 플랫폼 경쟁 측면을 균형 있게 검토한다는 방침.',tags:['구글지도','과기정통부','반출'],impact:'high',issueId:38},
-  {id:8,date:'2026.03.15',source:'미디어오늘',src_color:'#1abc9c',title:'방통위 "뉴스 아웃링크 전환 의무화 추진"…네이버 뉴스 생태계 재편 가능성',summary:'방송통신위원회가 포털 뉴스 서비스의 아웃링크 전환 의무화를 추진하겠다고 밝혀 논란. 네이버 뉴스 광고 수익에 직접적 영향이 불가피할 전망.',tags:['아웃링크','방통위','뉴스'],impact:'med',issueId:30},
-  {id:9,date:'2026.03.14',source:'블로터',src_color:'#34495e',title:'네이버 에이전트N 출시 전 규제 논란…"AI 에이전트 별도 규율 필요" vs "과잉 규제"',summary:'네이버가 AI 에이전트 서비스 출시를 앞두고 규제 불확실성에 직면. 과기정통부와 공정위가 각각 규율 방향을 검토 중.',tags:['에이전트','AI','규제'],impact:'med',issueId:21},
-  {id:10,date:'2026.03.13',source:'한국경제',src_color:'#f39c12',title:'USTR 연례 보고서 "한국 온플법은 비관세 장벽"…미 통상 압박 본격화',summary:'미국 무역대표부(USTR)가 연례 무역장벽 보고서에서 한국의 온라인플랫폼공정화법을 비관세 장벽으로 명시. 한미 디지털 통상 협상에 미치는 영향이 주목.',tags:['USTR','통상','온플법'],impact:'high',issueId:40},
-  {id:11,date:'2026.03.12',source:'연합뉴스',src_color:'#2ecc71',title:'개보위 "AI 학습 데이터 적법 근거 마련 시급"…개인정보법 개정안 입법예고',summary:'개인정보보호위원회가 AI 학습 데이터 활용의 적법 근거 마련을 위한 개인정보보호법 개정안을 입법예고. 업계 긍정 반응 속 세부 기준 논의 시작.',tags:['개인정보','AI학습','개보위'],impact:'med',issueId:18},
-  {id:12,date:'2026.03.11',source:'뉴스1',src_color:'#3498db',title:'온플법 "역차별" 논란 재점화…구글·알리 국내 매출 대비 세금 납부율 8% 수준',summary:'온플법 논의 과정에서 역차별 문제가 재점화. 국내 플랫폼이 규제를 받는 반면 구글·알리익스프레스 등 해외 플랫폼은 동등 규제 사각지대에 있다는 지적.',tags:['역차별','온플법','구글'],impact:'high',issueId:1},
-];
+let NEWS_DATA = [];
 
 // ═══ HELPERS ═══
 function rc(r){return r>=9?'r1':r>=7.5?'r2':r>=6?'r3':'r4';}
@@ -1521,8 +1428,72 @@ function renderBillsList(){
   }).join('');
 }
 
+
+// ═══ JSON 데이터 외부 로드 (속도 최적화) ═══
+const BASE = 'https://moef-aihub.github.io/naver-gr-intelligence/';
+
+async function loadAllData(){
+  try{
+    const [issuesRes, membersRes] = await Promise.all([
+      fetch(BASE + 'issues.json'),
+      fetch(BASE + 'members.json')
+    ]);
+    
+    if(issuesRes.ok){
+      ISSUES = await issuesRes.json();
+      // predictReason 복원
+      ISSUES.forEach(iss => {
+        if(!iss.predictReason) iss.predictReason = '입법 진행 현황 및 여야 구도 종합 판단';
+      });
+      console.log('✅ 이슈 데이터 로드:', ISSUES.length+'개');
+    }
+    
+    if(membersRes.ok){
+      MEMBERS_DATA = await membersRes.json();
+      console.log('✅ 의원 데이터 로드:', MEMBERS_DATA.length+'명');
+    }
+    
+    // 데이터 로드 후 화면 갱신
+    initAfterData();
+    
+  }catch(e){
+    console.warn('데이터 로드 실패:', e);
+    showToast('⚠️ 데이터 로드 실패 — 재시도 중...');
+    setTimeout(loadAllData, 3000);
+  }
+}
+
+function initAfterData(){
+  // 이슈 카운트 업데이트
+  const issEl = document.getElementById('totalIssues');
+  if(issEl) issEl.textContent = ISSUES.length;
+  
+  // 의원 데이터 초기화
+  allMemData = [...MEMBERS_DATA];
+  
+  // 뉴스 데이터 초기화 (localStorage 복원)
+  const savedUserNews = loadFromLocal('user_news', []);
+  newsData = [...savedUserNews];
+  const newsCountEl = document.getElementById('newsCount');
+  if(newsCountEl) newsCountEl.textContent = newsData.length || '-';
+  
+  // 현재 탭 렌더링
+  const activeTab = document.querySelector('.tab.on');
+  if(activeTab){
+    const pid = activeTab.dataset.p;
+    if(pid === 'home') loadAllData();
+    else if(pid === 'news') renderNewsMini();
+  } else {
+    renderHome();
+  }
+  
+  // 실시간 뉴스 로드
+  setTimeout(()=>{ loadRealtimeNews(); updateRealtimeStatus(); }, 1000);
+}
+
 // ═══ INIT ═══
-allMemData=[...MEMBERS_DATA];
+// 데이터를 외부 JSON에서 비동기 로드 (속도 최적화)
+allMemData=[];
 const savedUserNews = loadFromLocal('user_news', []);
 newsData=[...savedUserNews.filter(n=>!NEWS_DATA.some(h=>h.title===n.title)), ...NEWS_DATA];
 renderTop5();
