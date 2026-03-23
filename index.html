@@ -163,9 +163,11 @@ hr{border:none;border-top:1px solid var(--br);margin:10px 0}
 <header>
   <div class="logo">
     <div class="logo-n">N</div>
-    <div><div class="logo-t">GR Intelligence</div><div class="logo-s">50개 이슈 · 22대 국회 · 언론 모니터링</div></div>
+    <div><div class="logo-t">네이버 GR Intel</div><div class="logo-s">50개 이슈 · 22대 국회 · 언론 모니터링</div></div>
   </div>
-  <div style="display:flex;align-items:center;gap:10px">
+  <div style="display:flex;align-items:center;gap:8px">
+    <a href="gr-map.html" style="display:flex;align-items:center;gap:5px;background:var(--cd);border:1px solid var(--br);border-radius:7px;padding:5px 11px;color:var(--mt);font-size:11px;font-weight:600;text-decoration:none;transition:.15s" onmouseover="this.style.color='var(--g)';this.style.borderColor='var(--g)'" onmouseout="this.style.color='var(--mt)';this.style.borderColor='var(--br)'">🗺 전국 지도</a>
+    <a href="gr-directory.html" style="display:flex;align-items:center;gap:5px;background:var(--cd);border:1px solid var(--br);border-radius:7px;padding:5px 11px;color:var(--mt);font-size:11px;font-weight:600;text-decoration:none;transition:.15s" onmouseover="this.style.color='var(--g)';this.style.borderColor='var(--g)'" onmouseout="this.style.color='var(--mt)';this.style.borderColor='var(--br)'">👤 의원 DB</a>
     <div class="live"><div class="dot"></div>LIVE</div>
     <div style="font-size:10px;color:var(--mt)" id="nowTime"></div>
   </div>
@@ -523,7 +525,7 @@ let API_KEY=localStorage.getItem('grApiKey')||'';
 let chatHistory=[],isLoading=false;
 let curDomain='all',curSort='risk',curSearch='',curDomainSec='platform',selId=null;
 let curNewsFilter='all',curSchedFilter='all',curMemFilter='all';
-let allMemData=[...MEMBERS_DATA],newsData=[...NEWS_DATA];
+let allMemData=[],newsData=[];
 
 if(API_KEY){document.getElementById('apiKeyInput').value='••••••••••';document.getElementById('apiOk').style.display='inline';}
 function updateTime(){const n=new Date();document.getElementById('nowTime').textContent=`${n.getFullYear()}.${String(n.getMonth()+1).padStart(2,'0')}.${String(n.getDate()).padStart(2,'0')} ${String(n.getHours()).padStart(2,'0')}:${String(n.getMinutes()).padStart(2,'0')}`;}
@@ -1218,6 +1220,8 @@ function localR(q){
 function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500);}
 
 // ═══ INIT ═══
+allMemData=[...MEMBERS_DATA];
+newsData=[...NEWS_DATA];
 renderTop5();
 renderBMPressure();
 renderNewsMini();
