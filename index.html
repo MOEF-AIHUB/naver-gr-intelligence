@@ -964,105 +964,68 @@ function renderBillsFilters(){
 
 async function loadBills(){
   renderBillsFilters();
-  var w=W(),k=AK();
-  if(!w||!k){
-    $('billsStatus').textContent='⚪ ⚙️ 설정 → Worker URL + 국회 API 키 입력';
-    renderBillsList(); return;
-  }
+  var w=W(), k=AK();
+
+  // 1. 먼저 정적 bills.json 즉시 로드
   $('billsLoading').style.display='block';
-  $('billsStatus').innerHTML='<span style="color:var(--g)">🔄 22대 국회 전체 법안 수집 중...</span>';
-  
-  // 네이버 관련 키워드 전체로 병렬 요청
-  var fetchKws = ['온라인플랫폼','인공지능','저작권','개인정보','핀테크','알고리즘','포털','공정거래','데이터','전자금융','클라우드','광고','콘텐츠','디지털','통신'];
-  var seen = new Set();
-  var collected = [];
-  
+  $('billsStatus').innerHTML='<span style="color:var(--gd)">⏳ 로딩...</span>';
   try{
-    // 5개씩 병렬 처리
-    for(var i=0; i<fetchKws.length; i+=5){
-      var batch = fetchKws.slice(i, i+5);
-      var results = await Promise.all(batch.map(function(kw){
-        return fetch(w+'/assembly/bills?kw='+encodeURIComponent(kw), {
-          headers:{'X-Assembly-Key':k}
-        }).then(function(r){ return r.ok?r.json():{bills:[]}; })
-          .catch(function(){ return {bills:[]}; });
-      }));
-      results.forEach(function(data){
-        (data.bills||[]).forEach(function(b){
-          var id = b.BILL_ID||b.BILL_NAME||'';
-          if(id && !seen.has(id)){
-            seen.add(id);
-            collected.push(b);
-          }
-        });
-      });
-      $('billsStatus').innerHTML='<span style="color:var(--g)">🔄 수집 중... '+collected.length+'건</span>';
-    }
-    
-    // 네이버 관련도 점수로 정렬
-    allBills = collected.map(enrichBill)
-      .sort(function(a,b){ return b._naverScore - a._naverScore; });
-    
-    $('billsStatus').innerHTML='<span style="color:var(--g)">🟢 '+allBills.length+'건 · 네이버 관련 우선 정렬</span>';
-    showToast('📋 법안 '+allBills.length+'건 로드');
-  }catch(e){
-    $('billsStatus').innerHTML='<span style="color:var(--rd)">❌ '+e.message+'</span>';
-    console.error('bills:',e);
-  }finally{
-    $('billsLoading').style.display='none';
+    var r = await fetch('https://moef-aihub.github.io/naver-gr-intelligence/bills.json');
+    var staticBills = await r.json();
+    allBills = staticBills.map(enrichBill);
+    $('billsStatus').innerHTML='<span style="color:var(--g)">🟢 '+allBills.length+'건 (큐레이션)</span>';
     renderBillsList();
+  }catch(e){
+    console.warn('bills.json 로드 실패:', e);
   }
+
+  // 2. Worker 있으면 실시간 ALLBILL API 추가 수집
+  if(!w||!k){
+    $('billsLoading').style.display='none';
+    return;
+  }
+  $('billsStatus').innerHTML='<span style="color:var(--gd)">🔄 ALLBILL 실시간 수집...</span>';
+  var seen = new Set(allBills.map(function(b){return b.BILL_NO;}));
+  var fresh = [];
+  var kwList = ['온라인플랫폼','인공지능','저작권','개인정보','핀테크','알고리즘','포털','공정거래','데이터','전자금융'];
+  try{
+    for(var i=0;i<kwList.length;i++){
+      var res = await fetch(w+'/assembly/bills?kw='+encodeURIComponent(kwList[i])+'&size=50', {
+        headers:{'X-Assembly-Key':k}
+      });
+      if(!res.ok) continue;
+      var data = await res.json();
+      (data.bills||[]).forEach(function(b){
+        if(b.BILL_NO && !seen.has(b.BILL_NO)){
+          seen.add(b.BILL_NO);
+          fresh.push(b);
+        }
+      });
+    }
+    if(fresh.length){
+      allBills = allBills.concat(fresh.map(enrichBill));
+      allBills.sort(function(a,b){return b._naverScore-a._naverScore;});
+      $('billsStatus').innerHTML='<span style="color:var(--g)">🟢 실시간+큐레이션 · '+allBills.length+'건</span>';
+      showToast('📋 총 '+allBills.length+'건 로드');
+      renderBillsList();
+    }
+  }catch(e){ console.warn('ALLBILL 실시간 실패:', e.message); }
+  finally{ $('billsLoading').style.display='none'; }
 }
 
 function enrichBill(b){
-  var t=(b.BILL_NAME||'')+(b.PROPOSER||'')+(b.RST_PROPOSER||'');
-  var ns = naverScore(b);
-  var risk,rc_;
+  var ns = b.naver_score || naverScore(b);
+  var risk, rc_;
   if(ns>=90){risk='🔴 Critical';rc_='var(--rd)';}
   else if(ns>=70){risk='🟠 High';rc_='var(--gd)';}
   else if(ns>=50){risk='🟡 Medium';rc_='var(--bl)';}
   else{risk='⚪ Low';rc_='var(--mt)';}
-  var proc=b.PROC_RESULT||b.PROC_RESULT_CD||'';
-  var status='심사중',sc='var(--gd)';
-  if(/가결|통과/.test(proc)){status='가결';sc='var(--rd)';}
-  else if(/부결|폐기|철회/.test(proc)){status='폐기';sc='var(--mt)';}
+  var proc = b.PROC_RESULT||b.CMIT_RESULT||'';
+  var status='심사중', sc='var(--gd)';
+  if(/가결|원안가결|수정가결|통과/.test(proc)){status='✅ 가결';sc='var(--rd)';}
+  else if(/부결|폐기|철회|임기만료/.test(proc)){status='🚫 폐기';sc='var(--mt)';}
+  else if(/심사중|회부|상정/.test(proc)||!proc){status='🔄 심사중';sc='var(--gd)';}
   return Object.assign({},b,{_risk:risk,_rc:rc_,_status:status,_sc:sc,_naverScore:ns});
-}
-
-function renderBillsList(){
-  var el=$('billsContent'); if(!el)return;
-  if(!allBills.length){
-    if(AK()&&W()){
-      el.innerHTML='<div class="empty"><div style="font-size:28px;margin-bottom:8px">📋</div>'
-        +'<div style="margin-bottom:6px;font-weight:700">🔄 새로고침 버튼을 클릭하세요</div>'
-        +'<button class="btn" onclick="loadBills()" style="margin-top:4px">지금 로드하기</button></div>';
-    } else {
-      el.innerHTML='<div class="empty"><div style="font-size:28px;margin-bottom:8px">⚙️</div>'
-        +'<div style="margin-bottom:6px;font-weight:700">API 설정이 필요합니다</div>'
-        +'<div style="font-size:10px;color:var(--mt);line-height:1.8">'
-        +'Worker URL: https://nvgc-proxy.sebi1126.workers.dev<br>'
-        +'국회 API 키: cdc6bd117117408183d464fc0b32b02c</div>'
-        +'<button class="btn" onclick="openSettings()" style="margin-top:8px">⚙️ 설정 열기</button></div>';
-    }
-    return;
-  }
-  var src = curBillKw==='all' ? allBills
-    : allBills.filter(function(b){ return (b.BILL_NAME||'').indexOf(curBillKw)>-1; });
-  
-  // 상단에 네이버 관련도 높은 것 강조
-  var topNaver = src.filter(function(b){ return b._naverScore>=70; });
-  var rest = src.filter(function(b){ return b._naverScore<70; });
-  
-  var html = '';
-  if(topNaver.length && curBillKw==='all'){
-    html += '<div style="font-size:9px;font-weight:700;color:var(--rd);text-transform:uppercase;letter-spacing:.7px;padding:8px 0 5px">🔴 네이버 직결 법안 · '+topNaver.length+'건</div>';
-    html += topNaver.slice(0,30).map(function(b){ return billCard(b); }).join('');
-    html += '<div style="font-size:9px;font-weight:700;color:var(--mt);text-transform:uppercase;letter-spacing:.7px;padding:12px 0 5px;border-top:1px solid var(--br);margin-top:4px">기타 IT·디지털 법안 · '+rest.length+'건</div>';
-    html += rest.slice(0,20).map(function(b){ return billCard(b); }).join('');
-  } else {
-    html += src.slice(0,50).map(function(b){ return billCard(b); }).join('');
-  }
-  el.innerHTML = html;
 }
 
 function billCard(b){
