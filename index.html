@@ -181,14 +181,43 @@ header{background:#0A1628;border-bottom:1px solid var(--br);padding:0 16px;heigh
 
 <!-- ③ 이슈 전체 -->
 <div class="page" id="p-issues">
-  <div class="sechd">🗺 전체 이슈 리스크 매트릭스</div>
-  <div id="issueFilters" style="margin-bottom:10px"></div>
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;flex-wrap:wrap;gap:6px">
+    <div class="sechd" style="margin:0">🗺 이슈 전체 분류</div>
+    <div style="display:flex;gap:6px;align-items:center">
+      <input id="issueSearch" placeholder="이슈명 검색..." oninput="renderIssueTbody()" style="background:var(--cd2);border:1px solid var(--br);border-radius:7px;padding:5px 11px;color:var(--tx);font-size:11px;outline:none;width:160px">
+      <span id="issueCnt" style="font-size:10px;color:var(--mt)"></span>
+    </div>
+  </div>
+  <!-- 필터 그룹 -->
+  <div style="display:flex;flex-direction:column;gap:5px;margin-bottom:10px;background:var(--cd);border:1px solid var(--br);border-radius:8px;padding:9px 12px">
+    <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+      <span style="font-size:9px;font-weight:700;color:var(--mt);width:50px;flex-shrink:0">📁 영역</span>
+      <div id="issueFilterDomain" style="display:flex;flex-wrap:wrap;gap:3px"></div>
+    </div>
+    <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+      <span style="font-size:9px;font-weight:700;color:var(--mt);width:50px;flex-shrink:0">🔴 리스크</span>
+      <div id="issueFilterRisk" style="display:flex;flex-wrap:wrap;gap:3px"></div>
+    </div>
+    <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+      <span style="font-size:9px;font-weight:700;color:var(--mt);width:50px;flex-shrink:0">🏛 위원회</span>
+      <div id="issueFilterCmit" style="display:flex;flex-wrap:wrap;gap:3px"></div>
+    </div>
+    <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+      <span style="font-size:9px;font-weight:700;color:var(--mt);width:50px;flex-shrink:0">💰 BM</span>
+      <div id="issueFilterBM" style="display:flex;flex-wrap:wrap;gap:3px"></div>
+    </div>
+  </div>
+  <div style="overflow-x:auto">
   <table class="tbl">
     <thead><tr>
-      <th>이슈명</th><th>영역</th><th>소관위</th><th>리스크</th><th>통과예측</th><th>준비도</th><th>BM</th>
+      <th style="min-width:180px">이슈명</th><th>영역</th><th>소관위</th>
+      <th style="cursor:pointer" onclick="toggleIssueSort('risk')">리스크 ↕</th>
+      <th style="cursor:pointer" onclick="toggleIssueSort('predict')">통과예측 ↕</th>
+      <th>준비도</th><th>BM</th>
     </tr></thead>
     <tbody id="issueTbody"></tbody>
   </table>
+  </div>
 </div>
 
 <!-- ④ 히트맵 -->
@@ -608,65 +637,141 @@ function updateRtStatus(){
 }
 
 async function loadRtNews(){
-  if(realtimeLoaded||!W()||!BK()) return;
-  var ld=$('newsLoadingBar');
-  try{
-    var days=getNewsRange()||7;
-    var now=new Date(), from=new Date(); from.setDate(from.getDate()-days);
-    var fmt=function(d){ return d.toISOString().substring(0,10); };
-    var queries=['네이버 온플법','라인야후 네이버','AI기본법 네이버'];
-    var seen=new Set(), fresh=[];
-    for(var i=0;i<queries.length;i++){
-      try{
-        var r=await fetch(W()+'/bigkinds',{method:'POST',headers:{'Content-Type':'application/json'},
-          body:JSON.stringify({access_key:BK(),argument:{query:queries[i],published_at:{from:fmt(from),until:fmt(now)},sort:{date:'desc'},return_from:0,return_size:8,fields:['title','provider','published_at'],hilight:0}})});
-        var data=await r.json();
-        (data&&data.return_object&&data.return_object.documents||[]).forEach(function(d){
-          if(!seen.has(d.news_id)){
-            seen.add(d.news_id);
-            fresh.push({id:d.news_id,date:(d.published_at||'').substring(0,10),source:d.provider||'BigKinds',src_color:srcColor(d.provider||''),title:d.title||'',tags:guessTag(d.title||''),realtime:true});
-          }
-        });
-      }catch(e){}
-    }
-    if(fresh.length){
-      newsData=fresh.concat(HARD_NEWS);
-      realtimeLoaded=true;
-      renderWrNews();
-      renderNewsPage();
-      showToast('📰 실시간 '+fresh.length+'건 로드');
-    }
-  }catch(e){ console.warn('rtNews:',e); }
+  if(!W()||!BK()){ console.log('Worker/BK 키 없음'); return; }
+  var ld=document.getElementById('rtStatus');
+  if(ld) ld.innerHTML='<span style="color:var(--gd)">🔄 로딩...</span>';
+  
+  var days=getNewsRange()||7;
+  var now=new Date(), from=new Date();
+  from.setDate(from.getDate()-days);
+  var fmt=function(d){ return d.toISOString().substring(0,10); };
+  var queries=['네이버 온플법','라인야후','AI기본법','네이버 저작권','네이버 공정위'];
+  var seen=new Set(), fresh=[];
+  
+  for(var qi=0;qi<queries.length;qi++){
+    try{
+      var payload={
+        access_key: BK(),
+        argument:{
+          query: queries[qi],
+          published_at:{from:fmt(from), until:fmt(now)},
+          sort:{date:'desc'},
+          return_from:0,
+          return_size:10,
+          fields:['title','provider','published_at','hilight']
+        }
+      };
+      var r=await fetch(W()+'/bigkinds',{
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify(payload)
+      });
+      if(!r.ok){ console.warn('bigkinds HTTP',r.status); continue; }
+      var data=await r.json();
+      var docs=(data&&data.return_object&&data.return_object.documents)||[];
+      docs.forEach(function(d){
+        if(!seen.has(d.news_id)){
+          seen.add(d.news_id);
+          fresh.push({
+            id:d.news_id,
+            date:(d.published_at||'').substring(0,10),
+            source:d.provider||'BigKinds',
+            src_color:srcColor(d.provider||''),
+            title:d.title||'',
+            tags:guessTag(d.title||''),
+            realtime:true
+          });
+        }
+      });
+    }catch(e){ console.warn('rtNews query error:',queries[qi],e.message); }
+  }
+  
+  if(fresh.length){
+    newsData=fresh.concat(HARD_NEWS);
+    realtimeLoaded=true;
+    if(ld) ld.innerHTML='<span style="color:var(--g)">🟢 LIVE · '+fresh.length+'건</span>';
+    renderWrNews(); renderWrFreq();
+    if(document.getElementById('p-news').classList.contains('on')) renderNewsPage();
+    showToast('📰 실시간 '+fresh.length+'건 로드');
+  } else {
+    if(ld) ld.innerHTML='<span style="color:var(--mt)">⚪ 기사 없음 (Worker 확인)</span>';
+    console.warn('실시간 뉴스 0건');
+  }
 }
 
 function srcColor(p){ var m={'경향신문':'#e74c3c','조선일보':'#c0392b','한겨레':'#e74c3c','중앙일보':'#e67e22','한국경제':'#f39c12','이데일리':'#2980b9','ZDNet':'#16a085','디지털데일리':'#2c3e50','연합뉴스':'#27ae60'}; for(var k in m)if(p.indexOf(k)>-1)return m[k]; return '#607D8B'; }
 function guessTag(t){ var tags=[]; if(t.indexOf('온플')>-1||t.indexOf('플랫폼')>-1)tags.push('온플법'); if(t.indexOf('라인')>-1||t.indexOf('야후')>-1)tags.push('라인야후'); if(t.indexOf('AI')>-1||t.indexOf('인공지능')>-1)tags.push('AI기본법'); if(t.indexOf('저작권')>-1)tags.push('저작권'); return tags; }
 
 // ════ ISSUES ════
+var issueFilters = {domain:'all', risk:'all', cmit:'all', bm:'all'};
+var issueSort = {key:'risk', dir:-1};
+
 function renderIssues(){
-  var el=$('issueFilters');
-  if(el){
-    el.innerHTML='';
-    ['all'].concat(DOMAINS.map(function(d){return d.key;})).forEach(function(d){
-      var btn=document.createElement('button');
-      btn.className='fb'+(curIssueDomain===d?' on':'');
-      btn.textContent=d==='all'?'전체':d;
-      btn.dataset.v=d;
-      btn.onclick=function(){
-        curIssueDomain=this.dataset.v;
-        document.querySelectorAll('#issueFilters .fb').forEach(function(b){b.classList.remove('on');});
-        this.classList.add('on');
-        renderIssueTbody();
-      };
-      el.appendChild(btn);
-    });
-  }
+  buildIssueFilters();
+  renderIssueTbody();
+}
+
+function buildIssueFilters(){
+  // 영역
+  makeFilterBtns('issueFilterDomain', ['all'].concat(DOMAINS.map(function(d){return d.key;})),
+    'domain', function(v){return v==='all'?'전체':v;});
+  // 리스크
+  makeFilterBtns('issueFilterRisk',
+    ['all','critical','high','medium'],
+    'risk', function(v){return v==='all'?'전체':v==='critical'?'🔴 Critical(9+)':v==='high'?'🟠 High(7-8)':'🟡 Medium(~6)';});
+  // 위원회
+  var cmits = [...new Set(ISSUES.map(function(i){return i.cmit;}))];
+  makeFilterBtns('issueFilterCmit', ['all'].concat(cmits),
+    'cmit', function(v){return v==='all'?'전체':cs(v);});
+  // BM
+  makeFilterBtns('issueFilterBM', ['all'].concat(BMS),
+    'bm', function(v){return v==='all'?'전체':v;});
+}
+
+function makeFilterBtns(elId, values, filterKey, labelFn){
+  var el=document.getElementById(elId); if(!el)return;
+  el.innerHTML='';
+  values.forEach(function(v){
+    var btn=document.createElement('button');
+    btn.className='fb'+(issueFilters[filterKey]===v?' on':'');
+    btn.textContent=labelFn(v);
+    btn.dataset.v=v;
+    btn.onclick=function(){
+      issueFilters[filterKey]=this.dataset.v;
+      document.querySelectorAll('#'+elId+' .fb').forEach(function(b){b.classList.remove('on');});
+      this.classList.add('on');
+      renderIssueTbody();
+    };
+    el.appendChild(btn);
+  });
+}
+
+function toggleIssueSort(key){
+  if(issueSort.key===key) issueSort.dir *= -1;
+  else { issueSort.key=key; issueSort.dir=-1; }
   renderIssueTbody();
 }
 
 function renderIssueTbody(){
   var tbody=$('issueTbody'); if(!tbody)return;
-  var src=curIssueDomain==='all'?ISSUES:ISSUES.filter(function(i){return i.domain&&i.domain.indexOf(curIssueDomain.split('·')[0])>-1;});
+  var q=(document.getElementById('issueSearch')||{}).value||'';
+  var src=ISSUES.filter(function(i){
+    if(issueFilters.domain!=='all' && !(i.domain&&i.domain.indexOf(issueFilters.domain.split('·')[0])>-1)) return false;
+    if(issueFilters.risk==='critical' && i.risk<9) return false;
+    if(issueFilters.risk==='high' && (i.risk<7||i.risk>=9)) return false;
+    if(issueFilters.risk==='medium' && i.risk>=7) return false;
+    if(issueFilters.cmit!=='all' && i.cmit!==issueFilters.cmit) return false;
+    if(issueFilters.bm!=='all' && !(i.bm&&i.bm.indexOf(issueFilters.bm)>-1)) return false;
+    if(q && i.name.indexOf(q)===-1) return false;
+    return true;
+  });
+  // 정렬
+  src = src.slice().sort(function(a,b){
+    var va=a[issueSort.key]||0, vb=b[issueSort.key]||0;
+    return issueSort.dir*(vb-va);
+  });
+  var cntEl=document.getElementById('issueCnt');
+  if(cntEl) cntEl.textContent=src.length+'건';
   tbody.innerHTML='';
   src.forEach(function(iss){
     var c_=rc(iss.risk);
