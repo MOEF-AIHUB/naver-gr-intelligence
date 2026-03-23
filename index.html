@@ -2,359 +2,267 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <title>NVGC · 네이버 GR 인텔리전스</title>
-<!-- chart.js lazy loaded -->
 <style>
-/* font removed for speed - using system font */
-:root{
-  --g:#03C75A;--bl:#1C6EF2;--rd:#D94F3B;--gd:#E8A838;--pu:#8B5CF6;--teal:#0EA5E9;
-  --bg:#0A1628;--cd:#111E30;--cd2:#162030;--br:#1E3048;--tx:#D8E8F5;--mt:#5A7A9A;
-}
+:root{--g:#03C75A;--bl:#1C6EF2;--rd:#D94F3B;--gd:#E8A838;--pu:#8B5CF6;--tl:#0EA5E9;--bg:#0A1628;--cd:#111E30;--cd2:#162030;--br:#1E3048;--tx:#D8E8F5;--mt:#5A7A9A}
 *{margin:0;padding:0;box-sizing:border-box}
-body{background:var(--bg);color:var(--tx);font-family:-apple-system,'Malgun Gothic','맑은 고딕','Apple SD Gothic Neo',sans-serif;font-size:13px;height:100vh;display:flex;flex-direction:column;overflow:hidden}
-/* HEADER */
-header{background:#0A1628;border-bottom:1px solid var(--br);padding:0 16px;height:50px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;z-index:100}
+body{background:var(--bg);color:var(--tx);font-family:-apple-system,"Malgun Gothic","맑은 고딕","Apple SD Gothic Neo",sans-serif;font-size:13px;height:100vh;display:flex;flex-direction:column;overflow:hidden}
+a{color:inherit;text-decoration:none}
+header{background:#0A1628;border-bottom:1px solid var(--br);padding:0 16px;height:50px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
 .logo{display:flex;align-items:center;gap:8px}
-.logo-n{background:linear-gradient(135deg,#03C75A,#00A847);color:#fff;font-weight:900;font-size:14px;width:28px;height:28px;border-radius:6px;display:flex;align-items:center;justify-content:center}
-.logo-txt{font-size:13px;font-weight:700}
-.logo-sub{font-size:9px;color:var(--mt)}
-.nav-ext{display:flex;gap:6px}
-.nav-ext a{background:var(--cd);border:1px solid var(--br);border-radius:6px;padding:4px 10px;color:var(--mt);font-size:10px;text-decoration:none;transition:.15s}
-.nav-ext a:hover{color:var(--g);border-color:var(--g)}
-/* TABS */
-.tabs{display:flex;gap:2px;padding:8px 16px 0;background:var(--cd);border-bottom:1px solid var(--br);flex-shrink:0;overflow-x:auto}
+.logo-n{background:linear-gradient(135deg,var(--g),#00A847);color:#fff;font-weight:900;font-size:14px;width:28px;height:28px;border-radius:6px;display:flex;align-items:center;justify-content:center}
+.nav-links{display:flex;gap:6px}
+.nav-links a{background:var(--cd);border:1px solid var(--br);border-radius:6px;padding:4px 10px;color:var(--mt);font-size:10px;transition:.15s}
+.nav-links a:hover{color:var(--g);border-color:var(--g)}
+.tabs{display:flex;gap:0;padding:0 16px;background:var(--cd);border-bottom:1px solid var(--br);flex-shrink:0;overflow-x:auto}
 .tabs::-webkit-scrollbar{height:0}
-.tab{background:none;border:none;border-bottom:2px solid transparent;padding:6px 12px 8px;color:var(--mt);font-size:11px;font-weight:600;cursor:pointer;white-space:nowrap;transition:.15s}
+.tab{background:none;border:none;border-bottom:2px solid transparent;padding:10px 13px;color:var(--mt);font-size:11px;font-weight:600;cursor:pointer;white-space:nowrap;transition:.15s}
 .tab:hover{color:var(--tx)}
 .tab.on{color:var(--g);border-bottom-color:var(--g)}
-.badge{background:var(--rd);color:#fff;font-size:8px;padding:1px 4px;border-radius:4px;margin-left:3px}
-/* PAGES */
-.pages{flex:1;overflow:hidden}
-.page{display:none;height:100%;overflow-y:auto;padding:14px 16px}
+.bdg{background:var(--rd);color:#fff;font-size:7px;padding:1px 4px;border-radius:4px;margin-left:3px;vertical-align:1px}
+.content{flex:1;overflow:hidden;position:relative}
+.page{display:none;position:absolute;inset:0;overflow-y:auto;padding:14px 16px}
 .page.on{display:block}
-.page::-webkit-scrollbar{width:4px}
-.page::-webkit-scrollbar-thumb{background:var(--br);border-radius:2px}
-/* WAR ROOM */
-.wr-header{background:linear-gradient(135deg,#0D1E30,#0A1628);border:1px solid var(--br);border-radius:10px;padding:12px 16px;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px}
-.wr-title{font-size:9px;font-weight:700;color:var(--mt);letter-spacing:2px;text-transform:uppercase;margin-bottom:2px}
-.wr-date{font-size:16px;font-weight:900}
-.wr-sub{font-size:9px;color:var(--mt);margin-top:2px}
-.stat-badges{display:flex;gap:7px;flex-wrap:wrap}
-.stat-badge{text-align:center;border-radius:8px;padding:7px 14px;border:1px solid}
-.wr-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:10px}
-.wr-col-title{font-size:9px;font-weight:700;color:var(--mt);text-transform:uppercase;letter-spacing:.7px;margin-bottom:8px;display:flex;align-items:center;gap:5px}
-.pulse{width:6px;height:6px;background:var(--rd);border-radius:50%;animation:pulse 1.2s infinite}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
-.issue-card{border-radius:7px;padding:8px 10px;cursor:pointer;margin-bottom:6px;border:1px solid}
-.news-item{padding:5px 0;border-bottom:1px solid var(--br);cursor:pointer}
-.sch-item{display:flex;gap:7px;align-items:center;border-radius:6px;padding:5px 8px;margin-bottom:5px;cursor:pointer;border:1px solid}
-.action-card{border-left:3px solid;border-radius:0 7px 7px 0;padding:9px 11px;margin-bottom:6px}
-.domain-row{display:grid;grid-template-columns:160px 1fr 38px 60px;align-items:center;gap:10px;margin-bottom:8px}
-.bar-wrap{height:6px;background:var(--br);border-radius:3px;overflow:hidden}
-.bar-fill{height:100%;border-radius:3px;transition:width .8s}
-/* ISSUES TABLE */
-.section-hd{font-size:14px;font-weight:900;margin-bottom:10px}
-.tbl{width:100%;border-collapse:collapse}
-.tbl th{padding:8px 10px;text-align:left;font-size:10px;font-weight:700;color:var(--mt);border-bottom:2px solid var(--br);background:#0D1E30;position:sticky;top:0;z-index:5}
-.tbl td{padding:7px 10px;font-size:11px;border-bottom:1px solid var(--br)}
-.tbl tr:hover td{background:rgba(255,255,255,.02)}
+.page.flex{display:none}
+.page.flex.on{display:flex;flex-direction:column}
 /* CARDS */
-.card-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:10px;margin-bottom:12px}
 .card{background:var(--cd);border:1px solid var(--br);border-radius:8px;padding:12px}
-/* MEMBERS */
-.mem-layout{display:grid;grid-template-columns:1fr 340px;gap:0;height:100%}
-.mem-table-wrap{overflow-y:auto;border-right:1px solid var(--br)}
-.mem-detail{overflow-y:auto;padding:14px}
+/* TABLE */
+.tbl{width:100%;border-collapse:collapse}
+.tbl thead{position:sticky;top:0;z-index:5;background:#0D1E30}
+.tbl th{padding:8px 10px;text-align:left;font-size:9px;font-weight:700;color:var(--mt);border-bottom:2px solid var(--br)}
+.tbl td{padding:7px 10px;font-size:11px;border-bottom:1px solid var(--br)}
+.tbl tbody tr{cursor:pointer}
+.tbl tbody tr:hover td{background:rgba(255,255,255,.02)}
+/* CHIPS */
+.chip{font-size:8px;padding:2px 6px;border-radius:6px;font-weight:700;display:inline-block;margin:1px}
+/* FILTER BTNS */
+.fb{background:var(--cd2);border:1px solid var(--br);border-radius:16px;padding:4px 11px;color:var(--mt);font-size:10px;cursor:pointer;margin-right:4px;margin-bottom:4px;transition:.12s}
+.fb.on{border-color:var(--g);color:var(--g);background:rgba(3,199,90,.08)}
 /* MISC */
-.chip{font-size:9px;padding:2px 6px;border-radius:7px;font-weight:700;display:inline-block;margin:1px}
 .btn{background:rgba(3,199,90,.08);border:1px solid rgba(3,199,90,.3);border-radius:6px;padding:4px 12px;color:var(--g);font-size:10px;cursor:pointer}
 .btn:hover{background:rgba(3,199,90,.15)}
-.fb{background:var(--cd2);border:1px solid var(--br);border-radius:20px;padding:4px 11px;color:var(--mt);font-size:10px;cursor:pointer;margin-right:4px;margin-bottom:4px}
-.fb.on{border-color:var(--g);color:var(--g)}
-.toast{position:fixed;bottom:18px;right:18px;background:var(--cd);border:1px solid var(--g);color:var(--g);padding:7px 14px;border-radius:7px;font-size:11px;font-weight:700;z-index:999;opacity:0;transition:.25s;pointer-events:none}
-.toast.show{opacity:1}
-.empty-state{text-align:center;padding:50px 20px;color:var(--mt)}
-.empty-state .icon{font-size:36px;margin-bottom:10px}
-input.search{background:var(--cd2);border:1px solid var(--br);border-radius:8px;padding:8px 14px;color:var(--tx);font-size:12px;width:100%;outline:none;margin-bottom:10px}
-input.search:focus{border-color:var(--g)}
+.btn-p{background:var(--g);border:none;border-radius:7px;padding:9px;color:#fff;font-size:12px;font-weight:700;cursor:pointer;width:100%}
+.sechd{font-size:14px;font-weight:900;margin-bottom:10px}
+.empty{text-align:center;padding:40px;color:var(--mt)}
 /* MODAL */
 .ov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:500;align-items:center;justify-content:center}
 .ov.on{display:flex}
 .modal{background:var(--cd);border:1px solid var(--br);border-radius:12px;width:min(520px,95vw);max-height:85vh;overflow-y:auto}
-.modal-h{display:flex;justify-content:space-between;align-items:center;padding:14px 16px;border-bottom:1px solid var(--br)}
-.modal-b{padding:16px}
-.mx{background:none;border:none;color:var(--mt);font-size:18px;cursor:pointer;line-height:1}
+.mhd{display:flex;justify-content:space-between;align-items:center;padding:14px 16px;border-bottom:1px solid var(--br)}
+.mbdy{padding:16px}
+.mx{background:none;border:none;color:var(--mt);font-size:18px;cursor:pointer}
 .mx:hover{color:var(--rd)}
-.field{margin-bottom:10px}
-.flabel{font-size:10px;font-weight:700;color:var(--mt);display:block;margin-bottom:4px}
 .finput{width:100%;background:var(--cd2);border:1px solid var(--br);border-radius:6px;padding:7px 10px;color:var(--tx);font-size:11px;outline:none}
 .finput:focus{border-color:var(--g)}
-.btn-p{width:100%;background:var(--g);border:none;border-radius:7px;padding:9px;color:#fff;font-size:12px;font-weight:700;cursor:pointer;margin-top:4px}
-/* TOOLTIPS */
-[title]{cursor:help}
+/* TOAST */
+.toast{position:fixed;bottom:16px;right:16px;background:var(--cd);border:1px solid var(--g);color:var(--g);padding:7px 14px;border-radius:7px;font-size:11px;font-weight:700;z-index:999;opacity:0;transition:.25s;pointer-events:none}
+.toast.show{opacity:1}
+/* WAR ROOM */
+.wr-hdr{background:linear-gradient(135deg,#0D1E30,#0A1628);border:1px solid var(--br);border-radius:10px;padding:12px 16px;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px}
+.stat{text-align:center;border-radius:8px;padding:7px 14px;border:1px solid}
+.wr-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:10px}
+.col-hd{font-size:9px;font-weight:700;color:var(--mt);text-transform:uppercase;letter-spacing:.7px;margin-bottom:8px}
+.rank-row{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:8px;margin-bottom:5px;cursor:pointer;border:1px solid}
+.sch-row{display:flex;align-items:center;gap:7px;border-radius:6px;padding:5px 8px;margin-bottom:5px;cursor:pointer;border:1px solid}
+.bar-bg{height:5px;background:var(--br);border-radius:3px;overflow:hidden}
+.bar-fill{height:100%;border-radius:3px}
+.pulse{width:6px;height:6px;background:var(--rd);border-radius:50%;animation:pulse 1.2s infinite;display:inline-block;margin-right:5px}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+/* NEWS LAYOUT */
+.news-layout{display:grid;grid-template-columns:1fr 320px;height:100%;overflow:hidden}
+.news-left{overflow-y:auto;border-right:1px solid var(--br)}
+.news-right{overflow-y:auto;padding:14px;background:var(--cd)}
+.news-issue-hdr{display:flex;align-items:center;gap:8px;padding:8px 14px;background:var(--cd);border-bottom:1px solid var(--br);position:sticky;top:0;z-index:4;cursor:pointer}
+.news-row{display:flex;align-items:baseline;gap:8px;padding:6px 14px 6px 28px;border-bottom:1px solid rgba(30,48,72,.5);cursor:pointer}
+.news-row:hover{background:rgba(255,255,255,.02)}
 </style>
 </head>
 <body>
-
-<!-- HEADER -->
 <header>
   <div class="logo">
     <div class="logo-n">N</div>
     <div>
-      <div class="logo-txt">네이버 GR 인텔리전스</div>
-      <div class="logo-sub">50개 이슈 · 22대 국회 521명 · 실시간 언론 모니터링</div>
+      <div style="font-size:13px;font-weight:700">네이버 GR 인텔리전스</div>
+      <div style="font-size:9px;color:var(--mt)">50개 이슈 · 22대 국회 521명 · 실시간 연동</div>
     </div>
   </div>
   <div style="display:flex;align-items:center;gap:8px">
-    <button onclick="openSettings()" class="btn" style="font-size:10px">⚙️ 설정</button>
-    <div class="nav-ext">
-      <a href="gr-map.html">🗺 전국 지도</a>
+    <button class="btn" onclick="openSettings()">⚙️ 설정</button>
+    <div class="nav-links">
+      <a href="gr-map.html">🗺 지도</a>
       <a href="gr-directory.html">👤 의원 DB</a>
     </div>
   </div>
 </header>
 
-<!-- TABS -->
 <div class="tabs">
-  <button class="tab on" onclick="go('home',this)">⚡ GR 브리핑</button>
-  <button class="tab" onclick="go('news',this)">📰 언론 모니터링 <span class="badge">NEW</span></button>
-  <button class="tab" onclick="go('issues',this)">🗺 이슈 전체</button>
-  <button class="tab" onclick="go('heatmap',this)">🔥 히트맵</button>
-  <button class="tab" onclick="go('bm',this)">💰 BM 임팩트</button>
-  <button class="tab" onclick="go('assembly',this)">🏛 국회 일정</button>
-  <button class="tab" onclick="go('members',this)">👤 22대 의원</button>
-  <button class="tab" onclick="go('bills',this)">📋 법안 현황 <span class="badge">LIVE</span></button>
-  <button class="tab" onclick="go('ai',this)">🤖 AI 인텔 <span class="badge">LIVE</span></button>
+  <button class="tab on"  id="t-home"     onclick="go('home',this)">⚡ GR 브리핑</button>
+  <button class="tab"     id="t-news"     onclick="go('news',this)">📰 언론 모니터링</button>
+  <button class="tab"     id="t-issues"   onclick="go('issues',this)">🗺 이슈 전체</button>
+  <button class="tab"     id="t-heatmap"  onclick="go('heatmap',this)">🔥 히트맵</button>
+  <button class="tab"     id="t-bm"       onclick="go('bm',this)">💰 BM 임팩트</button>
+  <button class="tab"     id="t-assembly" onclick="go('assembly',this)">🏛 국회 일정</button>
+  <button class="tab"     id="t-members"  onclick="go('members',this)">👤 22대 의원</button>
+  <button class="tab"     id="t-bills"    onclick="go('bills',this)">📋 법안 현황 <span class="bdg">LIVE</span></button>
+  <button class="tab"     id="t-ai"       onclick="go('ai',this)">🤖 AI 인텔</button>
 </div>
 
-<!-- PAGES -->
-<div class="pages">
+<div class="content">
 
-<!-- ① GR 브리핑 (첫화면 WAR ROOM) -->
+<!-- ① GR 브리핑 -->
 <div class="page on" id="p-home">
-
-  <!-- 상단 헤더 -->
-  <div class="wr-header">
+  <div class="wr-hdr">
     <div>
-      <div class="wr-title">NAVER GR INTELLIGENCE · WAR ROOM</div>
-      <div class="wr-date" id="wrDate">—</div>
-      <div class="wr-sub">열린국회 · BigKinds · 의안정보시스템 연동</div>
+      <div style="font-size:9px;font-weight:700;color:var(--mt);letter-spacing:2px;text-transform:uppercase">NAVER GR · WAR ROOM</div>
+      <div style="font-size:17px;font-weight:900" id="wrDate"></div>
     </div>
-    <div class="stat-badges">
-      <div class="stat-badge" style="background:rgba(217,79,59,.1);border-color:rgba(217,79,59,.3)">
-        <div style="font-size:22px;font-weight:900;color:var(--rd);line-height:1" id="wrCritical">2</div>
-        <div style="font-size:8px;font-weight:700;color:var(--rd);letter-spacing:1px;margin-top:2px">CRITICAL</div>
-      </div>
-      <div class="stat-badge" style="background:rgba(232,168,56,.08);border-color:rgba(232,168,56,.2)">
-        <div style="font-size:22px;font-weight:900;color:var(--gd);line-height:1" id="wrHigh">10</div>
-        <div style="font-size:8px;font-weight:700;color:var(--gd);letter-spacing:1px;margin-top:2px">HIGH RISK</div>
-      </div>
-      <div class="stat-badge" style="background:rgba(3,199,90,.06);border-color:rgba(3,199,90,.15)">
-        <div style="font-size:22px;font-weight:900;color:var(--g);line-height:1" id="wrTotal">50</div>
-        <div style="font-size:8px;font-weight:700;color:var(--g);letter-spacing:1px;margin-top:2px">MONITORING</div>
-      </div>
-      <div class="stat-badge" style="background:rgba(139,92,246,.06);border-color:rgba(139,92,246,.15)">
-        <div style="font-size:22px;font-weight:900;color:var(--pu);line-height:1">3</div>
-        <div style="font-size:8px;font-weight:700;color:var(--pu);letter-spacing:1px;margin-top:2px">D-DAY</div>
-      </div>
+    <div style="display:flex;gap:7px;flex-wrap:wrap">
+      <div class="stat" style="background:rgba(217,79,59,.1);border-color:rgba(217,79,59,.3)"><div style="font-size:22px;font-weight:900;color:var(--rd)" id="wrCrit">—</div><div style="font-size:8px;color:var(--rd);font-weight:700">CRITICAL</div></div>
+      <div class="stat" style="background:rgba(232,168,56,.08);border-color:rgba(232,168,56,.2)"><div style="font-size:22px;font-weight:900;color:var(--gd)" id="wrHigh">—</div><div style="font-size:8px;color:var(--gd);font-weight:700">HIGH</div></div>
+      <div class="stat" style="background:rgba(3,199,90,.06);border-color:rgba(3,199,90,.15)"><div style="font-size:22px;font-weight:900;color:var(--g)">50</div><div style="font-size:8px;color:var(--g);font-weight:700">MONITORING</div></div>
     </div>
   </div>
-
-  <!-- 3열 그리드 -->
   <div class="wr-grid">
-    <!-- 좌: 규제 전선 -->
     <div>
-      <div class="wr-col-title"><span class="pulse"></span> 규제 전선 현황</div>
-      <div id="wrFrontline"></div>
+      <div class="col-hd"><span class="pulse"></span>규제 전선 순위</div>
+      <div id="wrRank"></div>
     </div>
-    <!-- 중: 언론 동향 + 이슈별 보도 빈도 -->
     <div>
-      <div class="wr-col-title">📰 언론 동향</div>
-      <div id="wrNews" style="margin-bottom:10px"></div>
-      <div style="font-size:9px;font-weight:700;color:var(--mt);text-transform:uppercase;letter-spacing:.7px;margin-bottom:6px">🔥 이슈별 보도 빈도</div>
-      <div id="wrMediaTemp"></div>
+      <div class="col-hd">📰 언론 동향</div>
+      <div id="wrNews"></div>
+      <div style="margin-top:8px;padding-top:8px;border-top:1px solid var(--br)">
+        <div class="col-hd">🔥 이슈별 보도 빈도</div>
+        <div id="wrFreq"></div>
+      </div>
     </div>
-    <!-- 우: 국회 일정 타임라인 -->
     <div>
-      <div class="wr-col-title">🏛 국회 타임라인</div>
-      <div id="wrTimeline" style="margin-bottom:10px"></div>
-      <div style="font-size:9px;font-weight:700;color:var(--mt);text-transform:uppercase;letter-spacing:.7px;margin-bottom:6px">⚡ 오늘 최우선 액션</div>
-      <div class="action-card" style="background:rgba(217,79,59,.06);border-color:rgba(217,79,59,.25);border-left-color:var(--rd)">
-        <div style="font-size:9px;font-weight:700;color:var(--rd);margin-bottom:3px">🚨 D-DAY · 오늘 18:00</div>
-        <div style="font-size:11px;font-weight:700;margin-bottom:3px">온플법 서면 의견서 제출</div>
-        <div style="font-size:9px;color:var(--mt)">정무위 법안2소위 3.24(월) 상정 확정</div>
+      <div class="col-hd">🏛 국회 타임라인</div>
+      <div id="wrTimeline"></div>
+      <div style="margin-top:8px;padding-top:8px;border-top:1px solid var(--br)">
+        <div class="col-hd">⚡ 오늘 최우선</div>
+        <div style="background:rgba(217,79,59,.06);border:1px solid rgba(217,79,59,.25);border-left:3px solid var(--rd);border-radius:0 7px 7px 0;padding:9px 11px">
+          <div style="font-size:9px;font-weight:700;color:var(--rd);margin-bottom:3px">🚨 D-DAY · 오늘 18:00</div>
+          <div style="font-size:11px;font-weight:700;margin-bottom:2px">온플법 서면 의견서 제출</div>
+          <div style="font-size:9px;color:var(--mt)">정무위 법안2소위 3.24(월) 상정</div>
+        </div>
       </div>
     </div>
   </div>
-
-  <!-- 하단: 5대 규제 전선 -->
-  <div style="background:var(--cd);border:1px solid var(--br);border-radius:10px;padding:12px 16px">
-    <div style="font-size:9px;font-weight:700;color:var(--mt);text-transform:uppercase;letter-spacing:.7px;margin-bottom:10px">📊 5대 규제 전선 위험도</div>
+  <div class="card">
+    <div class="col-hd">📊 5대 규제 전선</div>
     <div id="wrDomains"></div>
   </div>
 </div>
 
 <!-- ② 언론 모니터링 -->
-<div class="page" id="p-news" style="padding:0;display:flex;flex-direction:column;overflow:hidden">
-
-  <!-- 상단 컨트롤 바 -->
-  <div style="padding:9px 14px;border-bottom:1px solid var(--br);display:flex;align-items:center;gap:10px;flex-wrap:wrap;flex-shrink:0;background:var(--cd)">
-    <div style="font-size:13px;font-weight:900">📰 언론 모니터링</div>
-    <span id="realtimeStatus" style="font-size:10px;color:var(--mt)">⚪ 미연동</span>
-    <div id="newsLoadingBar" style="display:none;font-size:10px;color:var(--g)">🔄 BigKinds 로딩...</div>
-    <div style="margin-left:auto;display:flex;gap:6px;align-items:center">
-      <select id="newsDateRange" style="background:var(--cd2);border:1px solid var(--br);border-radius:6px;padding:4px 8px;color:var(--tx);font-size:10px;outline:none">
-        <option value="7">최근 7일</option>
-        <option value="3">최근 3일</option>
-        <option value="14">최근 14일</option>
-        <option value="30">최근 30일</option>
-      </select>
-      <button class="btn" onclick="realtimeNewsLoaded=false;loadRealtimeNews()">🔄 새로고침</button>
+<div class="page flex" id="p-news">
+  <div style="padding:9px 14px;border-bottom:1px solid var(--br);display:flex;align-items:center;gap:8px;flex-wrap:wrap;flex-shrink:0;background:var(--cd)">
+    <b>📰 언론 모니터링</b>
+    <span id="rtStatus" style="font-size:10px;color:var(--mt)">⚪ 미연동</span>
+    <select id="newsRange" onchange="renderNewsPage()" style="background:var(--cd2);border:1px solid var(--br);border-radius:5px;padding:3px 8px;color:var(--tx);font-size:10px;outline:none;margin-left:auto">
+      <option value="7">최근 7일</option><option value="3">최근 3일</option><option value="14">최근 14일</option>
+    </select>
+    <button class="btn" onclick="realtimeLoaded=false;loadRtNews()">🔄 새로고침</button>
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 300px;flex:1;overflow:hidden">
+    <div class="news-left" id="newsLeft"></div>
+    <div class="news-right">
+      <div class="col-hd">☁️ 키워드 클라우드</div>
+      <div id="kwCloud" style="margin-bottom:14px;min-height:80px"></div>
+      <div class="col-hd">📝 일간 언론 종합</div>
+      <div id="newsSummary" style="font-size:10px;line-height:1.9;margin-bottom:14px"></div>
+      <div class="col-hd">📊 매체별 보도량</div>
+      <div id="sourceChart"></div>
     </div>
   </div>
-
-  <!-- 상단: 키워드 클라우드 + 일간 언론 종합 -->
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:0;border-bottom:2px solid var(--br);flex-shrink:0">
-    <div style="padding:12px 14px;border-right:1px solid var(--br)">
-      <div style="font-size:9px;font-weight:700;color:var(--mt);text-transform:uppercase;letter-spacing:.7px;margin-bottom:8px">
-        ☁️ 키워드 클라우드 <span style="font-weight:400;font-size:8px" id="cloudPeriod"></span>
-      </div>
-      <div id="keywordCloud" style="min-height:80px"></div>
-    </div>
-    <div style="padding:12px 14px">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
-        <div style="font-size:9px;font-weight:700;color:var(--mt);text-transform:uppercase;letter-spacing:.7px">📝 일간 언론 종합</div>
-        <span id="aiSummaryDate" style="font-size:9px;color:var(--mt)"></span>
-      </div>
-      <div id="aiMediaSummary" style="font-size:10px;line-height:1.8;color:var(--tx)">
-        <span style="color:var(--mt)">BigKinds 기사 로드 후 분석이 표시됩니다.</span>
-      </div>
-    </div>
-  </div>
-
-  <!-- 하단: 이슈별 기사 목록 -->
-  <div style="flex:1;overflow-y:auto" id="newsIssueList"></div>
 </div>
 
 <!-- ③ 이슈 전체 -->
 <div class="page" id="p-issues">
-  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-wrap:wrap;gap:8px">
-    <div class="section-hd">🗺 전체 이슈 분석</div>
-    <div id="issueViewBtns" style="display:flex;gap:4px"></div>
-  </div>
-  <!-- 레이더 + 버블 차트 -->
-  <div id="issueCharts" style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px">
-    <div style="background:var(--cd);border:1px solid var(--br);border-radius:8px;padding:12px">
-      <div style="font-size:10px;font-weight:700;color:var(--mt);margin-bottom:8px">🕸 규제 영역별 레이더</div>
-      <canvas id="radarChart" height="200"></canvas>
-    </div>
-    <div style="background:var(--cd);border:1px solid var(--br);border-radius:8px;padding:12px">
-      <div style="font-size:10px;font-weight:700;color:var(--mt);margin-bottom:8px">🔵 리스크 × 통과예측 버블</div>
-      <canvas id="bubbleChart" height="200"></canvas>
-    </div>
-  </div>
-  <div id="domainFilters" style="margin-bottom:10px"></div>
-  <table class="tbl" id="issueTbl">
+  <div class="sechd">🗺 전체 이슈 리스크 매트릭스</div>
+  <div id="issueFilters" style="margin-bottom:10px"></div>
+  <table class="tbl">
     <thead><tr>
-      <th>이슈명</th><th>영역</th><th>소관위</th><th>리스크</th><th>통과예측</th><th>대응준비도</th><th>BM</th>
+      <th>이슈명</th><th>영역</th><th>소관위</th><th>리스크</th><th>통과예측</th><th>준비도</th><th>BM</th>
     </tr></thead>
-    <tbody id="issueTblBody"></tbody>
+    <tbody id="issueTbody"></tbody>
   </table>
 </div>
 
 <!-- ④ 히트맵 -->
 <div class="page" id="p-heatmap">
-  <div class="section-hd">🔥 규제영역 × BM 히트맵</div>
-  <div id="heatmapWrap" style="overflow-x:auto"></div>
+  <div class="sechd">🔥 규제영역 × BM 히트맵</div>
+  <div id="hmWrap" style="overflow-x:auto"></div>
 </div>
 
 <!-- ⑤ BM 임팩트 -->
 <div class="page" id="p-bm">
-  <div class="section-hd">💰 BM별 규제 임팩트</div>
+  <div class="sechd">💰 BM별 규제 임팩트</div>
   <div id="bmFilters" style="margin-bottom:10px"></div>
   <div id="bmContent"></div>
 </div>
 
 <!-- ⑥ 국회 일정 -->
 <div class="page" id="p-assembly">
-  <div class="section-hd">🏛 2026년 국회 일정</div>
-  <div style="background:var(--cd);border:1px solid var(--br);border-radius:8px;padding:12px;margin-bottom:12px">
-    <div style="font-size:10px;font-weight:700;color:var(--mt);margin-bottom:10px">📅 월별 GR 일정 히트맵</div>
-    <div id="calHeatmap"></div>
-  </div>
-  <div id="assemblyContent"></div>
+  <div class="sechd">🏛 2026년 국회 GR 일정</div>
+  <div id="calWrap" style="margin-bottom:12px"></div>
+  <div id="scheduleList"></div>
 </div>
 
 <!-- ⑦ 22대 의원 -->
 <div class="page" id="p-members">
-  <div class="section-hd">👤 GR 핵심 의원</div>
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-wrap:wrap;gap:8px">
+    <div class="sechd" style="margin-bottom:0">👤 GR 핵심 의원</div>
+    <span id="membersStatus" style="font-size:10px;color:var(--mt)">GR 핵심 5개 위원회</span>
+  </div>
   <div id="membersContent"></div>
 </div>
 
 <!-- ⑧ 법안 현황 -->
 <div class="page" id="p-bills">
   <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-wrap:wrap;gap:8px">
-    <div class="section-hd">📋 GR 관련 법안 현황</div>
+    <div class="sechd" style="margin-bottom:0">📋 GR 관련 법안 현황</div>
     <div style="display:flex;align-items:center;gap:8px">
       <span id="billsStatus" style="font-size:10px;color:var(--mt)">⚪ 설정 필요</span>
-      <button class="btn" onclick="loadBills(true)">🔄 새로고침</button>
+      <button class="btn" onclick="loadBills()">🔄 새로고침</button>
     </div>
   </div>
-  <div id="billsKeywords" style="margin-bottom:10px"></div>
-  <div id="billsLoading" style="display:none;background:rgba(3,199,90,.06);border:1px solid rgba(3,199,90,.2);border-radius:7px;padding:8px 12px;margin-bottom:8px;font-size:10px;color:var(--g)">🔄 국회 의안정보시스템 실시간 로딩 중...</div>
-  <div id="billsList"></div>
+  <div id="billsFilters" style="margin-bottom:10px"></div>
+  <div id="billsLoading" style="display:none;font-size:10px;color:var(--g);padding:8px 0">🔄 국회 의안정보시스템 로딩 중...</div>
+  <div id="billsContent"></div>
 </div>
 
 <!-- ⑨ AI 인텔 -->
 <div class="page" id="p-ai">
-  <div class="section-hd">🤖 AI GR 인텔리전스</div>
-  <div style="background:var(--cd);border:1px solid var(--br);border-radius:8px;padding:14px;margin-bottom:10px">
-    <div style="font-size:11px;color:var(--mt);margin-bottom:8px">Claude API 연동 — GR 이슈 분석 · 의원 전략 · 법안 리스크 질의</div>
-    <textarea id="aiQuery" style="width:100%;background:var(--cd2);border:1px solid var(--br);border-radius:6px;padding:9px;color:var(--tx);font-size:11px;height:80px;resize:vertical;outline:none" placeholder="예: 온플법 통과 시 네이버 검색광고 BM에 미치는 영향 분석해줘"></textarea>
-    <button class="btn-p" style="margin-top:6px" onclick="askAI()">🤖 AI에게 질문</button>
-    <div id="apiKeyWrap" style="margin-top:8px;display:none">
-      <input class="finput" id="aiKeyInput" type="password" placeholder="Anthropic API 키 입력 (sk-ant-...)">
+  <div class="sechd">🤖 AI GR 인텔리전스</div>
+  <div class="card" style="margin-bottom:10px">
+    <div style="font-size:10px;color:var(--mt);margin-bottom:8px">Claude API 연동 — GR 이슈 분석 · 의원 전략 · 법안 리스크 질의</div>
+    <textarea id="aiQ" style="width:100%;background:var(--cd2);border:1px solid var(--br);border-radius:6px;padding:9px;color:var(--tx);font-size:11px;height:80px;resize:vertical;outline:none" placeholder="예: 온플법 통과 시 네이버 검색광고 BM에 미치는 영향 분석해줘"></textarea>
+    <div id="aiKeyWrap" style="display:none;margin-top:6px">
+      <input class="finput" id="aiKeyIn" type="password" placeholder="Anthropic API 키 (sk-ant-...)">
       <button class="btn" style="margin-top:4px" onclick="saveAiKey()">저장</button>
     </div>
+    <button class="btn-p" style="margin-top:6px" onclick="askAI()">🤖 AI에게 질문</button>
   </div>
-  <div id="aiResponse" style="background:var(--cd);border:1px solid var(--br);border-radius:8px;padding:14px;min-height:100px;font-size:11px;line-height:1.8;color:var(--mt)">질문을 입력하면 여기에 답변이 표시됩니다.</div>
+  <div id="aiOut" class="card" style="min-height:100px;font-size:11px;line-height:1.9;color:var(--mt)">질문을 입력하면 여기에 답변이 표시됩니다.</div>
 </div>
 
-</div><!-- /pages -->
+</div><!-- /content -->
 
-<!-- MODAL (이슈 상세 / 설정) -->
-<div class="ov" id="ov" onclick="if(event.target===this)closeModal()">
-  <div class="modal">
-    <div id="modalContent"></div>
-  </div>
+<!-- MODAL -->
+<div class="ov" id="ov" onclick="if(event.target===this)$('ov').classList.remove('on')">
+  <div class="modal"><div id="modalBody"></div></div>
 </div>
-
 <div class="toast" id="toast"></div>
 
 <script>
-// ═══ 데이터 ═══
-const ISSUES = [{"id": 1, "name": "온플법 자사우대 금지", "domain": "플랫폼·공정거래", "bm": ["검색광고", "커머스", "플레이스"], "risk": 9.5, "predict": 72, "ready": 58, "cmit": "정무위원회", "status": "소위상정", "predictReason": "야당 단독발의·소위 상정 확정·여당 수정 협상 중", "actions": ["법무팀 의견서 제출", "정무위 소위 브리핑 자료 준비", "윤한홍·강준현 의원실 접촉"]}, {"id": 2, "name": "온플법 증명책임 전환", "domain": "플랫폼·공정거래", "bm": ["검색광고", "커머스"], "risk": 8.5, "predict": 55, "ready": 52, "cmit": "정무위원회", "status": "병합심사", "predictReason": "증명책임 전환은 헌법 논란으로 여당 제동 가능", "actions": ["헌법 논거 자료 준비", "법무팀 검토"]}, {"id": 3, "name": "온플법 과징금 10%", "domain": "플랫폼·공정거래", "bm": ["전사"], "risk": 9.0, "predict": 60, "ready": 55, "cmit": "정무위원회", "status": "병합심사", "predictReason": "과징금 10% 위헌 논거·여당 반발로 수정 가능성", "actions": ["과징금 비례성 논거 준비", "공정위 실무 채널 접촉"]}, {"id": 4, "name": "온플법 사전지정제", "domain": "플랫폼·공정거래", "bm": ["전사"], "risk": 8.0, "predict": 58, "ready": 60, "cmit": "정무위원회", "status": "논의중", "predictReason": "EU DMA 선례·여야 이견 좁혀지는 중", "actions": ["EU DMA 비교 분석 자료", "산업부 의견 조율"]}, {"id": 5, "name": "배달앱 수수료 상한제", "domain": "플랫폼·공정거래", "bm": ["커머스", "플레이스"], "risk": 7.5, "predict": 65, "ready": 62, "cmit": "정무위원회", "status": "논의중", "predictReason": "배달플랫폼 선례 있어 확산 가능성 높음", "actions": ["네이버 플레이스 영향 분석", "소상공인 상생 레퍼런스 준비"]}, {"id": 6, "name": "알고리즘 투명성 공개", "domain": "플랫폼·공정거래", "bm": ["검색광고", "뉴스"], "risk": 7.0, "predict": 45, "ready": 65, "cmit": "과학기술정보방송통신위원회", "status": "논의중", "predictReason": "알고리즘 공개 논의 지속·강제화는 시간 필요", "actions": ["알고리즘 자율규제 방안 준비"]}, {"id": 7, "name": "플랫폼 수수료 공시제", "domain": "플랫폼·공정거래", "bm": ["커머스", "플레이스"], "risk": 6.5, "predict": 62, "ready": 68, "cmit": "정무위원회", "status": "논의중", "predictReason": "수수료 규제 분위기 확산 중·적용 범위 협상 변수", "actions": ["수수료 공시 자율 선제 시행 검토"]}, {"id": 8, "name": "광고 공정성 규제", "domain": "플랫폼·공정거래", "bm": ["검색광고"], "risk": 6.0, "predict": 40, "ready": 70, "cmit": "정무위원회", "status": "초기", "predictReason": "광고 공정성 이슈 공론화 초기 단계", "actions": ["광고 표시 기준 자율 강화"]}, {"id": 9, "name": "끼워팔기 금지", "domain": "플랫폼·공정거래", "bm": ["커머스", "핀테크"], "risk": 7.0, "predict": 38, "ready": 60, "cmit": "정무위원회", "status": "초기", "predictReason": "끼워팔기 입증 어려워 독립 법안화 가능성 낮음", "actions": ["서비스 번들링 법적 검토"]}, {"id": 10, "name": "플랫폼 시장지배력 남용", "domain": "플랫폼·공정거래", "bm": ["전사"], "risk": 8.0, "predict": 42, "ready": 55, "cmit": "정무위원회", "status": "조사중", "predictReason": "직접 증거 부족으로 현재는 조사 단계", "actions": ["공정위 조사 대응팀 구성"]}, {"id": 11, "name": "최혜대우 금지", "domain": "플랫폼·공정거래", "bm": ["커머스"], "risk": 6.5, "predict": 68, "ready": 65, "cmit": "정무위원회", "status": "논의중", "predictReason": "EU 선례로 통과 유력", "actions": ["최혜대우 조항 현황 파악"]}, {"id": 12, "name": "다크패턴 규제", "domain": "플랫폼·공정거래", "bm": ["커머스", "멤버십"], "risk": 6.0, "predict": 63, "ready": 72, "cmit": "정무위원회", "status": "논의중", "predictReason": "다크패턴 규제는 여야 공감대 형성 중", "actions": ["UX 자율 개선 선제 시행"]}, {"id": 13, "name": "멀티호밍 금지", "domain": "플랫폼·공정거래", "bm": ["커머스"], "risk": 5.5, "predict": 35, "ready": 75, "cmit": "정무위원회", "status": "초기", "predictReason": "멀티호밍 금지는 산업 영향 커 신중론 있음", "actions": ["멀티호밍 현황 분석"]}, {"id": 14, "name": "EU DMA 역외 적용", "domain": "글로벌·외교", "bm": ["전사"], "risk": 6.0, "predict": 28, "ready": 70, "cmit": "외교통일위원회", "status": "모니터링", "predictReason": "EU DMA 직접 적용은 외교·법적 장벽 높음", "actions": ["EU DMA 모니터링 지속"]}, {"id": 15, "name": "AI기본법 고위험AI 지정", "domain": "AI·데이터", "bm": ["AI서비스", "클라우드"], "risk": 8.5, "predict": 75, "ready": 48, "cmit": "과학기술정보방송통신위원회", "status": "공청회예정", "predictReason": "고위험 AI 범위 공청회 후 확정 예정·네이버 포함 여부 미정", "actions": ["고위험 AI 반론 초안 준비", "고동진·황정아 의원실 브리핑"]}, {"id": 16, "name": "AI 영향평가 의무화", "domain": "AI·데이터", "bm": ["AI서비스"], "risk": 7.5, "predict": 65, "ready": 52, "cmit": "과학기술정보방송통신위원회", "status": "논의중", "predictReason": "영향평가 의무화는 기업 부담 크나 AI기본법 핵심 조항", "actions": ["영향평가 자율 시행 방안 검토"]}, {"id": 17, "name": "AI 설명의무", "domain": "AI·데이터", "bm": ["AI서비스", "검색"], "risk": 6.5, "predict": 60, "ready": 58, "cmit": "과학기술정보방송통신위원회", "status": "논의중", "predictReason": "설명의무 국제 추세 따라 통과 가능성 있음", "actions": ["AI 설명가능성 기술 현황 정리"]}, {"id": 18, "name": "AI학습 데이터 합법화", "domain": "AI·데이터", "bm": ["AI서비스"], "risk": 7.0, "predict": 55, "ready": 60, "cmit": "과학기술정보방송통신위원회", "status": "논의중", "predictReason": "AI 학습 데이터 합법화 산업 요구 강해 진전 중", "actions": ["데이터 학습 현황 투명 공개"]}, {"id": 19, "name": "딥페이크 삭제권", "domain": "AI·데이터", "bm": ["AI서비스", "뉴스"], "risk": 5.5, "predict": 85, "ready": 78, "cmit": "과학기술정보방송통신위원회", "status": "통과임박", "predictReason": "딥페이크 삭제권은 여야 초당적 지지", "actions": ["딥페이크 탐지·삭제 시스템 강화"]}, {"id": 20, "name": "아동 개인정보 보호", "domain": "AI·데이터", "bm": ["전사"], "risk": 5.0, "predict": 90, "ready": 82, "cmit": "과학기술정보방송통신위원회", "status": "통과임박", "predictReason": "아동 개인정보는 여야 이견 없어 통과 확실", "actions": ["아동 개인정보 처리 기준 점검"]}, {"id": 21, "name": "AI 에이전트 규제", "domain": "AI·데이터", "bm": ["AI서비스"], "risk": 6.0, "predict": 30, "ready": 55, "cmit": "과학기술정보방송통신위원회", "status": "초기", "predictReason": "에이전트 규제 프레임 아직 초기 논의 단계", "actions": ["AI 에이전트 자율규제 방안 선제 준비"]}, {"id": 22, "name": "AI 광고 표시제", "domain": "AI·데이터", "bm": ["검색광고"], "risk": 5.5, "predict": 70, "ready": 75, "cmit": "과학기술정보방송통신위원회", "status": "논의중", "predictReason": "AI 광고 표시제는 소비자 보호 명목으로 통과 유력", "actions": ["AI 생성 광고 표시 자율 강화"]}, {"id": 23, "name": "데이터 현지화", "domain": "AI·데이터", "bm": ["클라우드"], "risk": 7.0, "predict": 35, "ready": 65, "cmit": "과학기술정보방송통신위원회", "status": "모니터링", "predictReason": "데이터 로컬라이제이션은 WTO 통상 마찰 우려 있음", "actions": ["데이터 센터 현황 파악"]}, {"id": 24, "name": "CSAP 요건 강화", "domain": "AI·데이터", "bm": ["클라우드"], "risk": 7.5, "predict": 62, "ready": 58, "cmit": "과학기술정보방송통신위원회", "status": "논의중", "predictReason": "CSAP 요건 강화는 공공 보안 이슈로 추진 중", "actions": ["CSAP 인증 현황 점검", "과기정통부 실무 채널 접촉"]}, {"id": 25, "name": "마이데이터 확대", "domain": "AI·데이터", "bm": ["핀테크", "클라우드"], "risk": 5.0, "predict": 72, "ready": 75, "cmit": "정무위원회", "status": "진행중", "predictReason": "마이데이터 확대는 금융 당국 주도로 진행 중", "actions": ["마이데이터 서비스 확장 준비"]}, {"id": 26, "name": "EU 개인정보 적정성", "domain": "AI·데이터", "bm": ["글로벌"], "risk": 5.5, "predict": 78, "ready": 80, "cmit": "외교통일위원회", "status": "유지", "predictReason": "EU 적정성 결정은 외교 채널로 유지 예상", "actions": ["EU 개인정보 적정성 모니터링"]}, {"id": 27, "name": "AI학습 저작권", "domain": "미디어·저작권", "bm": ["AI서비스", "뉴스"], "risk": 8.0, "predict": 55, "ready": 45, "cmit": "문화체육관광위원회", "status": "소송중", "predictReason": "AI 학습 저작권 소송 진행 중·입법화는 판결 후 본격화", "actions": ["저작권 소송 현황 모니터링", "문체위 임오경 의원실 브리핑"]}, {"id": 28, "name": "뉴스 인접권", "domain": "미디어·저작권", "bm": ["뉴스"], "risk": 7.5, "predict": 48, "ready": 52, "cmit": "문화체육관광위원회", "status": "논의중", "predictReason": "인접권은 EU 선례 있으나 국내 언론 생태계 논란", "actions": ["언론사 상생 방안 제시"]}, {"id": 29, "name": "뉴스 알고리즘 규제", "domain": "미디어·저작권", "bm": ["뉴스"], "risk": 7.0, "predict": 58, "ready": 55, "cmit": "과학기술정보방송통신위원회", "status": "논의중", "predictReason": "뉴스 알고리즘 규제는 방통위 추진 의지 있음", "actions": ["알고리즘 편집 자율규제 강화"]}, {"id": 30, "name": "아웃링크 전환", "domain": "미디어·저작권", "bm": ["뉴스"], "risk": 6.5, "predict": 42, "ready": 60, "cmit": "문화체육관광위원회", "status": "논의중", "predictReason": "아웃링크 전환은 언론사 요구 강하나 포털 반발 심함", "actions": ["아웃링크 전환 영향 분석"]}, {"id": 31, "name": "허위정보 플랫폼 책임", "domain": "미디어·저작권", "bm": ["뉴스", "검색"], "risk": 6.0, "predict": 55, "ready": 65, "cmit": "과학기술정보방송통신위원회", "status": "논의중", "predictReason": "허위정보 플랫폼 책임은 선거철 앞두고 주목도 높음", "actions": ["팩트체크 시스템 강화"]}, {"id": 32, "name": "AI 생성물 표시제", "domain": "미디어·저작권", "bm": ["AI서비스", "뉴스"], "risk": 5.5, "predict": 75, "ready": 78, "cmit": "문화체육관광위원회", "status": "통과임박", "predictReason": "AI 생성물 표시제는 여야 공감대 형성·통과 유력", "actions": ["AI 생성물 표시 자율 시행"]}, {"id": 33, "name": "웹툰 수익배분", "domain": "미디어·저작권", "bm": ["커머스"], "risk": 5.5, "predict": 45, "ready": 70, "cmit": "문화체육관광위원회", "status": "논의중", "predictReason": "웹툰 수익배분 창작자 요구 강하나 계약 자율성 논란", "actions": ["웹툰 창작자 상생 방안 준비"]}, {"id": 34, "name": "OSP 면책 축소", "domain": "미디어·저작권", "bm": ["전사"], "risk": 7.0, "predict": 38, "ready": 55, "cmit": "문화체육관광위원회", "status": "초기", "predictReason": "OSP 면책 축소는 법리 논쟁 커 시간 걸림", "actions": ["OSP 면책 현황 법적 검토"]}, {"id": 35, "name": "댓글 조작 책임", "domain": "미디어·저작권", "bm": ["뉴스", "검색"], "risk": 6.0, "predict": 52, "ready": 68, "cmit": "과학기술정보방송통신위원회", "status": "논의중", "predictReason": "댓글 조작 책임은 선거 관련 여야 관심 높음", "actions": ["댓글 모니터링 시스템 점검"]}, {"id": 36, "name": "게임 저작권", "domain": "미디어·저작권", "bm": ["커머스"], "risk": 4.5, "predict": 35, "ready": 75, "cmit": "문화체육관광위원회", "status": "모니터링", "predictReason": "게임 저작권은 스트리밍 산업 관행 고려 신중론", "actions": ["게임 저작권 현황 모니터링"]}, {"id": 37, "name": "라인야후 지배구조", "domain": "글로벌·외교", "bm": ["글로벌"], "risk": 9.5, "predict": 48, "ready": 35, "cmit": "외교통일위원회", "status": "협상중", "predictReason": "일본 총무성 행정지도·외교 협상 결과에 따라 유동적", "actions": ["과기정통부 공조 요청", "외교부 채널 가동", "과방위·외통위 브리핑"]}, {"id": 38, "name": "구글 지도 반출 허용", "domain": "글로벌·외교", "bm": ["지도"], "risk": 8.5, "predict": 32, "ready": 68, "cmit": "외교통일위원회", "status": "정부반대", "predictReason": "구글 반출 허용 시 안보 우려·정부 반대 기조 유지", "actions": ["국가안보 논거 강화", "국토부 협력 채널 유지"]}, {"id": 39, "name": "라인 행정지도 위법성", "domain": "글로벌·외교", "bm": ["글로벌"], "risk": 8.0, "predict": 40, "ready": 42, "cmit": "외교통일위원회", "status": "대응중", "predictReason": "행정지도 위법성 논란·외교 채널 대응 주력", "actions": ["외교부 공조", "법무팀 국제법 검토"]}, {"id": 40, "name": "USTR 비관세장벽", "domain": "글로벌·외교", "bm": ["전사"], "risk": 7.5, "predict": 45, "ready": 50, "cmit": "외교통일위원회", "status": "모니터링", "predictReason": "USTR 압박 강화·한미 협상 의제 포함 가능성", "actions": ["통상부 모니터링", "미국 로펌 자문"]}, {"id": 41, "name": "EU AI법 역외 적용", "domain": "글로벌·외교", "bm": ["AI서비스", "글로벌"], "risk": 6.5, "predict": 55, "ready": 62, "cmit": "외교통일위원회", "status": "모니터링", "predictReason": "EU AI법 역외 적용은 법적 강제력 약해 대응 여유 있음", "actions": ["EU AI법 영향 범위 분석"]}, {"id": 42, "name": "글로벌 최저한세", "domain": "글로벌·외교", "bm": ["전사"], "risk": 6.0, "predict": 88, "ready": 72, "cmit": "기재위원회", "status": "이행중", "predictReason": "OECD Pillar 2 국제 합의·이행 거의 확정적", "actions": ["세무팀 이행 현황 점검"]}, {"id": 43, "name": "미국 FTC 규제", "domain": "글로벌·외교", "bm": ["글로벌"], "risk": 5.5, "predict": 40, "ready": 65, "cmit": "외교통일위원회", "status": "모니터링", "predictReason": "미국 FTC 규제는 포시마크 현지 법무팀 대응 중", "actions": ["미국 현지 법무팀 현황 파악"]}, {"id": 44, "name": "북미 저작권 분쟁", "domain": "글로벌·외교", "bm": ["AI서비스", "글로벌"], "risk": 6.0, "predict": 42, "ready": 58, "cmit": "외교통일위원회", "status": "소송중", "predictReason": "북미 저작권 분쟁은 법원 판결 진행 중", "actions": ["소송 현황 모니터링"]}, {"id": 45, "name": "빅테크 금융겸업 규제", "domain": "금융·핀테크", "bm": ["핀테크"], "risk": 7.5, "predict": 55, "ready": 52, "cmit": "정무위원회", "status": "논의중", "predictReason": "빅테크 금융 겸업 우려 커지나 혁신 저해 논란 병존", "actions": ["핀테크 분리 방안 검토", "금융위 채널 접촉"]}, {"id": 46, "name": "간편결제 수수료 상한", "domain": "금융·핀테크", "bm": ["핀테크"], "risk": 7.0, "predict": 50, "ready": 55, "cmit": "정무위원회", "status": "논의중", "predictReason": "간편결제 수수료 상한제는 핀테크 업계 반발 거셈", "actions": ["수수료 체계 합리성 자료 준비"]}, {"id": 47, "name": "대출비교 플랫폼 규제", "domain": "금융·핀테크", "bm": ["핀테크"], "risk": 6.5, "predict": 58, "ready": 60, "cmit": "정무위원회", "status": "논의중", "predictReason": "대출비교 플랫폼 금융 당국 관리 강화 기조", "actions": ["금융위 실무 채널 대응"]}, {"id": 48, "name": "선불충전금 규제", "domain": "금융·핀테크", "bm": ["핀테크"], "risk": 5.5, "predict": 65, "ready": 68, "cmit": "정무위원회", "status": "논의중", "predictReason": "선불충전금 규제는 소비자 보호 명목으로 추진 중", "actions": ["선불충전금 운용 현황 점검"]}, {"id": 49, "name": "마이데이터 금융 확대", "domain": "금융·핀테크", "bm": ["핀테크", "클라우드"], "risk": 5.0, "predict": 72, "ready": 75, "cmit": "정무위원회", "status": "진행중", "predictReason": "마이데이터 활성화는 정책 방향과 일치해 진전 예상", "actions": ["마이데이터 연동 서비스 준비"]}, {"id": 50, "name": "가상자산 제도화", "domain": "금융·핀테크", "bm": ["핀테크"], "risk": 5.5, "predict": 38, "ready": 60, "cmit": "정무위원회", "status": "초기", "predictReason": "두나무 협력 가상자산은 제도화 논의 초기 단계", "actions": ["가상자산 법제화 동향 모니터링"]}];
-const MEMBERS_DATA = []; // lazy loaded
-
-const MEMBER_GR = {"윤한홍": {"interests": ["온라인플랫폼 규제", "공정거래", "금융소비자보호"], "bills": ["온라인플랫폼 공정화법", "전자금융거래법 개정안"]}, "이정문": {"interests": ["플랫폼 수수료", "소상공인 보호", "배달앱 규제"], "bills": ["온라인플랫폼 중개거래 공정화법", "배달플랫폼 수수료 규제법"]}, "강준현": {"interests": ["공정거래", "대기업 규제", "소비자보호"], "bills": ["공정거래법 개정안", "소비자기본법 개정안"]}, "최민희": {"interests": ["AI기본법", "방송통신정책", "라인야후"], "bills": ["인공지능 기본법", "방송법 전부개정안", "정보통신망법 개정안"]}, "고동진": {"interests": ["AI 산업육성", "반도체", "디지털전환"], "bills": ["인공지능 진흥법", "반도체 특별법"]}, "황정아": {"interests": ["AI 거버넌스", "데이터 주권", "디지털 권리"], "bills": ["AI기본법 수정안", "데이터기본법 개정안"]}, "김석기": {"interests": ["한일관계", "외교", "안보"], "bills": ["재외동포법 개정안"]}, "김영배": {"interests": ["한일외교", "한미관계", "통상"], "bills": ["외교부 설치법 개정안"]}, "이해민": {"interests": ["저작권", "문화콘텐츠", "OTT"], "bills": ["저작권법 개정안(AI학습)", "OTT 규제법"]}, "조인철": {"interests": ["언론", "미디어정책", "포털 뉴스"], "bills": ["신문법 개정안", "포털뉴스 알고리즘 공개법"]}, "한기호": {"interests": ["핀테크", "금융혁신", "크라우드펀딩"], "bills": ["전자금융거래법 개정안", "크라우드펀딩법 개정안"]}, "이강일": {"interests": ["빅테크 규제", "디지털세", "플랫폼 독과점"], "bills": ["디지털세 도입 촉구 결의안", "플랫폼 독과점 규제법"]}};
-
-const HARD_NEWS = [
-  {id:1,date:'2026-03-23',source:'조선일보',src_color:'#c0392b',title:'온플법 정무위 소위 상정 확정…네이버 긴장',tags:['온플법'],impact:'high'},
-  {id:2,date:'2026-03-22',source:'한겨레',src_color:'#e74c3c',title:'AI기본법 과방위 공청회 4월 3일 개최 확정',tags:['AI기본법'],impact:'high'},
-  {id:3,date:'2026-03-22',source:'이데일리',src_color:'#2980b9',title:'라인야후 소프트뱅크 답변 마감 D-9',tags:['라인야후'],impact:'high'},
-  {id:4,date:'2026-03-21',source:'ZDNet Korea',src_color:'#16a085',title:'구글 지도 반출 허용 재논의…정부 신중론',tags:['구글지도'],impact:'med'},
-  {id:5,date:'2026-03-21',source:'디지털데일리',src_color:'#2c3e50',title:'AI 학습 저작권 소송 1심 판결 임박',tags:['저작권'],impact:'med'},
-];
-
-const SCHEDULE = [
-  {date:'3.24',dow:'월',title:'온플법 정무위 소위 상정',urgent:true,dday:0},
-  {date:'3.31',dow:'월',title:'라인야후 협상 최종 마감',urgent:true,dday:7},
-  {date:'4.3', dow:'금',title:'AI기본법 과방위 공청회',urgent:true,dday:10},
-  {date:'4.14',dow:'화',title:'과방위 라인야후 현안질의',urgent:false,dday:21},
-  {date:'5.26',dow:'화',title:'온플법 본회의 회부 결정',urgent:true,dday:63},
-];
-
+// ════ DATA ════
+const ISSUES = [{"id":1,"name":"온플법 자사우대 금지","domain":"플랫폼·공정거래","bm":["검색광고","커머스","플레이스"],"risk":9.5,"predict":72,"ready":58,"cmit":"정무위원회","status":"소위상정","predictReason":"야당 단독발의·소위 상정 확정·여당 수정 협상 중","actions":["법무팀 의견서 제출","정무위 소위 브리핑 자료 준비","윤한홍·강준현 의원실 접촉"]},{"id":2,"name":"온플법 증명책임 전환","domain":"플랫폼·공정거래","bm":["검색광고","커머스"],"risk":8.5,"predict":55,"ready":52,"cmit":"정무위원회","status":"병합심사","predictReason":"증명책임 전환은 헌법 논란으로 여당 제동 가능","actions":["헌법 논거 자료 준비","법무팀 검토"]},{"id":3,"name":"온플법 과징금 10%","domain":"플랫폼·공정거래","bm":["전사"],"risk":9.0,"predict":60,"ready":55,"cmit":"정무위원회","status":"병합심사","predictReason":"과징금 10% 위헌 논거·여당 반발로 수정 가능성","actions":["과징금 비례성 논거 준비","공정위 실무 채널 접촉"]},{"id":4,"name":"온플법 사전지정제","domain":"플랫폼·공정거래","bm":["전사"],"risk":8.0,"predict":58,"ready":60,"cmit":"정무위원회","status":"논의중","predictReason":"EU DMA 선례·여야 이견 좁혀지는 중","actions":["EU DMA 비교 분석 자료","산업부 의견 조율"]},{"id":5,"name":"배달앱 수수료 상한제","domain":"플랫폼·공정거래","bm":["커머스","플레이스"],"risk":7.5,"predict":65,"ready":62,"cmit":"정무위원회","status":"논의중","predictReason":"배달플랫폼 선례 있어 확산 가능성 높음","actions":["네이버 플레이스 영향 분석","소상공인 상생 레퍼런스 준비"]},{"id":6,"name":"알고리즘 투명성 공개","domain":"플랫폼·공정거래","bm":["검색광고","뉴스"],"risk":7.0,"predict":45,"ready":65,"cmit":"과학기술정보방송통신위원회","status":"논의중","predictReason":"알고리즘 공개 논의 지속·강제화는 시간 필요","actions":["알고리즘 자율규제 방안 준비"]},{"id":7,"name":"플랫폼 수수료 공시제","domain":"플랫폼·공정거래","bm":["커머스","플레이스"],"risk":6.5,"predict":62,"ready":68,"cmit":"정무위원회","status":"논의중","predictReason":"수수료 규제 분위기 확산 중·적용 범위 협상 변수","actions":["수수료 공시 자율 선제 시행 검토"]},{"id":8,"name":"광고 공정성 규제","domain":"플랫폼·공정거래","bm":["검색광고"],"risk":6.0,"predict":40,"ready":70,"cmit":"정무위원회","status":"초기","predictReason":"광고 공정성 이슈 공론화 초기 단계","actions":["광고 표시 기준 자율 강화"]},{"id":9,"name":"끼워팔기 금지","domain":"플랫폼·공정거래","bm":["커머스","핀테크"],"risk":7.0,"predict":38,"ready":60,"cmit":"정무위원회","status":"초기","predictReason":"끼워팔기 입증 어려워 독립 법안화 가능성 낮음","actions":["서비스 번들링 법적 검토"]},{"id":10,"name":"플랫폼 시장지배력 남용","domain":"플랫폼·공정거래","bm":["전사"],"risk":8.0,"predict":42,"ready":55,"cmit":"정무위원회","status":"조사중","predictReason":"직접 증거 부족으로 현재는 조사 단계","actions":["공정위 조사 대응팀 구성"]},{"id":11,"name":"최혜대우 금지","domain":"플랫폼·공정거래","bm":["커머스"],"risk":6.5,"predict":68,"ready":65,"cmit":"정무위원회","status":"논의중","predictReason":"EU 선례로 통과 유력","actions":["최혜대우 조항 현황 파악"]},{"id":12,"name":"다크패턴 규제","domain":"플랫폼·공정거래","bm":["커머스","멤버십"],"risk":6.0,"predict":63,"ready":72,"cmit":"정무위원회","status":"논의중","predictReason":"다크패턴 규제는 여야 공감대 형성 중","actions":["UX 자율 개선 선제 시행"]},{"id":13,"name":"멀티호밍 금지","domain":"플랫폼·공정거래","bm":["커머스"],"risk":5.5,"predict":35,"ready":75,"cmit":"정무위원회","status":"초기","predictReason":"멀티호밍 금지는 산업 영향 커 신중론 있음","actions":["멀티호밍 현황 분석"]},{"id":14,"name":"EU DMA 역외 적용","domain":"글로벌·외교","bm":["전사"],"risk":6.0,"predict":28,"ready":70,"cmit":"외교통일위원회","status":"모니터링","predictReason":"EU DMA 직접 적용은 외교·법적 장벽 높음","actions":["EU DMA 모니터링 지속"]},{"id":15,"name":"AI기본법 고위험AI 지정","domain":"AI·데이터","bm":["AI서비스","클라우드"],"risk":8.5,"predict":75,"ready":48,"cmit":"과학기술정보방송통신위원회","status":"공청회예정","predictReason":"고위험 AI 범위 공청회 후 확정 예정·네이버 포함 여부 미정","actions":["고위험 AI 반론 초안 준비","고동진·황정아 의원실 브리핑"]},{"id":16,"name":"AI 영향평가 의무화","domain":"AI·데이터","bm":["AI서비스"],"risk":7.5,"predict":65,"ready":52,"cmit":"과학기술정보방송통신위원회","status":"논의중","predictReason":"영향평가 의무화는 기업 부담 크나 AI기본법 핵심 조항","actions":["영향평가 자율 시행 방안 검토"]},{"id":17,"name":"AI 설명의무","domain":"AI·데이터","bm":["AI서비스","검색"],"risk":6.5,"predict":60,"ready":58,"cmit":"과학기술정보방송통신위원회","status":"논의중","predictReason":"설명의무 국제 추세 따라 통과 가능성 있음","actions":["AI 설명가능성 기술 현황 정리"]},{"id":18,"name":"AI학습 데이터 합법화","domain":"AI·데이터","bm":["AI서비스"],"risk":7.0,"predict":55,"ready":60,"cmit":"과학기술정보방송통신위원회","status":"논의중","predictReason":"AI 학습 데이터 합법화 산업 요구 강해 진전 중","actions":["데이터 학습 현황 투명 공개"]},{"id":19,"name":"딥페이크 삭제권","domain":"AI·데이터","bm":["AI서비스","뉴스"],"risk":5.5,"predict":85,"ready":78,"cmit":"과학기술정보방송통신위원회","status":"통과임박","predictReason":"딥페이크 삭제권은 여야 초당적 지지","actions":["딥페이크 탐지·삭제 시스템 강화"]},{"id":20,"name":"아동 개인정보 보호","domain":"AI·데이터","bm":["전사"],"risk":5.0,"predict":90,"ready":82,"cmit":"과학기술정보방송통신위원회","status":"통과임박","predictReason":"아동 개인정보는 여야 이견 없어 통과 확실","actions":["아동 개인정보 처리 기준 점검"]},{"id":21,"name":"AI 에이전트 규제","domain":"AI·데이터","bm":["AI서비스"],"risk":6.0,"predict":30,"ready":55,"cmit":"과학기술정보방송통신위원회","status":"초기","predictReason":"에이전트 규제 프레임 아직 초기 논의 단계","actions":["AI 에이전트 자율규제 방안 선제 준비"]},{"id":22,"name":"AI 광고 표시제","domain":"AI·데이터","bm":["검색광고"],"risk":5.5,"predict":70,"ready":75,"cmit":"과학기술정보방송통신위원회","status":"논의중","predictReason":"AI 광고 표시제는 소비자 보호 명목으로 통과 유력","actions":["AI 생성 광고 표시 자율 강화"]},{"id":23,"name":"데이터 현지화","domain":"AI·데이터","bm":["클라우드"],"risk":7.0,"predict":35,"ready":65,"cmit":"과학기술정보방송통신위원회","status":"모니터링","predictReason":"데이터 로컬라이제이션은 WTO 통상 마찰 우려 있음","actions":["데이터 센터 현황 파악"]},{"id":24,"name":"CSAP 요건 강화","domain":"AI·데이터","bm":["클라우드"],"risk":7.5,"predict":62,"ready":58,"cmit":"과학기술정보방송통신위원회","status":"논의중","predictReason":"CSAP 요건 강화는 공공 보안 이슈로 추진 중","actions":["CSAP 인증 현황 점검","과기정통부 실무 채널 접촉"]},{"id":25,"name":"마이데이터 확대","domain":"AI·데이터","bm":["핀테크","클라우드"],"risk":5.0,"predict":72,"ready":75,"cmit":"정무위원회","status":"진행중","predictReason":"마이데이터 확대는 금융 당국 주도로 진행 중","actions":["마이데이터 서비스 확장 준비"]},{"id":26,"name":"EU 개인정보 적정성","domain":"AI·데이터","bm":["글로벌"],"risk":5.5,"predict":78,"ready":80,"cmit":"외교통일위원회","status":"유지","predictReason":"EU 적정성 결정은 외교 채널로 유지 예상","actions":["EU 개인정보 적정성 모니터링"]},{"id":27,"name":"AI학습 저작권","domain":"미디어·저작권","bm":["AI서비스","뉴스"],"risk":8.0,"predict":55,"ready":45,"cmit":"문화체육관광위원회","status":"소송중","predictReason":"AI 학습 저작권 소송 진행 중·입법화는 판결 후 본격화","actions":["저작권 소송 현황 모니터링","문체위 임오경 의원실 브리핑"]},{"id":28,"name":"뉴스 인접권","domain":"미디어·저작권","bm":["뉴스"],"risk":7.5,"predict":48,"ready":52,"cmit":"문화체육관광위원회","status":"논의중","predictReason":"인접권은 EU 선례 있으나 국내 언론 생태계 논란","actions":["언론사 상생 방안 제시"]},{"id":29,"name":"뉴스 알고리즘 규제","domain":"미디어·저작권","bm":["뉴스"],"risk":7.0,"predict":58,"ready":55,"cmit":"과학기술정보방송통신위원회","status":"논의중","predictReason":"뉴스 알고리즘 규제는 방통위 추진 의지 있음","actions":["알고리즘 편집 자율규제 강화"]},{"id":30,"name":"아웃링크 전환","domain":"미디어·저작권","bm":["뉴스"],"risk":6.5,"predict":42,"ready":60,"cmit":"문화체육관광위원회","status":"논의중","predictReason":"아웃링크 전환은 언론사 요구 강하나 포털 반발 심함","actions":["아웃링크 전환 영향 분석"]},{"id":31,"name":"허위정보 플랫폼 책임","domain":"미디어·저작권","bm":["뉴스","검색"],"risk":6.0,"predict":55,"ready":65,"cmit":"과학기술정보방송통신위원회","status":"논의중","predictReason":"허위정보 플랫폼 책임은 선거철 앞두고 주목도 높음","actions":["팩트체크 시스템 강화"]},{"id":32,"name":"AI 생성물 표시제","domain":"미디어·저작권","bm":["AI서비스","뉴스"],"risk":5.5,"predict":75,"ready":78,"cmit":"문화체육관광위원회","status":"통과임박","predictReason":"AI 생성물 표시제는 여야 공감대 형성·통과 유력","actions":["AI 생성물 표시 자율 시행"]},{"id":33,"name":"웹툰 수익배분","domain":"미디어·저작권","bm":["커머스"],"risk":5.5,"predict":45,"ready":70,"cmit":"문화체육관광위원회","status":"논의중","predictReason":"웹툰 수익배분 창작자 요구 강하나 계약 자율성 논란","actions":["웹툰 창작자 상생 방안 준비"]},{"id":34,"name":"OSP 면책 축소","domain":"미디어·저작권","bm":["전사"],"risk":7.0,"predict":38,"ready":55,"cmit":"문화체육관광위원회","status":"초기","predictReason":"OSP 면책 축소는 법리 논쟁 커 시간 걸림","actions":["OSP 면책 현황 법적 검토"]},{"id":35,"name":"댓글 조작 책임","domain":"미디어·저작권","bm":["뉴스","검색"],"risk":6.0,"predict":52,"ready":68,"cmit":"과학기술정보방송통신위원회","status":"논의중","predictReason":"댓글 조작 책임은 선거 관련 여야 관심 높음","actions":["댓글 모니터링 시스템 점검"]},{"id":36,"name":"게임 저작권","domain":"미디어·저작권","bm":["커머스"],"risk":4.5,"predict":35,"ready":75,"cmit":"문화체육관광위원회","status":"모니터링","predictReason":"게임 저작권은 스트리밍 산업 관행 고려 신중론","actions":["게임 저작권 현황 모니터링"]},{"id":37,"name":"라인야후 지배구조","domain":"글로벌·외교","bm":["글로벌"],"risk":9.5,"predict":48,"ready":35,"cmit":"외교통일위원회","status":"협상중","predictReason":"일본 총무성 행정지도·외교 협상 결과에 따라 유동적","actions":["과기정통부 공조 요청","외교부 채널 가동","과방위·외통위 브리핑"]},{"id":38,"name":"구글 지도 반출 허용","domain":"글로벌·외교","bm":["지도"],"risk":8.5,"predict":32,"ready":68,"cmit":"외교통일위원회","status":"정부반대","predictReason":"구글 반출 허용 시 안보 우려·정부 반대 기조 유지","actions":["국가안보 논거 강화","국토부 협력 채널 유지"]},{"id":39,"name":"라인 행정지도 위법성","domain":"글로벌·외교","bm":["글로벌"],"risk":8.0,"predict":40,"ready":42,"cmit":"외교통일위원회","status":"대응중","predictReason":"행정지도 위법성 논란·외교 채널 대응 주력","actions":["외교부 공조","법무팀 국제법 검토"]},{"id":40,"name":"USTR 비관세장벽","domain":"글로벌·외교","bm":["전사"],"risk":7.5,"predict":45,"ready":50,"cmit":"외교통일위원회","status":"모니터링","predictReason":"USTR 압박 강화·한미 협상 의제 포함 가능성","actions":["통상부 모니터링","미국 로펌 자문"]},{"id":41,"name":"EU AI법 역외 적용","domain":"글로벌·외교","bm":["AI서비스","글로벌"],"risk":6.5,"predict":55,"ready":62,"cmit":"외교통일위원회","status":"모니터링","predictReason":"EU AI법 역외 적용은 법적 강제력 약해 대응 여유 있음","actions":["EU AI법 영향 범위 분석"]},{"id":42,"name":"글로벌 최저한세","domain":"글로벌·외교","bm":["전사"],"risk":6.0,"predict":88,"ready":72,"cmit":"기재위원회","status":"이행중","predictReason":"OECD Pillar 2 국제 합의·이행 거의 확정적","actions":["세무팀 이행 현황 점검"]},{"id":43,"name":"미국 FTC 규제","domain":"글로벌·외교","bm":["글로벌"],"risk":5.5,"predict":40,"ready":65,"cmit":"외교통일위원회","status":"모니터링","predictReason":"미국 FTC 규제는 포시마크 현지 법무팀 대응 중","actions":["미국 현지 법무팀 현황 파악"]},{"id":44,"name":"북미 저작권 분쟁","domain":"글로벌·외교","bm":["AI서비스","글로벌"],"risk":6.0,"predict":42,"ready":58,"cmit":"외교통일위원회","status":"소송중","predictReason":"북미 저작권 분쟁은 법원 판결 진행 중","actions":["소송 현황 모니터링"]},{"id":45,"name":"빅테크 금융겸업 규제","domain":"금융·핀테크","bm":["핀테크"],"risk":7.5,"predict":55,"ready":52,"cmit":"정무위원회","status":"논의중","predictReason":"빅테크 금융 겸업 우려 커지나 혁신 저해 논란 병존","actions":["핀테크 분리 방안 검토","금융위 채널 접촉"]},{"id":46,"name":"간편결제 수수료 상한","domain":"금융·핀테크","bm":["핀테크"],"risk":7.0,"predict":50,"ready":55,"cmit":"정무위원회","status":"논의중","predictReason":"간편결제 수수료 상한제는 핀테크 업계 반발 거셈","actions":["수수료 체계 합리성 자료 준비"]},{"id":47,"name":"대출비교 플랫폼 규제","domain":"금융·핀테크","bm":["핀테크"],"risk":6.5,"predict":58,"ready":60,"cmit":"정무위원회","status":"논의중","predictReason":"대출비교 플랫폼 금융 당국 관리 강화 기조","actions":["금융위 실무 채널 대응"]},{"id":48,"name":"선불충전금 규제","domain":"금융·핀테크","bm":["핀테크"],"risk":5.5,"predict":65,"ready":68,"cmit":"정무위원회","status":"논의중","predictReason":"선불충전금 규제는 소비자 보호 명목으로 추진 중","actions":["선불충전금 운용 현황 점검"]},{"id":49,"name":"마이데이터 금융 확대","domain":"금융·핀테크","bm":["핀테크","클라우드"],"risk":5.0,"predict":72,"ready":75,"cmit":"정무위원회","status":"진행중","predictReason":"마이데이터 활성화는 정책 방향과 일치해 진전 예상","actions":["마이데이터 연동 서비스 준비"]},{"id":50,"name":"가상자산 제도화","domain":"금융·핀테크","bm":["핀테크"],"risk":5.5,"predict":38,"ready":60,"cmit":"정무위원회","status":"초기","predictReason":"두나무 협력 가상자산은 제도화 논의 초기 단계","actions":["가상자산 법제화 동향 모니터링"]}];
+const MEMBER_GR = {"윤한홍":{"cmit":"정무위원회","role":"위원장","interests":["온라인플랫폼 규제","공정거래"],"bills":["온라인플랫폼 공정화법"]},"이정문":{"cmit":"정무위원회","role":"위원","interests":["플랫폼 수수료","소상공인 보호"],"bills":["온라인플랫폼 중개거래 공정화법"]},"강준현":{"cmit":"정무위원회","role":"위원","interests":["공정거래","소비자보호"],"bills":["공정거래법 개정안"]},"최민희":{"cmit":"과학기술정보방송통신위원회","role":"위원장","interests":["AI기본법","방송통신정책","라인야후"],"bills":["인공지능 기본법","방송법 전부개정안"]},"고동진":{"cmit":"과학기술정보방송통신위원회","role":"위원","interests":["AI 산업육성","반도체","디지털전환"],"bills":["인공지능 진흥법"]},"황정아":{"cmit":"과학기술정보방송통신위원회","role":"위원","interests":["AI 거버넌스","데이터 주권"],"bills":["AI기본법 수정안"]},"이해민":{"cmit":"문화체육관광위원회","role":"위원","interests":["저작권","문화콘텐츠","OTT"],"bills":["저작권법 개정안(AI학습)"]},"조인철":{"cmit":"문화체육관광위원회","role":"위원","interests":["언론","미디어정책","포털 뉴스"],"bills":["포털뉴스 알고리즘 공개법"]},"김석기":{"cmit":"외교통일위원회","role":"위원","interests":["한일관계","외교","안보"],"bills":["재외동포법 개정안"]},"김영배":{"cmit":"외교통일위원회","role":"위원","interests":["한일외교","한미관계","통상"],"bills":["외교부 설치법 개정안"]},"한기호":{"cmit":"정무위원회","role":"위원","interests":["핀테크","금융혁신"],"bills":["전자금융거래법 개정안"]},"이강일":{"cmit":"정무위원회","role":"위원","interests":["빅테크 규제","디지털세"],"bills":["플랫폼 독과점 규제법"]}};
+const HARD_NEWS = [{"id":1,"date":"2026-03-23","source":"조선일보","src_color":"#c0392b","title":"온플법 정무위 소위 상정 확정…네이버 긴장","tags":["온플법"],"impact":"high"},{"id":2,"date":"2026-03-22","source":"한겨레","src_color":"#e74c3c","title":"AI기본법 과방위 공청회 4월 3일 개최 확정","tags":["AI기본법"],"impact":"high"},{"id":3,"date":"2026-03-22","source":"이데일리","src_color":"#2980b9","title":"라인야후 소프트뱅크 답변 마감 D-9","tags":["라인야후"],"impact":"high"},{"id":4,"date":"2026-03-21","source":"ZDNet Korea","src_color":"#16a085","title":"구글 지도 반출 허용 재논의…정부 신중론","tags":["구글지도"],"impact":"med"},{"id":5,"date":"2026-03-21","source":"디지털데일리","src_color":"#2c3e50","title":"AI 학습 저작권 소송 1심 판결 임박","tags":["저작권"],"impact":"med"},{"id":6,"date":"2026-03-20","source":"연합뉴스","src_color":"#27ae60","title":"네이버 공정위 자사우대 조사 본격화","tags":["온플법"],"impact":"high"},{"id":7,"date":"2026-03-20","source":"한국경제","src_color":"#e67e22","title":"핀테크 겸업규제 완화 논의 재개","tags":["핀테크"],"impact":"med"}];
+const BMS = ['검색광고','커머스','AI클라우드','콘텐츠','핀테크','글로벌자산'];
 const DOMAINS = [
   {key:'플랫폼·공정거래',color:'#D94F3B',desc:'온플법·자사우대·수수료'},
   {key:'AI·데이터',color:'#E8A838',desc:'AI기본법·개인정보·학습데이터'},
@@ -362,864 +270,674 @@ const DOMAINS = [
   {key:'글로벌·외교',color:'#0EA5E9',desc:'라인야후·구글지도·USTR'},
   {key:'금융·핀테크',color:'#03C75A',desc:'겸업규제·수수료상한'},
 ];
-
-const BMS = ['검색광고','커머스','AI클라우드','콘텐츠','핀테크','글로벌자산'];
-const MEDIA_FREQ = [
-  {label:'온플법',count:18,color:'#D94F3B'},
-  {label:'라인야후',count:14,color:'#D94F3B'},
-  {label:'AI기본법',count:11,color:'#E8A838'},
-  {label:'저작권',count:8,color:'#8B5CF6'},
-  {label:'구글지도',count:5,color:'#0EA5E9'},
+const ISSUE_GROUPS = [
+  {key:'온플법',   label:'온라인플랫폼법',  color:'#D94F3B'},
+  {key:'라인야후', label:'라인야후 사태',    color:'#D94F3B'},
+  {key:'AI기본법', label:'AI기본법',        color:'#E8A838'},
+  {key:'저작권',   label:'AI 저작권·TDM',  color:'#8B5CF6'},
+  {key:'구글지도', label:'구글지도 반출',   color:'#0EA5E9'},
+  {key:'핀테크',   label:'핀테크·금융규제', color:'#03C75A'},
 ];
+const SCHEDULE = [
+  {date:'3.24',dow:'월',title:'온플법 정무위 소위 상정',urgent:true,dday:0},
+  {date:'3.31',dow:'월',title:'라인야후 협상 최종 마감',urgent:true,dday:7},
+  {date:'4.3', dow:'금',title:'AI기본법 과방위 공청회',urgent:true,dday:10},
+  {date:'4.14',dow:'화',title:'과방위 라인야후 현안질의',urgent:false,dday:21},
+  {date:'5.26',dow:'화',title:'온플법 본회의 회부 결정',urgent:true,dday:63},
+];
+const GR_CMITS = ['정무위원회','과학기술정보방송통신위원회','문화체육관광위원회','외교통일위원회','법제사법위원회'];
+const CMIT_SHORT = {'정무위원회':'정무위','과학기술정보방송통신위원회':'과방위','문화체육관광위원회':'문체위','외교통일위원회':'외통위','법제사법위원회':'법사위','기획재정위원회':'기재위','산업통상자원중소벤처기업위원회':'산자위','행정안전위원회':'행안위','국토교통위원회':'국토위','국방위원회':'국방위','보건복지위원회':'복지위','농림축산식품해양수산위원회':'농해수위','교육위원회':'교육위','국회운영위원회':'운영위'};
 
-let newsData = [...HARD_NEWS];
-let allBills = [];
-let billsLoaded = false;
-let curBillKw = 'all';
-let curNewsFlt = 'all';
-let curIssueDomain = 'all';
-let curBM = '검색광고';
-let realtimeNewsLoaded = false;
-let selMember = null;
+// ════ STATE ════
+var newsData = HARD_NEWS.slice();
+var membersData = [];
+var membersLoaded = false;
+var realtimeLoaded = false;
+var allBills = [];
+var curIssueDomain = 'all';
+var curBM = '검색광고';
+var curBillKw = 'all';
 
-// ═══ 유틸 ═══
+// ════ UTILS ════
 function $(id){ return document.getElementById(id); }
-function showToast(msg){ var t=$('toast');t.textContent=msg;t.classList.add('show');setTimeout(function(){t.classList.remove('show');},2200); }
-function closeModal(){ $('ov').classList.remove('on'); }
-function riskColor(r){ return r>=9?'var(--rd)':r>=7?'var(--gd)':'var(--bl)'; }
-function riskBg(r){ return r>=9?'rgba(217,79,59,.07)':r>=7?'rgba(232,168,56,.06)':'rgba(28,110,242,.05)'; }
-function WORKER_URL(){ return localStorage.getItem('worker_url')||''; }
-function BK_KEY(){ return localStorage.getItem('bigkinds_key')||''; }
-function ASM_KEY(){ return localStorage.getItem('assembly_key')||''; }
-function NV_ID(){ return localStorage.getItem('naver_id')||''; }
-function NV_SEC(){ return localStorage.getItem('naver_secret')||''; }
+function rc(r){ return r>=9?'var(--rd)':r>=7?'var(--gd)':'var(--bl)'; }
+function rbg(r){ return r>=9?'rgba(217,79,59,.07)':r>=7?'rgba(232,168,56,.06)':'rgba(28,110,242,.05)'; }
+function cs(c){ return CMIT_SHORT[c]||c; }
+function W(){ return localStorage.getItem('worker_url')||''; }
+function BK(){ return localStorage.getItem('bigkinds_key')||''; }
+function AK(){ return localStorage.getItem('assembly_key')||''; }
+function showToast(m){ var t=$('toast');t.textContent=m;t.classList.add('show');setTimeout(function(){t.classList.remove('show');},2200); }
+function cp(t){ try{navigator.clipboard.writeText(t);}catch(e){var el=document.createElement('textarea');el.value=t;document.body.appendChild(el);el.select();document.execCommand('copy');document.body.removeChild(el);} showToast(t+' 복사됨'); }
 
-// ═══ 탭 전환 ═══
+// ════ TAB ════
 function go(id, el){
-  document.querySelectorAll('.page').forEach(function(p){ p.classList.remove('on'); });
-  document.querySelectorAll('.tab').forEach(function(t){ t.classList.remove('on'); });
-  var page = $('p-'+id);
-  if(page) page.classList.add('on');
+  // 모든 탭/페이지 비활성
+  document.querySelectorAll('.tab').forEach(function(t){t.classList.remove('on');});
+  document.querySelectorAll('.page').forEach(function(p){
+    p.classList.remove('on');
+  });
+  // 활성화
   if(el) el.classList.add('on');
-  else { document.querySelectorAll('.tab').forEach(function(t){ if(t.getAttribute('onclick') && t.getAttribute('onclick').indexOf("'"+id+"'")>-1) t.classList.add('on'); }); }
-  if(id==='news'){ renderNews(); loadRealtimeNews(); updateRealtimeStatus(); }
-  if(id==='issues'){
-    renderIssueTable(); renderDomainFilters();
-    loadChartJs(function(){ setTimeout(renderIssueCharts, 50); });
-  }
+  var pg = $('p-'+id);
+  if(pg) pg.classList.add('on');
+  // 렌더
+  if(id==='home'){ renderHome(); }
+  if(id==='news'){ renderNewsPage(); loadRtNews(); updateRtStatus(); }
+  if(id==='issues'){ renderIssues(); }
   if(id==='heatmap'){ renderHeatmap(); }
   if(id==='bm'){ renderBM(); }
-  if(id==='assembly'){ renderAssembly(); renderCalHeatmap(); }
-  if(id==='members'){
-    if(!membersLoaded){ loadMembersLazy(function(){ renderMembers(); }); }
-    else renderMembers();
-  }
-  if(id==='bills'){ loadBills(true); }
+  if(id==='assembly'){ renderAssembly(); }
+  if(id==='members'){ renderMembers(); }
+  if(id==='bills'){ loadBills(); }
 }
 
-// ═══ WAR ROOM 첫화면 ═══
+// ════ HOME ════
 function renderHome(){
   var now = new Date();
-  var days = ['일','월','화','수','목','금','토'];
-  var dateEl = $('wrDate');
-  if(dateEl) dateEl.textContent = now.getFullYear()+'년 '+(now.getMonth()+1)+'월 '+now.getDate()+'일 ('+days[now.getDay()]+')';
-
-  var crit = ISSUES.filter(function(i){return i.risk>=9;}).length;
-  var high = ISSUES.filter(function(i){return i.risk>=7&&i.risk<9;}).length;
-  var wc = $('wrCritical'); if(wc) wc.textContent = crit;
-  var wh = $('wrHigh'); if(wh) wh.textContent = high;
-  var wt = $('wrTotal'); if(wt) wt.textContent = ISSUES.length;
-
-  renderWrFrontline();
+  var days=['일','월','화','수','목','금','토'];
+  var el = $('wrDate');
+  if(el) el.textContent = now.getFullYear()+'년 '+(now.getMonth()+1)+'월 '+now.getDate()+'일 ('+days[now.getDay()]+')';
+  var crit=ISSUES.filter(function(i){return i.risk>=9;}).length;
+  var high=ISSUES.filter(function(i){return i.risk>=7&&i.risk<9;}).length;
+  var ec=$('wrCrit'),eh=$('wrHigh');
+  if(ec)ec.textContent=crit; if(eh)eh.textContent=high;
+  renderWrRank();
   renderWrNews();
-  renderWrMediaTemp();
+  renderWrFreq();
   renderWrTimeline();
   renderWrDomains();
 }
 
-function renderWrFrontline(){
-  var el = $('wrFrontline');
-  if(!el) return;
-  var top = ISSUES.slice().sort(function(a,b){return b.risk-a.risk;}).slice(0,6);
-  el.innerHTML = '';
-  var rankLabels = ['1순위','2순위','3순위','4순위','5순위','6순위'];
-  var rankColors = ['#FF4444','#FF7700','#FF7700','#E8A838','#E8A838','#5A7A9A'];
-  top.forEach(function(iss, i){
-    var rc = riskColor(iss.risk);
-    var div = document.createElement('div');
-    div.style.cssText = 'display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:8px;background:'+riskBg(iss.risk)+';border:1px solid '+rc+'33;margin-bottom:5px;cursor:pointer';
-    div.title = iss.predictReason||'입법 진행 현황 종합 판단';
-    div.addEventListener('click', function(){ go('issues'); });
-    div.innerHTML
-      = '<div style="flex-shrink:0;text-align:center;width:40px">'
-        +'<div style="font-size:18px;font-weight:900;color:'+rankColors[i]+';line-height:1">'+(i+1)+'</div>'
-        +'<div style="font-size:8px;font-weight:700;color:'+rankColors[i]+'">'+rankLabels[i]+'</div>'
-        +'</div>'
-      + '<div style="width:1px;height:32px;background:'+rc+';opacity:.25;flex-shrink:0"></div>'
-      + '<div style="flex:1;min-width:0">'
-        +'<div style="font-size:11px;font-weight:700;line-height:1.3;margin-bottom:3px">'+iss.name+'</div>'
-        +'<div style="display:flex;align-items:center;gap:6px">'
-        +'<span style="font-size:9px;color:var(--mt)">'+iss.cmit.replace('위원회','위')+'</span>'
-        +'<span style="font-size:9px;color:'+rc+';font-weight:700">통과 '+iss.predict+'%</span>'
-        +'</div>'
-        +'</div>'
-      + '<div style="flex-shrink:0;text-align:right">'
-        +'<div style="font-size:18px;font-weight:900;color:'+rc+';line-height:1">'+iss.risk+'</div>'
-        +'<div style="font-size:8px;color:var(--mt)">리스크</div>'
-        +'</div>';
-    el.appendChild(div);
+function renderWrRank(){
+  var el=$('wrRank'); if(!el)return;
+  var top=ISSUES.slice().sort(function(a,b){return b.risk-a.risk;}).slice(0,6);
+  var rc_=[['#FF3B30','1순위'],['#FF6B35','2순위'],['#FF9500','3순위'],['#FFCC00','4순위'],['#8A8A8A','5순위'],['#8A8A8A','6순위']];
+  el.innerHTML='';
+  top.forEach(function(iss,i){
+    var c_=rc(iss.risk);
+    var row=document.createElement('div');
+    row.className='rank-row';
+    row.style.cssText='background:'+rbg(iss.risk)+';border-color:'+c_+'33';
+    row.title=iss.predictReason||'';
+    row.onclick=function(){go('issues',$('t-issues'));};
+    row.innerHTML='<div style="flex-shrink:0;text-align:center;width:36px">'
+      +'<div style="font-size:18px;font-weight:900;color:'+rc_[i][0]+';line-height:1">'+(i+1)+'</div>'
+      +'<div style="font-size:8px;color:'+rc_[i][0]+';font-weight:700">'+rc_[i][1]+'</div>'
+      +'</div>'
+      +'<div style="width:1px;height:30px;background:'+c_+';opacity:.25;flex-shrink:0"></div>'
+      +'<div style="flex:1;min-width:0">'
+        +'<div style="font-size:11px;font-weight:700;line-height:1.3;margin-bottom:2px">'+iss.name+'</div>'
+        +'<div style="font-size:9px;color:var(--mt)">'+cs(iss.cmit)+' · 통과 '+iss.predict+'%</div>'
+      +'</div>'
+      +'<div style="font-size:18px;font-weight:900;color:'+c_+';flex-shrink:0">'+iss.risk+'</div>';
+    el.appendChild(row);
   });
 }
 
 function renderWrNews(){
-  var el = $('wrNews');
-  if(!el) return;
-  el.innerHTML = '';
-  var src = newsData.slice(0,5);
-  src.forEach(function(n){
-    var div = document.createElement('div');
-    div.className = 'news-item';
-    div.addEventListener('click', function(){ go('news'); });
-    var live = n.realtime ? '<span style="font-size:7px;background:rgba(3,199,90,.15);color:var(--g);padding:1px 4px;border-radius:4px;font-weight:700;margin-left:3px">LIVE</span>' : '';
-    div.innerHTML = '<div style="display:flex;gap:5px;align-items:center;margin-bottom:2px">'
-      +'<span style="font-size:8px;background:'+n.src_color+'22;color:'+n.src_color+';padding:1px 5px;border-radius:4px;font-weight:700">'+n.source+'</span>'+live
-      +'</div>'
-      +'<div style="font-size:10px;font-weight:600;line-height:1.4">'+n.title.substring(0,40)+(n.title.length>40?'...':'')+'</div>';
-    el.appendChild(div);
+  var el=$('wrNews'); if(!el)return;
+  el.innerHTML='';
+  newsData.slice(0,5).forEach(function(n){
+    var row=document.createElement('div');
+    row.style.cssText='padding:5px 0;border-bottom:1px solid var(--br);cursor:pointer';
+    row.onclick=function(){go('news',$('t-news'));};
+    var live=n.realtime?'<span style="font-size:7px;background:rgba(3,199,90,.15);color:var(--g);padding:1px 4px;border-radius:3px;font-weight:700;margin-left:3px">LIVE</span>':'';
+    row.innerHTML='<div style="display:flex;gap:5px;align-items:center;margin-bottom:2px">'
+      +'<span style="font-size:8px;background:'+n.src_color+'22;color:'+n.src_color+';padding:1px 5px;border-radius:4px;font-weight:700">'+n.source+'</span>'+live+'</div>'
+      +'<div style="font-size:10px;font-weight:600;line-height:1.4">'+n.title.substring(0,38)+(n.title.length>38?'...':'')+'</div>';
+    el.appendChild(row);
   });
 }
 
-function renderWrMediaTemp(){
-  var el = $('wrMediaTemp');
-  if(!el) return;
-  var maxV = Math.max.apply(null, MEDIA_FREQ.map(function(m){return m.count;}));
-  el.innerHTML = MEDIA_FREQ.map(function(m){
-    var pct = (m.count/maxV*100).toFixed(0);
+function renderWrFreq(){
+  var el=$('wrFreq'); if(!el)return;
+  var freq={'온플법':0,'라인야후':0,'AI기본법':0,'저작권':0,'구글지도':0,'핀테크':0};
+  newsData.forEach(function(n){
+    (n.tags||[]).forEach(function(t){if(freq.hasOwnProperty(t))freq[t]++;});
+    Object.keys(freq).forEach(function(k){if((n.title||'').indexOf(k)>-1)freq[k]++;});
+  });
+  var max=Math.max.apply(null,Object.values(freq))||1;
+  var colors={'온플법':'#D94F3B','라인야후':'#D94F3B','AI기본법':'#E8A838','저작권':'#8B5CF6','구글지도':'#0EA5E9','핀테크':'#03C75A'};
+  el.innerHTML=Object.keys(freq).map(function(k){
+    var pct=(freq[k]/max*100).toFixed(0);
     return '<div style="display:flex;align-items:center;gap:6px;margin-bottom:5px">'
-      +'<span style="font-size:9px;font-weight:600;width:52px;flex-shrink:0">'+m.label+'</span>'
-      +'<div class="bar-wrap" style="flex:1"><div class="bar-fill" style="width:'+pct+'%;background:'+m.color+'"></div></div>'
-      +'<span style="font-size:9px;color:var(--mt);width:22px;text-align:right">'+m.count+'</span>'
+      +'<span style="font-size:9px;font-weight:600;width:50px;flex-shrink:0">'+k+'</span>'
+      +'<div class="bar-bg" style="flex:1"><div class="bar-fill" style="width:'+pct+'%;background:'+colors[k]+'"></div></div>'
+      +'<span style="font-size:9px;color:var(--mt);width:18px;text-align:right">'+freq[k]+'</span>'
       +'</div>';
   }).join('');
 }
 
 function renderWrTimeline(){
-  var el = $('wrTimeline');
-  if(!el) return;
-  el.innerHTML = '';
+  var el=$('wrTimeline'); if(!el)return;
+  el.innerHTML='';
   SCHEDULE.forEach(function(s){
-    var bc = s.dday===0?'var(--rd)':s.urgent?'var(--gd)':'var(--mt)';
-    var bg = s.dday===0?'rgba(217,79,59,.08)':s.urgent?'rgba(232,168,56,.05)':'transparent';
-    var bd = s.dday===0?'rgba(217,79,59,.3)':s.urgent?'rgba(232,168,56,.15)':'var(--br)';
-    var div = document.createElement('div');
-    div.className = 'sch-item';
-    div.style.cssText = 'background:'+bg+';border-color:'+bd;
-    div.addEventListener('click', function(){ go('assembly'); });
-    div.innerHTML = '<div style="flex-shrink:0;min-width:32px;text-align:center">'
+    var bc=s.dday===0?'var(--rd)':s.urgent?'var(--gd)':'var(--mt)';
+    var bg=s.dday===0?'rgba(217,79,59,.08)':s.urgent?'rgba(232,168,56,.05)':'transparent';
+    var bd=s.dday===0?'rgba(217,79,59,.3)':s.urgent?'rgba(232,168,56,.15)':'var(--br)';
+    var row=document.createElement('div');
+    row.className='sch-row';
+    row.style.cssText='background:'+bg+';border-color:'+bd;
+    row.onclick=function(){go('assembly',$('t-assembly'));};
+    row.innerHTML='<div style="flex-shrink:0;min-width:32px;text-align:center">'
       +'<div style="font-size:10px;font-weight:900;color:'+bc+';line-height:1">'+s.date+'</div>'
-      +'<div style="font-size:8px;color:var(--mt)">'+s.dow+'</div>'
-      +'</div>'
-      +'<div style="width:1px;height:26px;background:'+bc+';opacity:.4;flex-shrink:0"></div>'
+      +'<div style="font-size:8px;color:var(--mt)">'+s.dow+'</div></div>'
+      +'<div style="width:1px;height:24px;background:'+bc+';opacity:.4;flex-shrink:0"></div>'
       +'<div style="flex:1;font-size:10px;font-weight:700">'+s.title+'</div>'
       +'<span style="font-size:8px;font-weight:700;color:'+bc+';background:'+bc+'18;padding:1px 6px;border-radius:8px;flex-shrink:0">'+(s.dday===0?'D-DAY':'D-'+s.dday)+'</span>';
-    el.appendChild(div);
+    el.appendChild(row);
   });
 }
 
 function renderWrDomains(){
-  var el = $('wrDomains');
-  if(!el) return;
-  el.innerHTML = DOMAINS.map(function(d){
-    var domIssues = ISSUES.filter(function(i){ return i.domain && i.domain.indexOf(d.key.split('·')[0])>-1; });
-    var maxR = domIssues.length ? Math.max.apply(null,domIssues.map(function(i){return i.risk;})) : 7;
-    var pct = (maxR/10*100).toFixed(0);
-    return '<div class="domain-row">'
+  var el=$('wrDomains'); if(!el)return;
+  el.innerHTML=DOMAINS.map(function(d){
+    var domIss=ISSUES.filter(function(i){return i.domain&&i.domain.indexOf(d.key.split('·')[0])>-1;});
+    var maxR=domIss.length?Math.max.apply(null,domIss.map(function(i){return i.risk;})):7;
+    var pct=(maxR/10*100).toFixed(0);
+    return '<div style="display:grid;grid-template-columns:150px 1fr 36px 50px;align-items:center;gap:10px;margin-bottom:8px">'
       +'<div><div style="font-size:11px;font-weight:700">'+d.key+'</div><div style="font-size:9px;color:var(--mt)">'+d.desc+'</div></div>'
-      +'<div class="bar-wrap"><div class="bar-fill" style="width:'+pct+'%;background:'+d.color+'"></div></div>'
+      +'<div class="bar-bg"><div class="bar-fill" style="width:'+pct+'%;background:'+d.color+'"></div></div>'
       +'<div style="font-size:13px;font-weight:900;color:'+d.color+';text-align:right">'+maxR+'</div>'
-      +'<div style="font-size:9px;color:var(--mt);text-align:right">'+domIssues.length+'개 이슈</div>'
+      +'<div style="font-size:9px;color:var(--mt);text-align:right">'+domIss.length+'개 이슈</div>'
       +'</div>';
   }).join('');
 }
 
-// ═══ 뉴스 ═══
-var ISSUE_GROUPS = [
-  {key:'온플법',   label:'온라인플랫폼법(온플법)', color:'#D94F3B', keywords:['온플법','온라인플랫폼','자사우대','수수료규제']},
-  {key:'라인야후', label:'라인야후 사태',           color:'#D94F3B', keywords:['라인야후','라인','야후재팬','소프트뱅크']},
-  {key:'AI기본법', label:'AI기본법',               color:'#E8A838', keywords:['AI기본법','인공지능기본법','고위험AI','AI규제']},
-  {key:'저작권',   label:'AI 저작권·TDM',          color:'#8B5CF6', keywords:['저작권','TDM','AI학습','인접권']},
-  {key:'구글지도', label:'구글지도 반출',            color:'#0EA5E9', keywords:['구글지도','지도반출','구글맵','공간정보']},
-  {key:'핀테크',   label:'핀테크·금융규제',          color:'#03C75A', keywords:['핀테크','전자금융','네이버파이','간편결제']},
-];
-
-
-
-function renderNews(){
-  renderKeywordCloud();
-  renderNewsIssueList();
-  renderAiMediaSummary();
-  renderNewsFilters();
-  updateRealtimeStatus();
+// ════ NEWS ════
+function renderNewsPage(){
+  renderNewsLeft();
+  renderKwCloud();
+  renderNewsSummary();
+  renderSourceChart();
 }
 
-function renderNewsFilters(){
-  // 날짜범위 change event
-  var sel = document.getElementById('newsDateRange');
-  if(sel && !sel._bound){
-    sel._bound = true;
-    sel.onchange = function(){ renderKeywordCloud(); renderNewsIssueList(); };
-  }
+function getNewsRange(){
+  var sel=$('newsRange'); return sel?parseInt(sel.value)||7:7;
 }
 
-function getNewsDays(){
-  var sel = document.getElementById('newsDateRange');
-  return sel ? parseInt(sel.value)||7 : 7;
+function getNewsFiltered(){
+  var days=getNewsRange();
+  var cutoff=new Date(); cutoff.setDate(cutoff.getDate()-days);
+  return newsData.filter(function(n){ return !n.date||new Date(n.date)>=cutoff; });
 }
 
-function getNewsInRange(){
-  var days = getNewsDays();
-  var cutoff = new Date();
-  cutoff.setDate(cutoff.getDate() - days);
-  return newsData.filter(function(n){
-    if(!n.date) return true;
-    return new Date(n.date) >= cutoff;
-  });
-}
-
-function renderKeywordCloud(){
-  var el = document.getElementById('keywordCloud');
-  var pEl = document.getElementById('cloudPeriod');
-  if(!el) return;
-  var src = getNewsInRange();
-  if(pEl) pEl.textContent = '최근 '+getNewsDays()+'일 · '+src.length+'건';
-
-  var KWS = ['온플법','라인야후','AI기본법','저작권','구글지도','핀테크','알고리즘','공정위','과방위','정무위','데이터','개인정보','수수료','플랫폼','네이버','규제','국회','방통위','TDM','인공지능'];
-  var freq = {};
-  src.forEach(function(n){
-    var txt = (n.title||'') + ' ' + (n.summary||'');
-    KWS.forEach(function(kw){
-      var cnt = (txt.match(new RegExp(kw,'g'))||[]).length;
-      if(cnt) freq[kw] = (freq[kw]||0) + cnt;
+function renderNewsLeft(){
+  var el=$('newsLeft'); if(!el)return;
+  el.innerHTML='';
+  var src=getNewsFiltered();
+  ISSUE_GROUPS.forEach(function(grp){
+    var items=src.filter(function(n){
+      return (n.tags&&n.tags.indexOf(grp.key)>-1)||(n.title&&n.title.indexOf(grp.key)>-1);
     });
-  });
-
-  var sorted = Object.keys(freq).sort(function(a,b){return freq[b]-freq[a];}).slice(0,16);
-  if(!sorted.length){
-    el.innerHTML='<div style="color:var(--mt);font-size:10px;text-align:center;padding:15px 0">기사 로드 후 생성됩니다</div>';
-    return;
-  }
-  var max = freq[sorted[0]]||1;
-  var colors=['#D94F3B','#E8A838','#1C6EF2','#8B5CF6','#03C75A','#0EA5E9','#EC4899','#F97316'];
-  el.innerHTML = '<div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;line-height:2.2">'
-    + sorted.map(function(kw,i){
-      var sz = Math.round(11 + (freq[kw]/max)*14);
-      var col = colors[i%colors.length];
-      var op = (0.5 + (freq[kw]/max)*0.5).toFixed(2);
-      return '<span style="font-size:'+sz+'px;font-weight:700;color:'+col+';opacity:'+op+';cursor:default" title="'+kw+': '+freq[kw]+'건">'+kw+'</span>';
-    }).join('')
-    + '</div>';
-}
-
-function renderAiMediaSummary(){
-  var el = document.getElementById('aiMediaSummary');
-  var dtEl = document.getElementById('aiSummaryDate');
-  if(!el) return;
-  var src = getNewsInRange();
-  var now = new Date();
-  if(dtEl) dtEl.textContent = now.getFullYear()+'.'+(now.getMonth()+1)+'.'+now.getDate()+' 기준';
-
-  if(!src.length || src[0].id <= 5){
-    // 하드코딩 기사만 있을 때 고정 분석문
-    el.innerHTML = '<div style="color:var(--tx);font-size:10px;line-height:1.9">'
-      +'<b style="color:var(--rd)">온플법</b>이 이번 주 가장 많은 보도량을 기록하며 정무위 소위 상정 확정 관련 긴장감이 고조되고 있습니다. '
-      +'<b style="color:var(--rd)">라인야후</b>는 소프트뱅크 최종 답변 마감(3.31)을 앞두고 과기정통부 협상 채널 가동 필요성이 부각됩니다. '
-      +'<b style="color:var(--gd)">AI기본법</b>은 4월 3일 공청회를 기점으로 고위험 AI 범위 논의가 본격화될 전망입니다. '
-      +'전반적으로 규제 입법 속도가 빨라지는 국면으로, 선제적 대응이 요구됩니다.'
-      +'</div>';
-    return;
-  }
-
-  // 실시간 기사 기반 동적 분석
-  var issueCnts = {};
-  ISSUE_GROUPS.forEach(function(g){ issueCnts[g.key] = 0; });
-  src.forEach(function(n){
-    ISSUE_GROUPS.forEach(function(g){
-      if(n.tags&&n.tags.indexOf(g.key)>-1) issueCnts[g.key]++;
-      else {
-        g.keywords.forEach(function(kw){ if((n.title||'').indexOf(kw)>-1) issueCnts[g.key]++; });
-      }
-    });
-  });
-  var top = Object.keys(issueCnts).sort(function(a,b){return issueCnts[b]-issueCnts[a];}).filter(function(k){return issueCnts[k]>0;}).slice(0,3);
-  var topGroups = top.map(function(k){return ISSUE_GROUPS.find(function(g){return g.key===k;});}).filter(Boolean);
-
-  var summary = topGroups.map(function(g,i){
-    return '<b style="color:'+g.color+'">'+g.label+'</b>('+issueCnts[g.key]+'건)';
-  }).join(', ');
-
-  el.innerHTML = '<div style="color:var(--tx);font-size:10px;line-height:1.9">'
-    +'최근 '+getNewsDays()+'일간 총 <b>'+src.length+'건</b>의 관련 기사가 보도되었습니다. '
-    +summary+' 순으로 보도량이 많았습니다. '
-    +'<span style="color:var(--mt)">BigKinds 실시간 연동 기준</span>'
-    +'</div>';
-}
-
-function renderNewsIssueList(){
-  var el = document.getElementById('newsIssueList');
-  if(!el) return;
-  var src = getNewsInRange();
-  el.innerHTML = '';
-
-  ISSUE_GROUPS.forEach(function(group){
-    // 해당 이슈 기사 필터
-    var grouped = src.filter(function(n){
-      if(n.tags&&n.tags.indexOf(group.key)>-1) return true;
-      return group.keywords.some(function(kw){ return (n.title||'').indexOf(kw)>-1; });
-    });
-
-    // 섹션 헤더
-    var hdr = document.createElement('div');
-    hdr.style.cssText = 'display:flex;align-items:center;gap:10px;padding:9px 14px;background:var(--cd);border-bottom:1px solid var(--br);position:sticky;top:0;z-index:5;cursor:pointer';
-    hdr.innerHTML = '<span style="width:8px;height:8px;border-radius:50%;background:'+group.color+';flex-shrink:0"></span>'
-      +'<span style="font-size:12px;font-weight:700;flex:1">'+group.label+'</span>'
-      +'<span style="font-size:10px;font-weight:700;color:'+group.color+';background:'+group.color+'18;padding:2px 9px;border-radius:8px">'+grouped.length+'건</span>';
-
-    var body = document.createElement('div');
-    body.style.cssText = 'border-bottom:2px solid var(--br)';
-
-    if(!grouped.length){
-      body.innerHTML = '<div style="padding:10px 14px;font-size:10px;color:var(--mt)">최근 '+getNewsDays()+'일 내 관련 기사 없음</div>';
+    var hdr=document.createElement('div');
+    hdr.className='news-issue-hdr';
+    hdr.innerHTML='<span style="width:8px;height:8px;border-radius:50%;background:'+grp.color+';flex-shrink:0"></span>'
+      +'<span style="font-size:12px;font-weight:700;flex:1">'+grp.label+'</span>'
+      +'<span style="font-size:10px;font-weight:700;color:'+grp.color+';background:'+grp.color+'18;padding:2px 9px;border-radius:8px">'+items.length+'건</span>';
+    var body=document.createElement('div');
+    body.style.borderBottom='2px solid var(--br)';
+    var open=true;
+    hdr.onclick=function(){ open=!open; body.style.display=open?'':'none'; };
+    if(!items.length){
+      body.innerHTML='<div style="padding:8px 14px 8px 28px;font-size:10px;color:var(--mt)">최근 '+getNewsRange()+'일 내 관련 기사 없음</div>';
     } else {
-      grouped.slice(0,15).forEach(function(n){
-        var row = document.createElement('div');
-        row.style.cssText = 'display:flex;align-items:baseline;gap:10px;padding:7px 14px 7px 32px;border-bottom:1px solid var(--br)22';
-        if(n.link) row.onclick = function(){ window.open(n.link,'_blank'); row.style.opacity='.7'; };
-        row.style.cursor = 'pointer';
-        var live = n.realtime ? '<span style="font-size:7px;background:rgba(3,199,90,.15);color:var(--g);padding:1px 4px;border-radius:3px;font-weight:700;margin-left:3px">LIVE</span>' : '';
-        row.innerHTML = '<span style="font-size:9px;background:'+n.src_color+'18;color:'+n.src_color+';padding:1px 7px;border-radius:4px;font-weight:700;white-space:nowrap;flex-shrink:0">'+n.source+'</span>'
+      items.slice(0,15).forEach(function(n){
+        var row=document.createElement('div');
+        row.className='news-row';
+        if(n.link){ row.onclick=function(){ window.open(n.link,'_blank'); }; }
+        var live=n.realtime?'<span style="font-size:7px;background:rgba(3,199,90,.15);color:var(--g);padding:1px 4px;border-radius:3px;font-weight:700;margin-left:3px">LIVE</span>':'';
+        row.innerHTML='<span style="font-size:8px;background:'+n.src_color+'18;color:'+n.src_color+';padding:1px 7px;border-radius:4px;font-weight:700;white-space:nowrap;flex-shrink:0">'+n.source+'</span>'
           +live
-          +'<span style="font-size:11px;font-weight:600;flex:1;line-height:1.5;color:var(--tx)">'+n.title+'</span>'
+          +'<span style="font-size:11px;font-weight:600;flex:1;line-height:1.4;color:var(--tx)">'+n.title+'</span>'
           +'<span style="font-size:9px;color:var(--mt);white-space:nowrap;flex-shrink:0">'+n.date+'</span>';
         body.appendChild(row);
       });
-      if(grouped.length > 15){
-        var more = document.createElement('div');
-        more.style.cssText = 'padding:6px 14px;font-size:9px;color:var(--mt);text-align:center';
-        more.textContent = '+ '+(grouped.length-15)+'건 더 있음 (필터링 후 확인)';
-        body.appendChild(more);
-      }
     }
-
-    // 토글
-    var open = true;
-    hdr.onclick = function(){
-      open = !open;
-      body.style.display = open ? '' : 'none';
-    };
-
     el.appendChild(hdr);
     el.appendChild(body);
   });
 }
 
-function setNewsFlt(k, el){
-  curNewsFlt = k;
-  document.querySelectorAll('#newsFilters .fb').forEach(function(b){b.classList.remove('on');});
-  if(el) el.classList.add('on');
-  renderNewsList();
-  renderKeywordCloud();
-}
-
-// ═══ 이슈 테이블 ═══
-function renderIssueTable(){
-  renderDomainFilters();
-  var src = curIssueDomain==='all' ? ISSUES : ISSUES.filter(function(i){return i.domain&&i.domain.indexOf(curIssueDomain.split('·')[0])>-1;});
-  var tbody = $('issueTblBody');
-  if(!tbody) return;
-  tbody.innerHTML = src.map(function(iss){
-    var rc = riskColor(iss.risk);
-    var bms = (iss.bm||[]).map(function(b){return '<span class="chip" style="background:rgba(3,199,90,.08);color:var(--g);border:1px solid rgba(3,199,90,.2)">'+b+'</span>';}).join('');
-    return '<tr style="cursor:pointer" onclick="openIssueModal('+iss.id+')" title="'+iss.predictReason+'">'
-      +'<td style="font-weight:700">'+iss.name+'</td>'
-      +'<td style="font-size:10px;color:var(--mt)">'+iss.domain+'</td>'
-      +'<td style="font-size:10px">'+iss.cmit.replace('위원회','위')+'</td>'
-      +'<td><b style="color:'+rc+'">'+iss.risk+'</b></td>'
-      +'<td>'
-        +'<div style="display:flex;align-items:center;gap:5px">'
-        +'<div style="width:50px;height:4px;background:var(--br);border-radius:2px"><div style="width:'+iss.predict+'%;height:100%;background:'+rc+';border-radius:2px"></div></div>'
-        +'<span style="font-size:10px;color:'+rc+'">'+iss.predict+'%</span>'
-        +'</div>'
-      +'</td>'
-      +'<td style="font-size:10px">'+iss.ready+'분위</td>'
-      +'<td style="font-size:10px">'+bms+'</td>'
-      +'</tr>';
-  }).join('');
-}
-
-function openIssueModal(id){
-  var iss = ISSUES.find(function(i){return i.id===id;});
-  if(!iss) return;
-  var rc = riskColor(iss.risk);
-  $('modalContent').innerHTML = '<div class="modal-h">'
-    +'<div style="font-size:15px;font-weight:900">'+iss.name+'</div>'
-    +'<button class="mx" onclick="closeModal()">✕</button>'
-    +'</div>'
-    +'<div class="modal-b">'
-    +'<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:10px">'
-    +'<div style="background:var(--cd2);border:1px solid var(--br);border-radius:7px;padding:10px;text-align:center"><div style="font-size:20px;font-weight:900;color:'+rc+'">'+iss.risk+'</div><div style="font-size:9px;color:var(--mt)">리스크</div></div>'
-    +'<div style="background:var(--cd2);border:1px solid var(--br);border-radius:7px;padding:10px;text-align:center" title="'+iss.predictReason+'"><div style="font-size:20px;font-weight:900;color:'+rc+'">'+iss.predict+'%</div><div style="font-size:9px;color:var(--mt)">통과예측 ❓</div></div>'
-    +'<div style="background:var(--cd2);border:1px solid var(--br);border-radius:7px;padding:10px;text-align:center"><div style="font-size:20px;font-weight:900;color:var(--bl)">'+iss.ready+'</div><div style="font-size:9px;color:var(--mt)">대응준비도</div></div>'
-    +'</div>'
-    +'<div style="background:rgba(232,168,56,.06);border:1px solid rgba(232,168,56,.15);border-radius:7px;padding:9px;margin-bottom:10px;font-size:10px;color:var(--mt);line-height:1.7">'
-    +'<b style="color:var(--gd)">📊 통과예측 '+iss.predict+'% 근거</b><br>'+iss.predictReason
-    +'</div>'
-    +'<div style="font-size:10px;color:var(--mt);margin-bottom:4px">소관위원회</div>'
-    +'<div style="font-size:12px;font-weight:600;margin-bottom:10px">'+iss.cmit+'</div>'
-    +(iss.actions&&iss.actions.length?'<div style="font-size:10px;color:var(--mt);margin-bottom:5px">액션 아이템</div><div style="font-size:10px;line-height:1.8">'+iss.actions.map(function(a){return '→ '+a;}).join('<br>')+'</div>':'')
-    +'</div>';
-  $('ov').classList.add('on');
-}
-
-// ═══ 히트맵 ═══
-function renderHeatmap(){
-  var el = $('heatmapWrap');
-  if(!el) return;
-  var domains = [...new Set(ISSUES.map(function(i){return i.domain;}))];
-  var html = '<table class="tbl"><thead><tr><th>영역</th>';
-  BMS.forEach(function(b){ html += '<th>'+b+'</th>'; });
-  html += '</tr></thead><tbody>';
-  domains.forEach(function(d){
-    html += '<tr><td style="font-weight:700;white-space:nowrap;font-size:10px">'+d+'</td>';
-    BMS.forEach(function(bm){
-      var iss = ISSUES.filter(function(i){return i.domain===d&&i.bm&&i.bm.indexOf(bm)>-1;});
-      var maxR = iss.length ? Math.max.apply(null,iss.map(function(i){return i.risk;})) : 0;
-      var bg = maxR>=9?'rgba(217,79,59,.5)':maxR>=7?'rgba(232,168,56,.4)':maxR>=5?'rgba(28,110,242,.3)':'transparent';
-      var fc = maxR>=5?'var(--tx)':'var(--mt)';
-      html += '<td style="text-align:center;background:'+bg+';color:'+fc+';font-weight:700;font-size:12px">'+(maxR||'')+'</td>';
-    });
-    html += '</tr>';
+function renderKwCloud(){
+  var el=$('kwCloud'); if(!el)return;
+  var src=getNewsFiltered();
+  var KWS=['온플법','라인야후','AI기본법','저작권','구글지도','핀테크','알고리즘','공정위','과방위','정무위','데이터','개인정보','수수료','플랫폼','네이버','규제'];
+  var freq={};
+  src.forEach(function(n){
+    var txt=(n.title||'')+(n.summary||'');
+    KWS.forEach(function(k){ var cnt=(txt.match(new RegExp(k,'g'))||[]).length; if(cnt)freq[k]=(freq[k]||0)+cnt; });
   });
-  html += '</tbody></table>';
-  el.innerHTML = html;
+  var sorted=Object.keys(freq).sort(function(a,b){return freq[b]-freq[a];}).slice(0,14);
+  if(!sorted.length){ el.innerHTML='<div style="color:var(--mt);font-size:10px">기사 로드 후 생성</div>'; return; }
+  var max=freq[sorted[0]]||1;
+  var colors=['#D94F3B','#E8A838','#1C6EF2','#8B5CF6','#03C75A','#0EA5E9','#EC4899','#F97316'];
+  el.innerHTML='<div style="display:flex;flex-wrap:wrap;gap:7px;align-items:center;line-height:2.2">'
+    +sorted.map(function(k,i){
+      var sz=Math.round(10+(freq[k]/max)*14);
+      var col=colors[i%colors.length];
+      var op=(0.5+(freq[k]/max)*0.5).toFixed(2);
+      return '<span style="font-size:'+sz+'px;font-weight:700;color:'+col+';opacity:'+op+'" title="'+k+': '+freq[k]+'건">'+k+'</span>';
+    }).join('')+'</div>';
 }
 
-// ═══ BM 임팩트 ═══
-function renderBM(){
-  var fEl = $('bmFilters');
-  if(fEl){
-    fEl.innerHTML='';
-    BMS.forEach(function(bm){
-      var b=document.createElement('button');
-      b.className='fb'+(curBM===bm?' on':'');
-      b.textContent=bm;
-      b.dataset.v=bm;
-      b.onclick=function(){setBM(this.dataset.v,this);};
-      fEl.appendChild(b);
-    });
+function renderNewsSummary(){
+  var el=$('newsSummary'); if(!el)return;
+  var src=getNewsFiltered();
+  if(src.length<=7){
+    el.innerHTML='<span style="color:var(--tx)">온플법이 이번 주 최다 보도. 정무위 소위 상정 확정 관련 긴장감 고조. 라인야후 소프트뱅크 마감(3.31) 임박, 과기정통부 협상 채널 가동 필요.</span>';
+    return;
   }
-  renderBMContent();
-}
-function setBM(b,el){
-  curBM=b;
-  document.querySelectorAll('#bmFilters .fb').forEach(function(x){x.classList.remove('on');});
-  if(el)el.classList.add('on');
-  renderBMContent();
-}
-function renderBMContent(){
-  var el=$('bmContent'); if(!el)return;
-  var src=ISSUES.filter(function(i){return i.bm&&i.bm.indexOf(curBM)>-1;}).sort(function(a,b){return b.risk-a.risk;});
-  if(!src.length){el.innerHTML='<div class="empty-state"><div class="icon">💰</div><div>해당 BM 이슈 없음</div></div>';return;}
-  var avgR=(src.reduce(function(a,b){return a+b.risk;},0)/src.length).toFixed(1);
-  el.innerHTML='<div style="background:var(--cd);border:1px solid var(--br);border-radius:8px;padding:12px;margin-bottom:10px">'
-    +'<div style="font-size:14px;font-weight:900;margin-bottom:4px">'+curBM+'</div>'
-    +'<div style="font-size:10px;color:var(--mt)">관련 이슈 '+src.length+'개 · 평균 리스크 '+avgR+'</div>'
-    +'</div>'
-    + src.map(function(iss){
-      var rc=riskColor(iss.risk);
-      return '<div style="background:'+riskBg(iss.risk)+';border:1px solid '+rc+'33;border-radius:7px;padding:10px 12px;margin-bottom:7px;cursor:pointer" onclick="openIssueModal('+iss.id+')" title="'+iss.predictReason+'">'
-        +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">'
-        +'<div style="font-size:12px;font-weight:700">'+iss.name+'</div>'
-        +'<b style="color:'+rc+'">'+iss.risk+'</b>'
-        +'</div>'
-        +'<div style="font-size:10px;color:var(--mt)">'+iss.cmit.replace('위원회','위')+' · 통과예측 '+iss.predict+'%</div>'
-        +'</div>';
-    }).join('');
+  var freq={};
+  ISSUE_GROUPS.forEach(function(g){ freq[g.key]=0; });
+  src.forEach(function(n){ ISSUE_GROUPS.forEach(function(g){ if(n.tags&&n.tags.indexOf(g.key)>-1)freq[g.key]++; else if((n.title||'').indexOf(g.key)>-1)freq[g.key]++; }); });
+  var top=Object.keys(freq).sort(function(a,b){return freq[b]-freq[a];}).filter(function(k){return freq[k]>0;}).slice(0,3);
+  var sg=top.map(function(k){ var g=ISSUE_GROUPS.find(function(x){return x.key===k;}); return g?'<b style="color:'+g.color+'">'+g.label+'</b>('+freq[k]+'건)':k; }).join(', ');
+  el.innerHTML='<span style="color:var(--tx)">최근 '+getNewsRange()+'일 '+src.length+'건 보도. '+sg+' 순 보도 집중.</span>';
 }
 
-// ═══ 국회 일정 ═══
-function renderAssembly(){
-  var el=$('assemblyContent'); if(!el)return;
-  el.innerHTML=SCHEDULE.map(function(s){
-    var bc=s.dday===0?'var(--rd)':s.urgent?'var(--gd)':'var(--mt)';
-    var bg=s.dday===0?'rgba(217,79,59,.06)':s.urgent?'rgba(232,168,56,.04)':'var(--cd)';
-    var bd=s.dday===0?'rgba(217,79,59,.25)':s.urgent?'rgba(232,168,56,.15)':'var(--br)';
-    return '<div style="background:'+bg+';border:1px solid '+bd+';border-radius:8px;padding:12px;margin-bottom:8px;display:flex;gap:14px;align-items:center">'
-      +'<div style="flex-shrink:0;text-align:center;min-width:48px">'
-      +'<div style="font-size:16px;font-weight:900;color:'+bc+'">'+s.date+'</div>'
-      +'<div style="font-size:9px;color:var(--mt)">'+s.dow+'요일</div>'
-      +'</div>'
-      +'<div style="flex:1">'
-      +'<div style="font-size:13px;font-weight:700">'+s.title+'</div>'
-      +'</div>'
-      +'<span style="font-size:11px;font-weight:700;color:'+bc+';background:'+bc+'18;padding:3px 10px;border-radius:10px;flex-shrink:0">'+(s.dday===0?'D-DAY':'D-'+s.dday)+'</span>'
+function renderSourceChart(){
+  var el=$('sourceChart'); if(!el)return;
+  var src=getNewsFiltered();
+  var freq={};
+  src.forEach(function(n){ freq[n.source]=(freq[n.source]||0)+1; });
+  var sorted=Object.keys(freq).sort(function(a,b){return freq[b]-freq[a];}).slice(0,7);
+  var max=sorted.length?freq[sorted[0]]:1;
+  el.innerHTML=sorted.map(function(s){
+    var pct=(freq[s]/max*100).toFixed(0);
+    var col=newsData.find(function(n){return n.source===s;});
+    var color=col?col.src_color:'#607D8B';
+    return '<div style="display:flex;align-items:center;gap:7px;margin-bottom:5px">'
+      +'<span style="font-size:9px;font-weight:600;width:66px;flex-shrink:0;overflow:hidden;white-space:nowrap;text-overflow:ellipsis">'+s+'</span>'
+      +'<div class="bar-bg" style="flex:1"><div class="bar-fill" style="width:'+pct+'%;background:'+color+'"></div></div>'
+      +'<span style="font-size:9px;color:var(--mt);width:16px;text-align:right">'+freq[s]+'</span>'
       +'</div>';
   }).join('');
 }
 
-// ═══ 의원 ═══
-function renderMembers(){
-  var el=$('membersContent'); if(!el)return;
-  var grCmits=['정무위원회','과학기술정보방송통신위원회','문화체육관광위원회','외교통일위원회','법제사법위원회'];
-  var MD=getMembersData(); var grMembers=MD.filter(function(m){return grCmits.indexOf(m.cmit)>-1;});
-  el.innerHTML='<div style="font-size:10px;color:var(--mt);margin-bottom:8px">GR 핵심 5개 상임위 · '+grMembers.length+'명</div>'
-    +'<table class="tbl"><thead><tr><th>역할</th><th>의원명</th><th>정당</th><th>위원회</th><th>전화</th><th>관심분야</th><th>대표발의</th></tr></thead>'
-    +'<tbody>'+grMembers.map(function(m){
-      var pc_=m.party==='더불어민주당'?'var(--teal)':m.party==='국민의힘'?'#EF9A9A':'#CE93D8';
-      var rc=m.role==='위원장'?'color:var(--gd);font-weight:700':m.role==='간사'?'color:var(--bl);font-weight:700':'color:var(--mt)';
-      var gr=MEMBER_GR[m.name]||{};
-      var interests=(gr.interests||[]).slice(0,2).map(function(t){return '<span style="font-size:8px;background:rgba(28,110,242,.1);color:var(--bl);padding:1px 5px;border-radius:4px;margin-right:2px">'+t+'</span>';}).join('');
-      var bills=(gr.bills||[]).slice(0,1).map(function(b){return '<span style="font-size:8px;color:var(--mt)">'+b+'</span>';}).join('');
-      return '<tr><td style="'+rc+'">'+m.role+'</td>'
-        +'<td style="font-weight:700">'+m.name+'</td>'
-        +'<td style="color:'+pc_+';font-size:10px">'+(m.party==='더불어민주당'?'민주':m.party==='국민의힘'?'국힘':m.party)+'</td>'
-        +'<td style="font-size:10px">'+m.cmit.replace('위원회','위')+'</td>'
-        +'<td><a href="tel:'+m.tel+'" style="color:var(--bl);font-size:10px">'+m.tel+'</a></td>'
-        +'<td>'+(interests||'<span style="font-size:9px;color:var(--br)">—</span>')+'</td>'
-        +'<td>'+(bills||'<span style="font-size:9px;color:var(--br)">—</span>')+'</td>'
-        +'</tr>';
-    }).join('')+'</tbody></table>';
+// ════ REALTIME NEWS ════
+function updateRtStatus(){
+  var el=$('rtStatus'); if(!el)return;
+  if(W()&&BK()) el.innerHTML='<span style="color:var(--g)">🟢 BigKinds 연동됨</span>';
+  else el.textContent='⚪ 미연동';
 }
 
+async function loadRtNews(){
+  if(realtimeLoaded||!W()||!BK()) return;
+  var ld=$('newsLoadingBar');
+  try{
+    var days=getNewsRange()||7;
+    var now=new Date(), from=new Date(); from.setDate(from.getDate()-days);
+    var fmt=function(d){ return d.toISOString().substring(0,10); };
+    var queries=['네이버 온플법','라인야후 네이버','AI기본법 네이버'];
+    var seen=new Set(), fresh=[];
+    for(var i=0;i<queries.length;i++){
+      try{
+        var r=await fetch(W()+'/bigkinds',{method:'POST',headers:{'Content-Type':'application/json'},
+          body:JSON.stringify({access_key:BK(),argument:{query:queries[i],published_at:{from:fmt(from),until:fmt(now)},sort:{date:'desc'},return_from:0,return_size:8,fields:['title','provider','published_at'],hilight:0}})});
+        var data=await r.json();
+        (data&&data.return_object&&data.return_object.documents||[]).forEach(function(d){
+          if(!seen.has(d.news_id)){
+            seen.add(d.news_id);
+            fresh.push({id:d.news_id,date:(d.published_at||'').substring(0,10),source:d.provider||'BigKinds',src_color:srcColor(d.provider||''),title:d.title||'',tags:guessTag(d.title||''),realtime:true});
+          }
+        });
+      }catch(e){}
+    }
+    if(fresh.length){
+      newsData=fresh.concat(HARD_NEWS);
+      realtimeLoaded=true;
+      renderWrNews();
+      renderNewsPage();
+      showToast('📰 실시간 '+fresh.length+'건 로드');
+    }
+  }catch(e){ console.warn('rtNews:',e); }
+}
 
-// ═══ 법안 현황 ═══
-var BILL_KWS=['all','온라인플랫폼','인공지능','저작권','데이터보호','핀테크','알고리즘'];
-function renderBillsKws(){
-  var el=$('billsKeywords'); if(!el)return;
-  el.innerHTML='';
-  BILL_KWS.forEach(function(k){
-    var b=document.createElement('button');
-    b.className='fb'+(curBillKw===k?' on':'');
-    b.textContent=k==='all'?'전체':k;
-    b.dataset.v=k;
-    b.onclick=function(){setBillKw(this.dataset.v,this);};
-    el.appendChild(b);
+function srcColor(p){ var m={'경향신문':'#e74c3c','조선일보':'#c0392b','한겨레':'#e74c3c','중앙일보':'#e67e22','한국경제':'#f39c12','이데일리':'#2980b9','ZDNet':'#16a085','디지털데일리':'#2c3e50','연합뉴스':'#27ae60'}; for(var k in m)if(p.indexOf(k)>-1)return m[k]; return '#607D8B'; }
+function guessTag(t){ var tags=[]; if(t.indexOf('온플')>-1||t.indexOf('플랫폼')>-1)tags.push('온플법'); if(t.indexOf('라인')>-1||t.indexOf('야후')>-1)tags.push('라인야후'); if(t.indexOf('AI')>-1||t.indexOf('인공지능')>-1)tags.push('AI기본법'); if(t.indexOf('저작권')>-1)tags.push('저작권'); return tags; }
+
+// ════ ISSUES ════
+function renderIssues(){
+  var el=$('issueFilters');
+  if(el){
+    el.innerHTML='';
+    ['all'].concat(DOMAINS.map(function(d){return d.key;})).forEach(function(d){
+      var btn=document.createElement('button');
+      btn.className='fb'+(curIssueDomain===d?' on':'');
+      btn.textContent=d==='all'?'전체':d;
+      btn.dataset.v=d;
+      btn.onclick=function(){
+        curIssueDomain=this.dataset.v;
+        document.querySelectorAll('#issueFilters .fb').forEach(function(b){b.classList.remove('on');});
+        this.classList.add('on');
+        renderIssueTbody();
+      };
+      el.appendChild(btn);
+    });
+  }
+  renderIssueTbody();
+}
+
+function renderIssueTbody(){
+  var tbody=$('issueTbody'); if(!tbody)return;
+  var src=curIssueDomain==='all'?ISSUES:ISSUES.filter(function(i){return i.domain&&i.domain.indexOf(curIssueDomain.split('·')[0])>-1;});
+  tbody.innerHTML='';
+  src.forEach(function(iss){
+    var c_=rc(iss.risk);
+    var tr=document.createElement('tr');
+    tr.title=iss.predictReason||'';
+    tr.onclick=function(){ openIssueModal(iss.id); };
+    var bms=(iss.bm||[]).map(function(b){return '<span class="chip" style="background:rgba(3,199,90,.08);color:var(--g);border:1px solid rgba(3,199,90,.2)">'+b+'</span>';}).join('');
+    tr.innerHTML='<td style="font-weight:700">'+iss.name+'</td>'
+      +'<td style="font-size:10px;color:var(--mt)">'+iss.domain+'</td>'
+      +'<td style="font-size:10px">'+cs(iss.cmit)+'</td>'
+      +'<td><b style="color:'+c_+'">'+iss.risk+'</b></td>'
+      +'<td><div style="display:flex;align-items:center;gap:5px">'
+        +'<div style="width:50px;height:4px;background:var(--br);border-radius:2px"><div style="width:'+iss.predict+'%;height:100%;background:'+c_+';border-radius:2px"></div></div>'
+        +'<span style="font-size:10px;color:'+c_+'">'+iss.predict+'%</span></div></td>'
+      +'<td style="font-size:10px">'+iss.ready+'분위</td>'
+      +'<td>'+bms+'</td>';
+    tbody.appendChild(tr);
   });
 }
-function setBillKw(k,el){
-  curBillKw=k;
-  document.querySelectorAll('#billsKeywords .fb').forEach(function(b){b.classList.remove('on');});
-  if(el)el.classList.add('on');
-  renderBillsList();
+
+function openIssueModal(id){
+  var iss=ISSUES.find(function(i){return i.id===id;}); if(!iss)return;
+  var c_=rc(iss.risk);
+  $('modalBody').innerHTML='<div class="mhd"><div style="font-size:15px;font-weight:900">'+iss.name+'</div><button class="mx" id="issModalX">✕</button></div>'
+    +'<div class="mbdy">'
+    +'<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:10px">'
+    +'<div style="background:var(--cd2);border:1px solid var(--br);border-radius:7px;padding:10px;text-align:center"><div style="font-size:20px;font-weight:900;color:'+c_+'">'+iss.risk+'</div><div style="font-size:9px;color:var(--mt)">리스크</div></div>'
+    +'<div style="background:var(--cd2);border:1px solid var(--br);border-radius:7px;padding:10px;text-align:center" title="'+iss.predictReason+'"><div style="font-size:20px;font-weight:900;color:'+c_+'">'+iss.predict+'%</div><div style="font-size:9px;color:var(--mt)">통과예측 ❓</div></div>'
+    +'<div style="background:var(--cd2);border:1px solid var(--br);border-radius:7px;padding:10px;text-align:center"><div style="font-size:20px;font-weight:900;color:var(--bl)">'+iss.ready+'</div><div style="font-size:9px;color:var(--mt)">준비도</div></div>'
+    +'</div>'
+    +'<div style="background:rgba(232,168,56,.06);border:1px solid rgba(232,168,56,.15);border-radius:7px;padding:9px;margin-bottom:10px;font-size:10px;line-height:1.8">'
+    +'<b style="color:var(--gd)">📊 통과예측 '+iss.predict+'% 근거</b><br>'+iss.predictReason+'</div>'
+    +(iss.actions&&iss.actions.length?'<div style="font-size:10px;color:var(--mt);margin-bottom:4px">액션 아이템</div><div style="font-size:10px;line-height:1.9">'+iss.actions.map(function(a){return '→ '+a;}).join('<br>')+'</div>':'')
+    +'</div>';
+  $('ov').classList.add('on');
+  var mx=document.getElementById('issModalX'); if(mx) mx.onclick=function(){$('ov').classList.remove('on');};
 }
-async function loadBills(force){
-  renderBillsKws();
-  var w=WORKER_URL(), k=ASM_KEY();
+
+// ════ HEATMAP ════
+function renderHeatmap(){
+  var el=$('hmWrap'); if(!el)return;
+  var domains=[...new Set(ISSUES.map(function(i){return i.domain;}))];
+  var html='<table class="tbl"><thead><tr><th style="min-width:140px">영역</th>';
+  BMS.forEach(function(b){html+='<th>'+b+'</th>';});
+  html+='</tr></thead><tbody>';
+  domains.forEach(function(d){
+    html+='<tr><td style="font-weight:700;font-size:10px;white-space:nowrap">'+d+'</td>';
+    BMS.forEach(function(bm){
+      var iss=ISSUES.filter(function(i){return i.domain===d&&i.bm&&i.bm.indexOf(bm)>-1;});
+      var maxR=iss.length?Math.max.apply(null,iss.map(function(i){return i.risk;})):0;
+      var bg=maxR>=9?'rgba(217,79,59,.5)':maxR>=7?'rgba(232,168,56,.4)':maxR>=5?'rgba(28,110,242,.3)':'transparent';
+      var fc=maxR>=5?'var(--tx)':'var(--mt)';
+      html+='<td style="text-align:center;background:'+bg+';color:'+fc+';font-weight:700;font-size:12px">'+(maxR||'')+'</td>';
+    });
+    html+='</tr>';
+  });
+  html+='</tbody></table>';
+  el.innerHTML=html;
+}
+
+// ════ BM ════
+function renderBM(){
+  var el=$('bmFilters');
+  if(el){
+    el.innerHTML='';
+    BMS.forEach(function(b){
+      var btn=document.createElement('button');
+      btn.className='fb'+(curBM===b?' on':'');
+      btn.textContent=b; btn.dataset.v=b;
+      btn.onclick=function(){
+        curBM=this.dataset.v;
+        document.querySelectorAll('#bmFilters .fb').forEach(function(x){x.classList.remove('on');});
+        this.classList.add('on');
+        renderBMContent();
+      };
+      el.appendChild(btn);
+    });
+  }
+  renderBMContent();
+}
+
+function renderBMContent(){
+  var el=$('bmContent'); if(!el)return;
+  var src=ISSUES.filter(function(i){return i.bm&&i.bm.indexOf(curBM)>-1;}).sort(function(a,b){return b.risk-a.risk;});
+  if(!src.length){el.innerHTML='<div class="empty">해당 BM 이슈 없음</div>';return;}
+  var avgR=(src.reduce(function(a,b){return a+b.risk;},0)/src.length).toFixed(1);
+  el.innerHTML='<div class="card" style="margin-bottom:10px"><b style="font-size:14px">'+curBM+'</b><span style="font-size:10px;color:var(--mt);margin-left:8px">관련 이슈 '+src.length+'개 · 평균 리스크 '+avgR+'</span></div>'
+    +src.map(function(iss){
+      var c_=rc(iss.risk);
+      return '<div style="background:'+rbg(iss.risk)+';border:1px solid '+c_+'33;border-radius:7px;padding:10px 12px;margin-bottom:7px;cursor:pointer" onclick="openIssueModal('+iss.id+')" title="'+iss.predictReason+'">'
+        +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:3px">'
+        +'<div style="font-size:12px;font-weight:700">'+iss.name+'</div><b style="color:'+c_+'">'+iss.risk+'</b></div>'
+        +'<div style="font-size:10px;color:var(--mt)">'+cs(iss.cmit)+' · 통과예측 '+iss.predict+'%</div></div>';
+    }).join('');
+}
+
+// ════ ASSEMBLY ════
+function renderAssembly(){
+  // 캘린더
+  var cEl=$('calWrap');
+  if(cEl){
+    var months=['3월','4월','5월','6월'];
+    var events=[[{d:24,t:'온플법 소위',u:true},{d:31,t:'라인야후 마감',u:true}],[{d:3,t:'AI기본법 공청회',u:true},{d:14,t:'과방위 현안질의',u:false}],[{d:26,t:'온플법 본회의',u:true}],[]];
+    cEl.innerHTML='<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px">'
+      +months.map(function(m,mi){
+        return '<div class="card"><div style="font-size:10px;font-weight:700;color:var(--mt);margin-bottom:6px">2026 '+m+'</div>'
+          +(events[mi].length?events[mi].map(function(ev){
+            var c_=ev.u?'var(--rd)':'var(--gd)';
+            return '<div style="font-size:9px;padding:4px 6px;border-radius:5px;background:'+c_+'18;border-left:2px solid '+c_+';margin-bottom:4px"><b style="color:'+c_+'">'+ev.d+'일</b> '+ev.t+'</div>';
+          }).join(''):'<div style="font-size:9px;color:var(--mt)">주요 일정 없음</div>')
+          +'</div>';
+      }).join('')+'</div>';
+  }
+  // 타임라인
+  var sEl=$('scheduleList');
+  if(sEl){
+    sEl.innerHTML=SCHEDULE.map(function(s){
+      var bc=s.dday===0?'var(--rd)':s.urgent?'var(--gd)':'var(--mt)';
+      var bg=s.dday===0?'rgba(217,79,59,.06)':s.urgent?'rgba(232,168,56,.04)':'var(--cd)';
+      var bd=s.dday===0?'rgba(217,79,59,.25)':s.urgent?'rgba(232,168,56,.15)':'var(--br)';
+      return '<div style="background:'+bg+';border:1px solid '+bd+';border-radius:8px;padding:12px;margin-bottom:8px;display:flex;gap:14px;align-items:center">'
+        +'<div style="flex-shrink:0;text-align:center;min-width:48px"><div style="font-size:16px;font-weight:900;color:'+bc+'">'+s.date+'</div><div style="font-size:9px;color:var(--mt)">'+s.dow+'요일</div></div>'
+        +'<div style="flex:1"><div style="font-size:13px;font-weight:700">'+s.title+'</div></div>'
+        +'<span style="font-size:11px;font-weight:700;color:'+bc+';background:'+bc+'18;padding:3px 10px;border-radius:10px">'+(s.dday===0?'D-DAY':'D-'+s.dday)+'</span></div>';
+    }).join('');
+  }
+}
+
+// ════ MEMBERS ════
+function renderMembers(){
+  var el=$('membersContent'); if(!el)return;
+  if(!membersLoaded){
+    el.innerHTML='<div style="text-align:center;padding:40px;color:var(--mt)"><div style="font-size:24px;margin-bottom:10px">⏳</div>의원 데이터 로딩 중...</div>';
+    fetch('https://moef-aihub.github.io/naver-gr-intelligence/members.json')
+      .then(function(r){return r.json();})
+      .then(function(data){
+        membersData=data; membersLoaded=true;
+        renderMembersTable();
+      })
+      .catch(function(){
+        el.innerHTML='<div style="text-align:center;padding:30px;color:var(--rd)">❌ 데이터 로드 실패 — 새로고침 해주세요</div>';
+      });
+  } else { renderMembersTable(); }
+}
+
+function renderMembersTable(){
+  var el=$('membersContent'); if(!el)return;
+  var grMembers=membersData.filter(function(m){return GR_CMITS.indexOf(m.cmit)>-1;});
+  $('membersStatus').textContent='GR 핵심 5개 위원회 · '+grMembers.length+'명';
+  el.innerHTML='<div style="overflow-x:auto"><table class="tbl"><thead><tr>'
+    +'<th>역할</th><th>의원명</th><th>정당</th><th>위원회</th><th>전화</th><th>관심분야</th><th>대표발의</th>'
+    +'</tr></thead><tbody>'
+    +grMembers.map(function(m){
+      var pc_=m.party==='더불어민주당'?'var(--tl)':m.party==='국민의힘'?'#EF9A9A':'#CE93D8';
+      var rc_=m.role==='위원장'?'color:var(--gd);font-weight:700':m.role==='간사'?'color:var(--bl);font-weight:700':'color:var(--mt)';
+      var gr=MEMBER_GR[m.name]||{};
+      var ints=(gr.interests||[]).slice(0,2).map(function(t){return '<span class="chip" style="background:rgba(28,110,242,.1);color:var(--bl);border:1px solid rgba(28,110,242,.2)">'+t+'</span>';}).join('');
+      var bills=(gr.bills||[]).slice(0,1).map(function(b){return '<span style="font-size:9px;color:var(--mt)">'+b+'</span>';}).join('');
+      return '<tr onclick="openIssueModal && null" style="cursor:default">'
+        +'<td style="'+rc_+'">'+m.role+'</td>'
+        +'<td style="font-weight:700">'+m.name+'</td>'
+        +'<td style="color:'+pc_+';font-size:10px">'+(m.party==='더불어민주당'?'민주':m.party==='국민의힘'?'국힘':m.party||'')+'</td>'
+        +'<td style="font-size:10px">'+cs(m.cmit)+'</td>'
+        +'<td><a href="tel:'+m.tel+'" style="color:var(--bl);font-size:10px">'+m.tel+'</a></td>'
+        +'<td>'+(ints||'<span style="font-size:9px;color:var(--br)">—</span>')+'</td>'
+        +'<td>'+(bills||'<span style="font-size:9px;color:var(--br)">—</span>')+'</td>'
+        +'</tr>';
+    }).join('')+'</tbody></table></div>';
+}
+
+// ════ BILLS ════
+var BILL_KWS=['all','온라인플랫폼','인공지능','저작권','데이터보호','핀테크','알고리즘'];
+
+function renderBillsFilters(){
+  var el=$('billsFilters'); if(!el)return;
+  el.innerHTML='';
+  BILL_KWS.forEach(function(k){
+    var btn=document.createElement('button');
+    btn.className='fb'+(curBillKw===k?' on':'');
+    btn.textContent=k==='all'?'전체':k; btn.dataset.v=k;
+    btn.onclick=function(){
+      curBillKw=this.dataset.v;
+      document.querySelectorAll('#billsFilters .fb').forEach(function(b){b.classList.remove('on');});
+      this.classList.add('on');
+      renderBillsList();
+    };
+    el.appendChild(btn);
+  });
+}
+
+async function loadBills(){
+  renderBillsFilters();
+  var w=W(),k=AK();
   if(!w||!k){
-    $('billsStatus').textContent='⚪ ⚙️ 설정에서 Worker URL + 국회 API 키 입력';
+    $('billsStatus').textContent='⚪ ⚙️ 설정 → Worker URL + 국회 API 키 입력';
     renderBillsList(); return;
   }
-  var ld=$('billsLoading'); if(ld)ld.style.display='block';
-  $('billsStatus').innerHTML='<span style="color:var(--g)">🔄 국회 API 로딩 중...</span>';
+  $('billsLoading').style.display='block';
+  $('billsStatus').innerHTML='<span style="color:var(--g)">🔄 국회 API 로딩...</span>';
   try{
-    var res=await fetch(w+'/assembly/bills',{
-      method:'GET',
-      headers:{'X-Assembly-Key':k}
-    });
+    var res=await fetch(w+'/assembly/bills',{headers:{'X-Assembly-Key':k}});
     if(!res.ok) throw new Error('HTTP '+res.status);
     var data=await res.json();
     if(data.error) throw new Error(data.error);
     allBills=(data.bills||[]).map(enrichBill);
-    billsLoaded=true;
     $('billsStatus').innerHTML='<span style="color:var(--g)">🟢 실시간 · '+allBills.length+'건</span>';
-    showToast('📋 법안 '+allBills.length+'건 로드');
+    showToast('📋 법안 '+allBills.length+'건');
   }catch(e){
-    $('billsStatus').innerHTML='<span style="color:var(--rd)">❌ '+e.message+' — Worker v3 업데이트 필요</span>';
-    console.error('loadBills:', e);
+    $('billsStatus').innerHTML='<span style="color:var(--rd)">❌ '+e.message+'</span>';
+    console.error('bills:',e);
+  }finally{
+    $('billsLoading').style.display='none';
+    renderBillsList();
   }
-  finally{ if(ld)ld.style.display='none'; renderBillsList(); }
 }
+
 function enrichBill(b){
   var t=(b.BILL_NAME||'')+(b.PROPOSER||'');
-  var risk='low',rc='var(--mt)';
-  if(/온라인플랫폼|자사우대|플랫폼규제/.test(t)){risk='critical';rc='var(--rd)';}
-  else if(/인공지능|AI기본|고위험/.test(t)){risk='high';rc='var(--gd)';}
-  else if(/저작권|TDM|라인야후/.test(t)){risk='high';rc='var(--gd)';}
-  else if(/데이터|개인정보|핀테크|알고리즘/.test(t)){risk='medium';rc='var(--bl)';}
-  var proc=b.PROC_RESULT_CD||b.PROC_RESULT||'';
+  var risk='low',rc_='var(--mt)';
+  if(/온라인플랫폼|자사우대|플랫폼규제/.test(t)){risk='critical';rc_='var(--rd)';}
+  else if(/인공지능|AI기본|고위험/.test(t)){risk='high';rc_='var(--gd)';}
+  else if(/저작권|TDM|라인야후/.test(t)){risk='high';rc_='var(--gd)';}
+  else if(/데이터|개인정보|핀테크|알고리즘/.test(t)){risk='medium';rc_='var(--bl)';}
+  var proc=b.PROC_RESULT||b.PROC_RESULT_CD||'';
   var status='심사중',sc='var(--gd)';
   if(/가결|통과/.test(proc)){status='가결';sc='var(--rd)';}
   else if(/부결|폐기|철회/.test(proc)){status='폐기';sc='var(--mt)';}
-  return Object.assign({},b,{_risk:risk,_rc:rc,_status:status,_sc:sc});
+  return Object.assign({},b,{_risk:risk,_rc:rc_,_status:status,_sc:sc});
 }
+
 function renderBillsList(){
-  var el=$('billsList'); if(!el)return;
+  var el=$('billsContent'); if(!el)return;
   if(!allBills.length){
-    var msg = ASM_KEY() ? 
-      '<div class="empty-state"><div class="icon">⏳</div><div>법안 데이터 없음</div><div style="font-size:10px;margin-top:6px">🔄 새로고침 버튼을 눌러주세요</div></div>' :
-      '<div class="empty-state"><div class="icon">📋</div><div style="margin-bottom:6px">국회 API 키를 설정하세요</div><div style="font-size:10px;line-height:1.8">⚙️ 설정 → 국회 OpenAPI 키 입력<br><a href="https://open.assembly.go.kr" target="_blank" style="color:var(--bl)">open.assembly.go.kr</a></div></div>';
-    el.innerHTML = msg;
+    el.innerHTML=AK()?'<div class="empty"><div style="font-size:24px;margin-bottom:8px">⏳</div>🔄 새로고침 버튼을 눌러주세요</div>'
+      :'<div class="empty"><div style="font-size:24px;margin-bottom:8px">📋</div>⚙️ 설정 → 국회 OpenAPI 키 입력<br><small style="color:var(--mt)">키: cdc6bd117117408183d464fc0b32b02c</small></div>';
     return;
   }
   var src=curBillKw==='all'?allBills:allBills.filter(function(b){return (b.BILL_NAME||'').indexOf(curBillKw)>-1;});
   el.innerHTML=src.slice(0,50).map(function(b){
     var url=b.LINK_URL?'href="'+b.LINK_URL+'" target="_blank"':'';
-    return '<div style="background:var(--cd);border:1px solid var(--br);border-radius:7px;padding:10px 12px;margin-bottom:7px">'
+    return '<div class="card" style="margin-bottom:7px">'
       +'<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:5px">'
-      +'<a '+url+' style="font-size:12px;font-weight:700;color:var(--tx);text-decoration:none;line-height:1.4;flex:1">'+b.BILL_NAME+'</a>'
+      +'<a '+url+' style="font-size:12px;font-weight:700;flex:1;line-height:1.4">'+b.BILL_NAME+'</a>'
       +'<span style="font-size:9px;font-weight:700;color:'+b._rc+';background:'+b._rc+'18;padding:2px 7px;border-radius:7px;white-space:nowrap;flex-shrink:0">'+b._risk+'</span>'
       +'</div>'
       +'<div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center">'
-      +'<span style="font-size:9px;color:'+b._sc+';background:'+b._sc+'15;padding:1px 6px;border-radius:6px;font-weight:700">'+b._status+'</span>'
+      +'<span style="font-size:9px;font-weight:700;color:'+b._sc+';background:'+b._sc+'15;padding:1px 6px;border-radius:5px">'+b._status+'</span>'
       +'<span style="font-size:9px;color:var(--mt)">대표: '+(b.RST_PROPOSER||b.PROPOSER||'-')+'</span>'
       +((b.PROPOSE_DT||'').substring(0,10)?'<span style="font-size:9px;color:var(--mt)">📅 '+(b.PROPOSE_DT||'').substring(0,10)+'</span>':'')
       +(b.LINK_URL?'<a href="'+b.LINK_URL+'" target="_blank" style="font-size:9px;color:var(--bl);margin-left:auto">원문 →</a>':'')
-      +'</div>'
-      +'</div>';
+      +'</div></div>';
   }).join('');
 }
 
-// ═══ AI 인텔 ═══
-var AI_KEY = localStorage.getItem('ai_key')||'';
-function saveAiKey(){ AI_KEY=document.getElementById('aiKeyInput').value.trim(); localStorage.setItem('ai_key',AI_KEY); showToast('저장됨'); }
+// ════ AI ════
 async function askAI(){
-  var q = document.getElementById('aiQuery').value.trim();
-  if(!q){ showToast('질문을 입력하세요'); return; }
-  if(!AI_KEY){ $('apiKeyWrap').style.display='block'; showToast('Anthropic API 키를 먼저 입력하세요'); return; }
-  var res = $('aiResponse');
-  res.innerHTML='<span style="color:var(--g)">🤖 분석 중...</span>';
+  var q=document.getElementById('aiQ').value.trim();
+  if(!q){showToast('질문을 입력하세요');return;}
+  var key=localStorage.getItem('ai_key')||'';
+  if(!key){document.getElementById('aiKeyWrap').style.display='block';showToast('API 키를 먼저 입력하세요');return;}
+  $('aiOut').innerHTML='<span style="color:var(--g)">🤖 분석 중...</span>';
   try{
-    var r = await fetch('https://api.anthropic.com/v1/messages',{
-      method:'POST',
-      headers:{'Content-Type':'application/json','x-api-key':AI_KEY,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
-      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:800,system:'당신은 네이버 GR(정부관계) 전문 분석가입니다. 한국어로 간결하고 실무적인 답변을 제공하세요.',messages:[{role:'user',content:q}]})
-    });
-    var d = await r.json();
-    res.innerHTML = (d.content&&d.content[0])?d.content[0].text.replace(/\n/g,'<br>') : '응답 없음';
-  }catch(e){ res.innerHTML='❌ 오류: '+e.message; }
+    var r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',
+      headers:{'Content-Type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:800,
+        system:'당신은 네이버 GR 전문 분석가입니다. 한국어로 간결하고 실무적인 답변을 제공하세요.',
+        messages:[{role:'user',content:q}]})});
+    var d=await r.json();
+    $('aiOut').innerHTML=(d.content&&d.content[0])?d.content[0].text.replace(/\n/g,'<br>'):'응답 없음';
+  }catch(e){$('aiOut').innerHTML='❌ 오류: '+e.message;}
 }
+function saveAiKey(){var v=document.getElementById('aiKeyIn').value.trim();localStorage.setItem('ai_key',v);showToast('저장됨');}
 
-// ═══ 실시간 뉴스 ═══
-async function loadRealtimeNews(){
-  if(realtimeNewsLoaded) return;
-  var w=WORKER_URL(), k=BK_KEY();
-  if(!w||!k) return;
-  var ld=$('newsLoadingBar'); if(ld)ld.style.display='block';
-  try{
-    var queries=['네이버 온플법','라인야후','AI기본법 네이버'];
-    var results=await Promise.all(queries.map(function(q){
-      return fetch(w+'/bigkinds',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({access_key:k,argument:{query:q,published_at:{from:fmt(14),until:fmt(0)},sort:{date:'desc'},return_from:0,return_size:5,fields:['title','provider','published_at','hilight'],hilight:120}})}).then(function(r){return r.json();}).catch(function(){return {};});
-    }));
-    var seen=new Set(), fresh=[];
-    results.forEach(function(data){
-      (data&&data.return_object&&data.return_object.documents||[]).forEach(function(d){
-        if(!seen.has(d.news_id)){
-          seen.add(d.news_id);
-          fresh.push({id:d.news_id,date:(d.published_at||'').substring(0,10),source:d.provider||'빅카인즈',src_color:srcColor(d.provider),title:d.title||'',tags:guessTag(d.title||''),realtime:true});
-        }
-      });
-    });
-    if(fresh.length){
-      newsData=[].concat(fresh,HARD_NEWS);
-      realtimeNewsLoaded=true;
-      if($('p-news').classList.contains('on')) renderNews();
-      renderWrNews();
-      showToast('📰 실시간 기사 '+fresh.length+'건');
-    }
-  }catch(e){console.warn('News error:',e);}
-  finally{ if(ld)ld.style.display='none'; }
-}
-function fmt(daysAgo){ var d=new Date(); d.setDate(d.getDate()-daysAgo); return d.toISOString().substring(0,10); }
-function srcColor(p){ var m={'경향신문':'#e74c3c','조선일보':'#c0392b','한겨레':'#e74c3c','중앙일보':'#e67e22','한국경제':'#f39c12','이데일리':'#2980b9','ZDNet Korea':'#16a085','디지털데일리':'#2c3e50','연합뉴스':'#2ecc71'}; for(var k in m) if(p&&p.indexOf(k)>-1) return m[k]; return '#607D8B'; }
-function guessTag(t){ var tags=[]; if(t.indexOf('온플')>-1||t.indexOf('플랫폼')>-1) tags.push('온플법'); if(t.indexOf('라인')>-1||t.indexOf('야후')>-1) tags.push('라인야후'); if(t.indexOf('AI')>-1||t.indexOf('인공지능')>-1) tags.push('AI기본법'); if(t.indexOf('저작권')>-1) tags.push('저작권'); return tags; }
-function updateRealtimeStatus(){ var el=$('realtimeStatus'); if(!el)return; var w=WORKER_URL(),k=BK_KEY(); if(w&&k) el.innerHTML='<span style="color:var(--g)">🟢 BigKinds 연동됨</span>'; else el.textContent='⚪ 미연동'; }
-
-// ═══ 설정 ═══
+// ════ SETTINGS ════
 function openSettings(){
-  $('modalContent').innerHTML='<div class="modal-h"><div style="font-size:14px;font-weight:700">⚙️ API 설정</div><button class="mx" onclick="closeModal()">✕</button></div>'
-    +'<div class="modal-b">'
-    +'<div style="background:rgba(3,199,90,.06);border:1px solid rgba(3,199,90,.2);border-radius:7px;padding:9px;margin-bottom:12px;font-size:10px;color:var(--g)">🔒 모든 키는 브라우저에만 저장됩니다</div>'
-    +'<div class="field"><label class="flabel">☁️ Cloudflare Worker URL <span style="color:var(--rd)">*필수</span></label><input class="finput" id="cfg-w" value="'+(WORKER_URL())+'" placeholder="https://nvgc-proxy.xxx.workers.dev"></div>'
-    +'<div class="field"><label class="flabel">📰 BigKinds API 키</label><input class="finput" id="cfg-bk" type="password" value="'+(BK_KEY())+'" placeholder="BigKinds access_key"></div>'
-    +'<div class="field"><label class="flabel">🏛 국회 OpenAPI 키</label><input class="finput" id="cfg-asm" type="password" value="'+(ASM_KEY())+'" placeholder="열린국회정보 API 키"></div>'
-    +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:7px">'
-    +'<div class="field"><label class="flabel">🟢 네이버 Client ID</label><input class="finput" id="cfg-ni" type="password" value="'+(NV_ID())+'"></div>'
-    +'<div class="field"><label class="flabel">🟢 네이버 Secret</label><input class="finput" id="cfg-ns" type="password" value="'+(NV_SEC())+'"></div>'
-    +'</div>'
+  $('modalBody').innerHTML='<div class="mhd"><div style="font-size:14px;font-weight:700">⚙️ API 설정</div><button class="mx" id="closeModalBtn">✕</button></div>'
+    +'<div class="mbdy">'
+    +'<div style="background:rgba(3,199,90,.06);border:1px solid rgba(3,199,90,.2);border-radius:7px;padding:8px 12px;margin-bottom:12px;font-size:10px;color:var(--g)">🔒 모든 키는 브라우저에만 저장됩니다</div>'
+    +'<div style="margin-bottom:9px"><label style="font-size:9px;font-weight:700;color:var(--mt);display:block;margin-bottom:4px">☁️ Cloudflare Worker URL <span style="color:var(--rd)">*필수</span></label><input class="finput" id="cfg-w" value="'+(W())+'" placeholder="https://nvgc-proxy.xxx.workers.dev"></div>'
+    +'<div style="margin-bottom:9px"><label style="font-size:9px;font-weight:700;color:var(--mt);display:block;margin-bottom:4px">📰 BigKinds API 키</label><input class="finput" id="cfg-bk" type="password" value="'+(BK())+'"></div>'
+    +'<div style="margin-bottom:9px"><label style="font-size:9px;font-weight:700;color:var(--mt);display:block;margin-bottom:4px">🏛 국회 OpenAPI 키</label><input class="finput" id="cfg-asm" type="password" value="'+(AK())+'"></div>'
     +'<button class="btn-p" onclick="saveSettings()">💾 저장하기</button>'
     +'<div style="display:flex;justify-content:space-between;margin-top:8px">'
     +'<button class="btn" onclick="testWorker()">🔗 연결 테스트</button>'
     +'<button style="background:none;border:none;color:var(--mt);font-size:10px;cursor:pointer" onclick="clearSettings()">🗑 초기화</button>'
     +'</div></div>';
   $('ov').classList.add('on');
+  var sx=document.getElementById('settingsX'); if(sx) sx.onclick=function(){$('ov').classList.remove('on');};
 }
 function saveSettings(){
-  var fields=[['worker_url','cfg-w'],['bigkinds_key','cfg-bk'],['assembly_key','cfg-asm'],['naver_id','cfg-ni'],['naver_secret','cfg-ns']];
-  fields.forEach(function(f){ var v=document.getElementById(f[1]); if(v&&v.value.trim()) localStorage.setItem(f[0],v.value.trim()); });
-  realtimeNewsLoaded=false; billsLoaded=false; allBills=[];
-  closeModal(); showToast('저장됨');
-  updateRealtimeStatus();
+  var f=[['worker_url','cfg-w'],['bigkinds_key','cfg-bk'],['assembly_key','cfg-asm']];
+  f.forEach(function(x){var v=document.getElementById(x[1]);if(v&&v.value.trim())localStorage.setItem(x[0],v.value.trim());});
+  realtimeLoaded=false; allBills=[];
+  $('ov').classList.remove('on');
+  showToast('저장됨');
+  updateRtStatus();
 }
 async function testWorker(){
-  var w=WORKER_URL(); if(!w){showToast('Worker URL 없음');return;}
-  try{ var r=await fetch(w+'/health'); var d=await r.json(); showToast(d.status==='ok'?'✅ 연결 성공!':'⚠️ '+JSON.stringify(d)); }
-  catch(e){ showToast('❌ 실패: '+e.message); }
+  var w=W(); if(!w){showToast('Worker URL 없음');return;}
+  try{var r=await fetch(w+'/health');var d=await r.json();showToast(d.status==='ok'?'✅ 연결 성공!':'⚠️ '+JSON.stringify(d));}
+  catch(e){showToast('❌ 실패: '+e.message);}
 }
-function clearSettings(){
-  ['worker_url','bigkinds_key','assembly_key','naver_id','naver_secret','ai_key'].forEach(function(k){localStorage.removeItem(k);});
-  closeModal(); showToast('초기화 완료');
-}
+function clearSettings(){['worker_url','bigkinds_key','assembly_key','ai_key'].forEach(function(k){localStorage.removeItem(k);});$('ov').classList.remove('on');showToast('초기화 완료');}
 
+// ════ MODAL CLOSE ════
+document.getElementById('ov').addEventListener('click', function(e){
+  if(e.target === this) this.classList.remove('on');
+});
+document.addEventListener('click', function(e){
+  if(e.target && e.target.id === 'closeModalBtn') $('ov').classList.remove('on');
+});
 
-
-// ═══ LAZY LOADERS ═══
-var membersLoaded = false;
-var chartJsLoaded = false;
-
-function loadMembersLazy(cb){
-  if(membersLoaded){ if(cb)cb(); return; }
-  var el = $('membersContent');
-  if(el) el.innerHTML = '<div style="text-align:center;padding:30px;color:var(--mt)">⏳ 의원 데이터 로딩...</div>';
-  fetch('https://moef-aihub.github.io/naver-gr-intelligence/members.json')
-    .then(function(r){ return r.json(); })
-    .then(function(data){
-      // MEMBERS_DATA에 주입
-      window._membersData = data;
-      membersLoaded = true;
-      if(cb) cb();
-    })
-    .catch(function(e){
-      if(el) el.innerHTML = '<div style="text-align:center;padding:20px;color:var(--rd)">❌ 로드 실패 — 새로고침 해주세요</div>';
-    });
-}
-
-function getMembersData(){
-  return window._membersData || MEMBERS_DATA;
-}
-
-function loadChartJs(cb){
-  if(chartJsLoaded || window.Chart){ chartJsLoaded=true; if(cb)cb(); return; }
-  var s = document.createElement('script');
-  s.src = 'https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js';
-  s.onload = function(){ chartJsLoaded=true; if(cb)cb(); };
-  document.head.appendChild(s);
-}
-
-// ═══ 차트 ═══
-var radarChartInst = null, bubbleChartInst = null;
-
-function renderIssueCharts(){
-  renderRadarChart();
-  renderBubbleChart();
-}
-
-function renderRadarChart(){
-  var ctx = document.getElementById('radarChart');
-  if(!ctx || !ISSUES.length) return;
-  if(radarChartInst){ radarChartInst.destroy(); radarChartInst=null; }
-  var domains = ['플랫폼·공정거래','AI·데이터','미디어·저작권','글로벌·외교','금융·핀테크'];
-  var labels = ['플랫폼·공정거래','AI·데이터','미디어·저작권','글로벌·외교','금융·핀테크'];
-  var data = domains.map(function(d){
-    var iss = ISSUES.filter(function(i){return i.domain&&i.domain.indexOf(d.split('·')[0])>-1;});
-    return iss.length ? (iss.reduce(function(a,b){return a+b.risk;},0)/iss.length).toFixed(1)*1 : 0;
-  });
-  radarChartInst = new Chart(ctx, {
-    type:'radar',
-    data:{
-      labels:labels,
-      datasets:[{
-        label:'평균 리스크',
-        data:data,
-        backgroundColor:'rgba(217,79,59,.15)',
-        borderColor:'#D94F3B',
-        borderWidth:2,
-        pointBackgroundColor:'#D94F3B',
-        pointRadius:4,
-      }]
-    },
-    options:{
-      responsive:true,
-      plugins:{legend:{display:false}},
-      scales:{r:{
-        min:0,max:10,
-        ticks:{color:'#5A7A9A',font:{size:9},stepSize:2},
-        grid:{color:'rgba(30,48,72,.8)'},
-        angleLines:{color:'rgba(30,48,72,.8)'},
-        pointLabels:{color:'#D8E8F5',font:{size:10,weight:'700'}},
-      }}
-    }
-  });
-}
-
-function renderBubbleChart(){
-  var ctx = document.getElementById('bubbleChart');
-  if(!ctx || !ISSUES.length) return;
-  if(bubbleChartInst){ bubbleChartInst.destroy(); bubbleChartInst=null; }
-  var colors = {'플랫폼·공정거래':'#D94F3B','AI·데이터':'#E8A838','미디어·저작권':'#8B5CF6','글로벌·외교':'#0EA5E9','금융·핀테크':'#03C75A'};
-  var datasets = Object.keys(colors).map(function(domain){
-    var domIss = ISSUES.filter(function(i){return i.domain&&i.domain.indexOf(domain.split('·')[0])>-1;});
-    return {
-      label:domain,
-      data:domIss.map(function(i){return {x:i.risk,y:i.predict,r:Math.max(4,(i.ready||50)/10)};}),
-      backgroundColor:colors[domain]+'66',
-      borderColor:colors[domain],
-      borderWidth:1,
-    };
-  });
-  bubbleChartInst = new Chart(ctx, {
-    type:'bubble',
-    data:{datasets:datasets},
-    options:{
-      responsive:true,
-      plugins:{
-        legend:{display:false},
-        tooltip:{callbacks:{label:function(ctx){
-          var d=ctx.dataset.data[ctx.dataIndex];
-          return ctx.dataset.label+' | 리스크:'+d.x+' 통과:'+d.y+'%';
-        }}}
-      },
-      scales:{
-        x:{min:4,max:10,title:{display:true,text:'리스크',color:'#5A7A9A',font:{size:10}},ticks:{color:'#5A7A9A',font:{size:9}},grid:{color:'rgba(30,48,72,.6)'}},
-        y:{min:0,max:100,title:{display:true,text:'통과예측(%)',color:'#5A7A9A',font:{size:10}},ticks:{color:'#5A7A9A',font:{size:9}},grid:{color:'rgba(30,48,72,.6)'}},
-      }
-    }
-  });
-}
-
-function renderCalHeatmap(){
-  var el = document.getElementById('calHeatmap');
-  if(!el) return;
-  var months = ['3월','4월','5월','6월'];
-  var events = [
-    {month:2,day:24,title:'온플법 소위',urgent:true},
-    {month:2,day:31,title:'라인야후 마감',urgent:true},
-    {month:3,day:3,title:'AI기본법 공청회',urgent:true},
-    {month:3,day:14,title:'과방위 현안질의',urgent:false},
-    {month:4,day:26,title:'온플법 본회의',urgent:true},
-  ];
-  var html = '<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px">';
-  months.forEach(function(m, mi){
-    var mEvents = events.filter(function(e){return e.month===mi;});
-    html += '<div style="background:var(--cd2);border:1px solid var(--br);border-radius:7px;padding:8px">'
-      +'<div style="font-size:10px;font-weight:700;color:var(--mt);margin-bottom:6px">2026 '+m+'</div>';
-    if(mEvents.length){
-      mEvents.forEach(function(ev){
-        var c = ev.urgent?'var(--rd)':'var(--gd)';
-        html += '<div style="font-size:9px;padding:4px 6px;border-radius:5px;background:'+c+'18;border-left:2px solid '+c+';margin-bottom:4px;line-height:1.4">'
-          +'<b style="color:'+c+'">'+ev.day+'일</b> '+ev.title+'</div>';
-      });
-    } else {
-      html += '<div style="font-size:9px;color:var(--mt);padding:4px">주요 일정 없음</div>';
-    }
-    html += '</div>';
-  });
-  html += '</div>';
-  el.innerHTML = html;
-}
-
-// ═══ INIT ═══
+// ════ INIT ════
 renderHome();
-updateRealtimeStatus();
-setTimeout(loadRealtimeNews, 1500);
+updateRtStatus();
+setTimeout(loadRtNews, 1500);
 </script>
 </body>
 </html>
