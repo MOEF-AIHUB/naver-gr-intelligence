@@ -45,6 +45,7 @@ header{background:#0A1628;border-bottom:1px solid var(--br);padding:0 20px;heigh
 .ac{background:rgba(217,79,59,.08);border-left:3px solid var(--rd)}
 .aw{background:rgba(232,168,56,.08);border-left:3px solid var(--gd)}
 .ai-a{background:rgba(28,110,242,.08);border-left:3px solid var(--bl)}
+.ag{background:rgba(3,199,90,.08);border-left:3px solid var(--g)}
 .at{font-weight:700;margin-bottom:2px}
 .pb{height:5px;background:var(--br);border-radius:3px;overflow:hidden;margin-top:4px}
 .pf{height:100%;border-radius:3px}
@@ -74,7 +75,8 @@ header{background:#0A1628;border-bottom:1px solid var(--br);padding:0 20px;heigh
 .bd{font-size:11px;color:var(--mt);line-height:1.5;margin-top:4px}
 .li{display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid var(--br)}
 .li:last-child{border-bottom:none}
-.la{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0}
+.la{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;overflow:hidden}
+.la img{width:100%;height:100%;object-fit:cover}
 .sb{display:flex;gap:7px;margin-bottom:14px;flex-wrap:wrap}
 .si{flex:1;min-width:180px;background:var(--cd);border:1px solid var(--br);border-radius:7px;padding:8px 13px;color:var(--tx);font-size:12px;outline:none}
 .si:focus{border-color:var(--g)}
@@ -103,6 +105,7 @@ header{background:#0A1628;border-bottom:1px solid var(--br);padding:0 20px;heigh
 .cday{min-height:44px;background:var(--bg);border:1px solid var(--br);border-radius:5px;padding:4px}
 .cday.today{border-color:var(--g);background:rgba(3,199,90,.06)}
 .cday.hev{border-color:rgba(217,79,59,.35)}
+.cday.assembly{border-color:rgba(28,110,242,.4);background:rgba(28,110,242,.04)}
 .sc{display:flex;align-items:flex-start;gap:10px;padding:11px;border-radius:7px;margin-bottom:8px}
 .sc-bad{background:rgba(217,79,59,.07);border-left:3px solid var(--rd)}
 .sc-mid{background:rgba(232,168,56,.07);border-left:3px solid var(--gd)}
@@ -111,6 +114,10 @@ hr{border:none;border-top:1px solid var(--br);margin:12px 0}
 .cw{position:relative;height:180px}
 .eb{background:none;border:1px solid var(--br);border-radius:5px;padding:3px 8px;font-size:10px;color:var(--mt);cursor:pointer}
 .eb:hover{border-color:var(--gd);color:var(--gd)}
+.sync-btn{background:rgba(3,199,90,.1);border:1px solid rgba(3,199,90,.3);border-radius:6px;padding:5px 12px;color:var(--g);font-size:11px;cursor:pointer;font-weight:600;display:flex;align-items:center;gap:5px}
+.sync-btn:hover{background:rgba(3,199,90,.2)}
+.sync-btn.loading{opacity:.6;pointer-events:none}
+.assembly-badge{background:rgba(28,110,242,.15);border:1px solid rgba(28,110,242,.3);color:var(--bl);font-size:9px;padding:2px 6px;border-radius:10px;font-weight:700}
 .fab{position:fixed;bottom:20px;right:20px;width:46px;height:46px;background:linear-gradient(135deg,var(--g),#00A847);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:22px;cursor:pointer;box-shadow:0 4px 18px rgba(3,199,90,.4);border:none;color:#fff;z-index:200}
 .ov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:300;align-items:center;justify-content:center}
 .ov.on{display:flex}
@@ -122,10 +129,16 @@ hr{border:none;border-top:1px solid var(--br);margin:12px 0}
 .finput{width:100%;background:var(--bg);border:1px solid var(--br);border-radius:6px;padding:8px 12px;color:var(--tx);font-size:12px;outline:none}
 .finput:focus{border-color:var(--g)}
 .btn-p{width:100%;background:linear-gradient(135deg,var(--g),#00A847);color:#fff;border:none;border-radius:8px;padding:11px;font-size:13px;font-weight:700;cursor:pointer;margin-top:8px}
-.loading{text-align:center;padding:40px;color:var(--mt);font-size:12px}
+.loading{text-align:center;padding:30px;color:var(--mt);font-size:12px}
 .toast{position:fixed;bottom:76px;right:20px;background:var(--cd);border:1px solid var(--g);color:var(--g);padding:9px 16px;border-radius:7px;font-size:12px;font-weight:700;z-index:500;transform:translateY(10px);opacity:0;transition:.25s;pointer-events:none}
 .toast.show{transform:translateY(0);opacity:1}
 ::-webkit-scrollbar{width:4px}::-webkit-scrollbar-thumb{background:var(--br);border-radius:2px}
+.member-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px;margin-top:8px}
+.member-card{background:var(--cd2);border:1px solid var(--br);border-radius:8px;padding:12px;display:flex;align-items:center;gap:10px}
+.member-pic{width:40px;height:40px;border-radius:50%;object-fit:cover;background:var(--br);flex-shrink:0}
+.cmit-filter{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+.cmit-btn{background:var(--cd);border:1px solid var(--br);border-radius:20px;padding:5px 12px;color:var(--mt);font-size:11px;cursor:pointer}
+.cmit-btn.on{border-color:var(--bl);color:var(--bl);background:rgba(28,110,242,.1)}
 </style>
 </head>
 <body>
@@ -133,10 +146,10 @@ hr{border:none;border-top:1px solid var(--br);margin:12px 0}
 <header>
   <div class="logo">
     <div class="logo-n">N</div>
-    <div><div class="logo-t">GR Intelligence</div><div class="logo-s">대관 인텔리전스 · 실시간 DB 연동</div></div>
+    <div><div class="logo-t">GR Intelligence</div><div class="logo-s">대관 인텔리전스 · 국회 API 실시간 연동</div></div>
   </div>
   <div style="display:flex;align-items:center;gap:12px">
-    <div class="live"><div class="dot"></div>LIVE</div>
+    <div class="live"><div class="dot"></div>국회 API 연동</div>
     <div style="font-size:10px;color:var(--mt)" id="nowTime"></div>
   </div>
 </header>
@@ -145,7 +158,8 @@ hr{border:none;border-top:1px solid var(--br);margin:12px 0}
   <button class="tab on" onclick="go('dash',this)">📊 대시보드</button>
   <button class="tab" onclick="go('bills',this)">📋 법안 추적</button>
   <button class="tab" onclick="go('pred',this)">🔮 규제 예측</button>
-  <button class="tab" onclick="go('leg',this)">🏛 의원실</button>
+  <button class="tab" onclick="go('assembly',this)">🏛 국회 실시간 <span style="background:var(--rd);color:#fff;font-size:8px;padding:1px 5px;border-radius:8px;font-weight:900;margin-left:3px">NEW</span></button>
+  <button class="tab" onclick="go('members',this)">👤 의원 정보</button>
   <button class="tab" onclick="go('cal',this)">📅 일정</button>
   <button class="tab" onclick="go('intel',this)">🤖 AI 인텔 <span style="background:var(--g);color:#000;font-size:8px;padding:1px 5px;border-radius:8px;font-weight:900;margin-left:3px">LIVE</span></button>
 </div>
@@ -155,10 +169,10 @@ hr{border:none;border-top:1px solid var(--br);margin:12px 0}
 <!-- DASHBOARD -->
 <div class="page on" id="p-dash">
   <div class="g4">
-    <div class="card"><div class="ch"><div class="ct">모니터링 법안</div><span>📋</span></div><div class="kv" style="color:var(--bl)" id="kpi-bills">-</div><div class="kl">22대 국회 계류</div><div class="kc up">실시간 업데이트</div></div>
+    <div class="card"><div class="ch"><div class="ct">모니터링 법안</div><span>📋</span></div><div class="kv" style="color:var(--bl)" id="kpi-bills">-</div><div class="kl">22대 국회 계류</div><div class="kc up">DB 실시간</div></div>
     <div class="card"><div class="ch"><div class="ct">Critical 이슈</div><span>🔴</span></div><div class="kv" style="color:var(--rd)" id="kpi-crit">-</div><div class="kl">즉시 대응 필요</div><div class="kc up">DB 연동</div></div>
-    <div class="card"><div class="ch"><div class="ct">긴급 일정</div><span>📅</span></div><div class="kv" style="color:var(--gd)" id="kpi-events">-</div><div class="kl">이번 주 주요 일정</div><div class="kc neu">실시간</div></div>
-    <div class="card"><div class="ch"><div class="ct">관리 의원실</div><span>🏛</span></div><div class="kv" style="color:var(--g)" id="kpi-legs">-</div><div class="kl">정기 관리 대상</div><div class="kc dn">실시간</div></div>
+    <div class="card"><div class="ch"><div class="ct">오늘 국회 일정</div><span>🏛</span></div><div class="kv" style="color:var(--gd)" id="kpi-assembly">-</div><div class="kl">국회 API 실시간</div><div class="kc ag" style="color:var(--g)">▲ 자동 업데이트</div></div>
+    <div class="card"><div class="ch"><div class="ct">관리 의원실</div><span>👤</span></div><div class="kv" style="color:var(--g)" id="kpi-legs">-</div><div class="kl">국회의원 API 연동</div><div class="kc dn">실시간</div></div>
   </div>
   <div class="card" style="margin-bottom:16px">
     <div class="ch"><div class="ct">⚡ 긴급 알림</div><div class="ca" onclick="openAddAlert()">+ 추가</div></div>
@@ -167,14 +181,17 @@ hr{border:none;border-top:1px solid var(--br);margin:12px 0}
   <div class="g2">
     <div class="card"><div class="ch"><div class="ct">이슈 리스크 레이더</div></div><div class="cw"><canvas id="rc"></canvas></div></div>
     <div class="card">
-      <div class="ch"><div class="ct">🗓 주요 일정</div><div class="ca" onclick="openAddEvent()">+ 추가</div></div>
-      <div class="tl" id="timelineList"><div class="loading">로딩 중...</div></div>
+      <div class="ch">
+        <div class="ct">🏛 오늘의 국회 일정 <span class="assembly-badge">국회 API</span></div>
+        <button class="sync-btn" id="syncBtn" onclick="syncAssembly()">🔄 새로고침</button>
+      </div>
+      <div id="assemblyToday"><div class="loading">국회 API 불러오는 중...</div></div>
     </div>
   </div>
   <div class="g3">
     <div class="card"><div class="ch"><div class="ct">법안 단계별 현황</div></div><div class="cw" style="height:150px"><canvas id="fc"></canvas></div></div>
     <div class="card"><div class="ch"><div class="ct">통과 예측 확률</div></div><div id="predMeters"><div class="loading">로딩 중...</div></div></div>
-    <div class="card"><div class="ch"><div class="ct">우선 대응 의원실 TOP5</div></div><div id="topLegs"><div class="loading">로딩 중...</div></div></div>
+    <div class="card"><div class="ch"><div class="ct">우선 대응 의원실</div></div><div id="topLegs"><div class="loading">로딩 중...</div></div></div>
   </div>
 </div>
 
@@ -220,26 +237,80 @@ hr{border:none;border-top:1px solid var(--br);margin:12px 0}
   </div>
 </div>
 
-<!-- LEGISLATORS -->
-<div class="page" id="p-leg">
-  <div class="g2r">
-    <div class="card"><div class="ch"><div class="ct">관리 의원실</div><div class="ca" onclick="openAddLeg()">+ 추가</div></div><div id="llist"><div class="loading">로딩 중...</div></div></div>
-    <div class="card">
-      <div class="ch"><div class="ct">이슈별 의원 분포</div></div>
-      <div class="cw"><canvas id="ic"></canvas></div>
-      <hr><div class="ct" style="margin-bottom:10px">이슈 네트워크</div>
-      <svg width="100%" height="180" viewBox="0 0 300 180" style="background:var(--bg);border-radius:8px;border:1px solid var(--br)">
-        <line x1="150" y1="90" x2="65" y2="50" stroke="#1E3048" stroke-width="1.5"/><line x1="150" y1="90" x2="235" y2="50" stroke="#1E3048" stroke-width="1.5"/><line x1="150" y1="90" x2="65" y2="145" stroke="#1E3048" stroke-width="1.5"/><line x1="150" y1="90" x2="235" y2="145" stroke="#1E3048" stroke-width="1.5"/>
-        <circle cx="150" cy="90" r="28" fill="rgba(3,199,90,.1)" stroke="#03C75A" stroke-width="1.5"/><text x="150" y="87" text-anchor="middle" fill="#03C75A" font-size="10" font-weight="bold">온플법</text><text x="150" y="99" text-anchor="middle" fill="#03C75A" font-size="9">72%</text>
-        <circle cx="65" cy="50" r="20" fill="rgba(28,110,242,.1)" stroke="#1C6EF2" stroke-width="1.5"/><text x="65" y="47" text-anchor="middle" fill="#1C6EF2" font-size="9" font-weight="bold">AI기본법</text><text x="65" y="58" text-anchor="middle" fill="#1C6EF2" font-size="8">58%</text>
-        <circle cx="235" cy="50" r="20" fill="rgba(217,79,59,.1)" stroke="#D94F3B" stroke-width="1.5"/><text x="235" y="47" text-anchor="middle" fill="#D94F3B" font-size="9" font-weight="bold">라인야후</text><text x="235" y="58" text-anchor="middle" fill="#D94F3B" font-size="8">48%</text>
-        <circle cx="65" cy="145" r="16" fill="rgba(232,168,56,.1)" stroke="#E8A838" stroke-width="1.5"/><text x="65" y="143" text-anchor="middle" fill="#E8A838" font-size="8" font-weight="bold">수수료</text><text x="65" y="153" text-anchor="middle" fill="#E8A838" font-size="7">61%</text>
-        <circle cx="235" cy="145" r="16" fill="rgba(139,92,246,.1)" stroke="#8B5CF6" stroke-width="1.5"/><text x="235" y="143" text-anchor="middle" fill="#8B5CF6" font-size="8" font-weight="bold">저작권</text><text x="235" y="153" text-anchor="middle" fill="#8B5CF6" font-size="7">40%</text>
-        <circle cx="105" cy="70" r="11" fill="rgba(33,150,243,.2)" stroke="#2196F3" stroke-width="1"/><text x="105" y="73" text-anchor="middle" fill="#2196F3" font-size="7">이정문</text>
-        <circle cx="192" cy="74" r="10" fill="rgba(244,67,54,.2)" stroke="#F44336" stroke-width="1"/><text x="192" y="77" text-anchor="middle" fill="#F44336" font-size="7">고동진</text>
-        <circle cx="110" cy="118" r="10" fill="rgba(33,150,243,.2)" stroke="#2196F3" stroke-width="1"/><text x="110" y="121" text-anchor="middle" fill="#2196F3" font-size="7">강준현</text>
-      </svg>
+<!-- ASSEMBLY REALTIME -->
+<div class="page" id="p-assembly">
+  <div class="card" style="margin-bottom:14px">
+    <div class="ch">
+      <div>
+        <div class="ct">🏛 국회 실시간 일정 <span class="assembly-badge">국회 OpenAPI 연동</span></div>
+        <div style="font-size:10px;color:var(--mt);margin-top:3px">open.assembly.go.kr 실시간 데이터</div>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center">
+        <select id="cmitFilter" class="finput" style="width:160px;padding:5px 8px;font-size:11px" onchange="loadAssemblySchedules()">
+          <option value="">전체 위원회</option>
+          <option value="정무위원회">정무위원회</option>
+          <option value="과학기술정보방송통신위원회">과방위</option>
+          <option value="문화체육관광위원회">문체위</option>
+          <option value="산업통상자원중소벤처기업위원회">산자중기위</option>
+          <option value="외교통일위원회">외통위</option>
+          <option value="법제사법위원회">법사위</option>
+        </select>
+        <input type="date" id="dateFilter" class="finput" style="width:140px;padding:5px 8px;font-size:11px" onchange="loadAssemblySchedules()">
+        <button class="sync-btn" onclick="loadAssemblySchedules()">🔄 조회</button>
+      </div>
     </div>
+    <div id="assemblySchedules"><div class="loading">국회 API에서 불러오는 중...</div></div>
+  </div>
+
+  <div class="card">
+    <div class="ch">
+      <div class="ct">📋 GR 관련 위원회 모니터링 현황</div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px">
+      <div style="background:var(--cd2);border:1px solid rgba(217,79,59,.3);border-radius:8px;padding:12px;text-align:center">
+        <div style="font-size:10px;color:var(--mt);margin-bottom:6px">정무위원회</div>
+        <div style="font-size:20px;font-weight:900;color:var(--rd)">온플법</div>
+        <div style="font-size:10px;color:var(--mt);margin-top:4px">법안2소위 계류</div>
+        <button class="sync-btn" style="margin-top:8px;width:100%;justify-content:center" onclick="searchCmit('정무위원회')">일정 보기</button>
+      </div>
+      <div style="background:var(--cd2);border:1px solid rgba(28,110,242,.3);border-radius:8px;padding:12px;text-align:center">
+        <div style="font-size:10px;color:var(--mt);margin-bottom:6px">과학기술정보방송통신위원회</div>
+        <div style="font-size:20px;font-weight:900;color:var(--bl)">AI기본법</div>
+        <div style="font-size:10px;color:var(--mt);margin-top:4px">공청회 예정</div>
+        <button class="sync-btn" style="margin-top:8px;width:100%;justify-content:center" onclick="searchCmit('과학기술정보방송통신위원회')">일정 보기</button>
+      </div>
+      <div style="background:var(--cd2);border:1px solid rgba(232,168,56,.3);border-radius:8px;padding:12px;text-align:center">
+        <div style="font-size:10px;color:var(--mt);margin-bottom:6px">문화체육관광위원회</div>
+        <div style="font-size:20px;font-weight:900;color:var(--gd)">저작권</div>
+        <div style="font-size:10px;color:var(--mt);margin-top:4px">AI 학습 쟁점</div>
+        <button class="sync-btn" style="margin-top:8px;width:100%;justify-content:center" onclick="searchCmit('문화체육관광위원회')">일정 보기</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MEMBERS -->
+<div class="page" id="p-members">
+  <div class="card">
+    <div class="ch">
+      <div>
+        <div class="ct">👤 국회의원 실시간 정보 <span class="assembly-badge">국회 OpenAPI</span></div>
+        <div style="font-size:10px;color:var(--mt);margin-top:3px">소속위원회·연락처·보좌관 정보 실시간</div>
+      </div>
+      <button class="sync-btn" onclick="loadMembers()">🔄 새로고침</button>
+    </div>
+    <div class="cmit-filter" id="cmitFilterBtns">
+      <button class="cmit-btn on" onclick="filterMembers('',this)">전체</button>
+      <button class="cmit-btn" onclick="filterMembers('정무위원회',this)">정무위</button>
+      <button class="cmit-btn" onclick="filterMembers('과학기술정보방송통신위원회',this)">과방위</button>
+      <button class="cmit-btn" onclick="filterMembers('문화체육관광위원회',this)">문체위</button>
+      <button class="cmit-btn" onclick="filterMembers('산업통상자원중소벤처기업위원회',this)">산자중기위</button>
+      <button class="cmit-btn" onclick="filterMembers('외교통일위원회',this)">외통위</button>
+    </div>
+    <div style="margin-bottom:10px">
+      <input class="si" style="max-width:300px" placeholder="🔍 의원명·정당 검색..." oninput="searchMember(this.value)">
+    </div>
+    <div id="memberList"><div class="loading">국회 API에서 의원 정보 불러오는 중...</div></div>
   </div>
 </div>
 
@@ -247,11 +318,16 @@ hr{border:none;border-top:1px solid var(--br);margin:12px 0}
 <div class="page" id="p-cal">
   <div class="g2">
     <div class="card">
-      <div class="ch"><div class="ct">📅 2026년 3월</div><div class="ca" onclick="openAddEvent()">+ 일정 추가</div></div>
+      <div class="ch"><div class="ct">📅 2026년 3월 <span class="assembly-badge">국회 일정 연동</span></div><div class="ca" onclick="openAddEvent()">+ 추가</div></div>
       <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:3px;margin-bottom:6px">
         <div style="text-align:center;font-size:10px;color:var(--mt);padding:3px">일</div><div style="text-align:center;font-size:10px;color:var(--mt);padding:3px">월</div><div style="text-align:center;font-size:10px;color:var(--mt);padding:3px">화</div><div style="text-align:center;font-size:10px;color:var(--mt);padding:3px">수</div><div style="text-align:center;font-size:10px;color:var(--mt);padding:3px">목</div><div style="text-align:center;font-size:10px;color:var(--mt);padding:3px">금</div><div style="text-align:center;font-size:10px;color:var(--mt);padding:3px">토</div>
       </div>
       <div id="cg" style="display:grid;grid-template-columns:repeat(7,1fr);gap:3px"></div>
+      <div style="display:flex;gap:10px;margin-top:10px;font-size:10px;color:var(--mt)">
+        <span><span style="color:var(--rd)">●</span> 긴급 일정</span>
+        <span><span style="color:var(--bl)">●</span> 국회 일정</span>
+        <span><span style="color:var(--gd)">●</span> 예정 일정</span>
+      </div>
     </div>
     <div class="card"><div class="ch"><div class="ct">이번 주 일정</div></div><div class="tl" id="weekTl"><div class="loading">로딩 중...</div></div></div>
   </div>
@@ -266,13 +342,13 @@ hr{border:none;border-top:1px solid var(--br);margin:12px 0}
         <div class="live" id="aiStatus"><div class="dot"></div>대기 중</div>
       </div>
       <div style="background:rgba(232,168,56,.06);border:1px solid rgba(232,168,56,.2);border-radius:7px;padding:9px 12px;margin-bottom:10px;font-size:11px;color:var(--gd);display:flex;align-items:center;gap:10px">
-        <span>🔑 API 키</span>
-        <input id="apiKeyInput" type="password" placeholder="sk-ant-... (Anthropic API 키 입력)" style="flex:1;background:rgba(0,0,0,.3);border:1px solid rgba(232,168,56,.3);border-radius:5px;padding:5px 10px;color:var(--tx);font-size:11px;outline:none">
+        <span>🔑</span>
+        <input id="apiKeyInput" type="password" placeholder="Anthropic API 키 입력 (sk-ant-...)" style="flex:1;background:rgba(0,0,0,.3);border:1px solid rgba(232,168,56,.3);border-radius:5px;padding:5px 10px;color:var(--tx);font-size:11px;outline:none">
         <button onclick="saveKey()" style="background:var(--gd);color:#000;border:none;border-radius:5px;padding:5px 12px;font-size:11px;font-weight:700;cursor:pointer">저장</button>
         <span id="apiOk" style="display:none;color:var(--g)">✅</span>
       </div>
       <div class="msgs" id="msgs">
-        <div class="msg-ai"><div class="av">N</div><div class="b-ai"><span class="ai-tag">GR AI · Claude</span><br>안녕하세요, 회장님. Supabase DB와 연동된 실시간 GR Intelligence입니다.<br><br>API 키 입력 후 무엇이든 질문하세요.<br><br>🔴 <b>온플법 서면의견서</b> — 오늘 18:00 마감<br>⚠️ <b>라인야후 협상</b> — 3.31 마감<br>📋 <b>AI기본법 공청회</b> — 4.3 예정</div></div>
+        <div class="msg-ai"><div class="av">N</div><div class="b-ai"><span class="ai-tag">GR AI · Claude + 국회 API</span><br>안녕하세요, 회장님. 국회 OpenAPI와 실시간 연동된 GR Intelligence입니다.<br><br>🏛 국회 실시간 탭에서 위원회 일정을 바로 조회할 수 있습니다.<br>👤 의원 정보 탭에서 소속 위원회별 의원 정보를 확인하세요.<br><br>API 키 입력 후 무엇이든 질문하세요.</div></div>
       </div>
       <div class="qbtns">
         <button class="qb" onclick="ask('온플법 반론 논거 5가지 정리해줘')">온플법 논거</button>
@@ -311,16 +387,18 @@ hr{border:none;border-top:1px solid var(--br);margin:12px 0}
 <div class="toast" id="toast"></div>
 
 <script>
-// ═══ SUPABASE 설정 ═══
+// ═══ CONFIG ═══
 const SUPABASE_URL = 'https://ebbptjjttuuilrhupkxd.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_7quIEQpe3bD8piHlTT_cTQ_TOWqY1Sp';
+const ASSEMBLY_KEY = 'cdc6bd117117408183d464fc0b32b02c';
+const ASSEMBLY_BASE = 'https://open.assembly.go.kr/portal/openapi';
+
 const { createClient } = supabase;
 const db = createClient(SUPABASE_URL, SUPABASE_KEY);
 
 let API_KEY = localStorage.getItem('grApiKey') || '';
-let allBills = [];
-let chatHistory = [];
-let isLoading = false;
+let allBills = [], allMembers = [], allEvents = [];
+let chatHistory = [], isLoading = false;
 
 // ═══ INIT ═══
 if(API_KEY){ document.getElementById('apiKeyInput').value='••••••••••••'; document.getElementById('apiOk').style.display='inline'; }
@@ -328,58 +406,34 @@ function updateTime(){ const n=new Date(); document.getElementById('nowTime').te
 updateTime(); setInterval(updateTime,60000);
 function saveKey(){ const k=document.getElementById('apiKeyInput').value.trim(); if(!k)return; API_KEY=k; localStorage.setItem('grApiKey',k); document.getElementById('apiOk').style.display='inline'; showToast('API 키 저장됨'); }
 
-// ═══ LOAD ALL DATA ═══
+// ═══ SUPABASE LOAD ═══
 async function loadAll(){
-  await Promise.all([loadAlerts(),loadEvents(),loadBills(),loadLegs()]);
+  await Promise.all([loadAlerts(), loadEvents(), loadBills(), loadLegs()]);
   initCharts();
+  syncAssembly();
 }
 
-// ═══ ALERTS ═══
 async function loadAlerts(){
   const {data}=await db.from('alerts').select('*').order('created_at');
   if(!data)return;
   document.getElementById('alertList').innerHTML=data.map(a=>`
     <div class="alert ${a.type}">
       <div>${a.icon}</div>
-      <div>
-        <div class="at">${a.title}</div>${a.body}
+      <div><div class="at">${a.title}</div>${a.body}
         <span style="font-size:10px;color:var(--mt);cursor:pointer;margin-left:8px" onclick="deleteAlert(${a.id})">🗑</span>
       </div>
     </div>`).join('') || '<div style="color:var(--mt);font-size:12px">알림이 없습니다</div>';
 }
 
-// ═══ EVENTS ═══
 async function loadEvents(){
   const {data}=await db.from('events').select('*').order('day_num');
   if(!data)return;
-  document.getElementById('kpi-events').textContent=data.filter(e=>e.level==='al').length;
-  document.getElementById('timelineList').innerHTML=data.map(e=>`
-    <div class="tli ${e.level}">
-      <div class="td">${e.date_label}</div>
-      <div class="tt">${e.title} <span style="font-size:10px;color:var(--mt);cursor:pointer" onclick="deleteEvent(${e.id})">🗑</span></div>
-      <div class="ts">${e.subtitle||''}</div>
-    </div>`).join('');
+  allEvents=data;
+  renderCalendar(data);
   document.getElementById('weekTl').innerHTML=data.filter(e=>e.day_num>=22&&e.day_num<=35).map(e=>`
     <div class="tli ${e.level}"><div class="td">${e.date_label}</div><div class="tt">${e.title}</div><div class="ts">${e.subtitle||''}</div></div>`).join('');
-  renderCalendar(data);
 }
 
-function renderCalendar(events){
-  const evMap={};
-  events.forEach(e=>{if(e.day_num<=31)evMap[e.day_num]=e;});
-  let html='';
-  for(let i=0;i<6;i++)html+=`<div style="height:44px"></div>`;
-  for(let d=1;d<=31;d++){
-    const t=d===23,ev=evMap[d];
-    html+=`<div class="cday${t?' today':''}${ev?' hev':''}">
-      <div style="font-size:11px;font-weight:${t?700:400};color:${t?'var(--g)':'var(--tx)'}">${d}</div>
-      ${ev?`<div style="font-size:9px;color:var(--mt);line-height:1.3;margin-top:2px">${ev.title.substring(0,8)}</div>`:''}
-    </div>`;
-  }
-  document.getElementById('cg').innerHTML=html;
-}
-
-// ═══ BILLS ═══
 async function loadBills(){
   const {data}=await db.from('bills').select('*').order('predict',{ascending:false});
   if(!data)return;
@@ -387,9 +441,152 @@ async function loadBills(){
   document.getElementById('kpi-bills').textContent=data.length;
   document.getElementById('kpi-crit').textContent=data.filter(b=>b.risk==='crit').length;
   renderBills(data);
-  renderPredMeters(data);
+  document.getElementById('predMeters').innerHTML=data.slice(0,5).map(b=>`
+    <div class="mw">
+      <div class="ml" style="font-size:10px">${b.name.substring(0,8)}...</div>
+      <div class="mb"><div class="mf" style="width:${b.predict}%;background:${b.risk==='crit'?'var(--rd)':b.risk==='high'?'var(--gd)':'var(--bl)'}"></div></div>
+      <div class="mv" style="color:${b.risk==='crit'?'var(--rd)':b.risk==='high'?'var(--gd)':'var(--bl)'}">${b.predict}%</div>
+    </div>`).join('');
 }
 
+async function loadLegs(){
+  const {data}=await db.from('legislators').select('*').order('relation',{ascending:false});
+  if(!data)return;
+  document.getElementById('kpi-legs').textContent=data.length;
+  document.getElementById('topLegs').innerHTML=`
+    <div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid var(--br);color:var(--mt);font-weight:700;font-size:10px"><span>의원실</span><span>관계도</span></div>`+
+    data.slice(0,5).map(l=>`
+    <div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid var(--br);font-size:11px">
+      <span><span style="color:${l.color}">●</span> ${l.name}(${l.party})</span>
+      <span style="color:${l.relation>=4?'var(--g)':'var(--gd)'}">${'★'.repeat(l.relation)}${'☆'.repeat(5-l.relation)}</span>
+    </div>`).join('');
+}
+
+// ═══ ASSEMBLY API ═══
+async function fetchAssembly(endpoint, params={}){
+  const url = new URL(`${ASSEMBLY_BASE}/${endpoint}`);
+  url.searchParams.set('KEY', ASSEMBLY_KEY);
+  url.searchParams.set('Type', 'json');
+  url.searchParams.set('pIndex', '1');
+  url.searchParams.set('pSize', '100');
+  Object.entries(params).forEach(([k,v])=>{ if(v) url.searchParams.set(k,v); });
+  try {
+    const res = await fetch(url.toString());
+    const data = await res.json();
+    const key = Object.keys(data)[0];
+    return data[key]?.[1]?.row || [];
+  } catch(e) {
+    console.error('Assembly API error:', e);
+    return [];
+  }
+}
+
+async function syncAssembly(){
+  const btn = document.getElementById('syncBtn');
+  if(btn){ btn.classList.add('loading'); btn.textContent='🔄 불러오는 중...'; }
+  const today = new Date();
+  const dateStr = `${today.getFullYear()}${String(today.getMonth()+1).padStart(2,'0')}${String(today.getDate()).padStart(2,'0')}`;
+  const rows = await fetchAssembly('ALLSCHEDULE', {SCH_DT: dateStr});
+  document.getElementById('kpi-assembly').textContent = rows.length;
+  if(rows.length === 0){
+    document.getElementById('assemblyToday').innerHTML = `<div style="color:var(--mt);font-size:12px;padding:16px 0">오늘 국회 일정이 없거나 API에서 데이터를 찾을 수 없습니다.</div>`;
+  } else {
+    document.getElementById('assemblyToday').innerHTML = rows.map(r=>`
+      <div class="alert ai-a" style="margin-bottom:6px">
+        <div>🏛</div>
+        <div>
+          <div class="at">${r.CMIT_NM||'국회'} — ${r.SCH_CN||r.SCH_KIND}</div>
+          <div style="font-size:10px;color:var(--mt)">${r.SCH_DT} ${r.SCH_TM||''} · ${r.EV_PLC||r.CONF_DIV||''}</div>
+        </div>
+      </div>`).join('');
+  }
+  if(btn){ btn.classList.remove('loading'); btn.textContent='🔄 새로고침'; }
+  showToast(`국회 일정 ${rows.length}건 업데이트됨`);
+}
+
+async function loadAssemblySchedules(){
+  const cmit = document.getElementById('cmitFilter')?.value || '';
+  const date = document.getElementById('dateFilter')?.value?.replace(/-/g,'') || '';
+  document.getElementById('assemblySchedules').innerHTML = '<div class="loading">국회 API 조회 중...</div>';
+  const rows = await fetchAssembly('ALLSCHEDULE', {CMIT_NM: cmit, SCH_DT: date});
+  if(rows.length === 0){
+    document.getElementById('assemblySchedules').innerHTML = `<div style="color:var(--mt);font-size:12px;padding:16px">조회된 일정이 없습니다. 날짜나 위원회를 변경해보세요.</div>`;
+    return;
+  }
+  document.getElementById('assemblySchedules').innerHTML = `
+    <div style="font-size:11px;color:var(--mt);margin-bottom:10px">${rows.length}건 조회됨</div>
+    ${rows.map(r=>`
+      <div style="padding:10px 0;border-bottom:1px solid var(--br);display:flex;gap:10px;align-items:flex-start">
+        <div style="min-width:80px;font-size:10px;color:var(--mt)">${r.SCH_DT}<br>${r.SCH_TM||''}</div>
+        <div style="flex:1">
+          <div style="font-size:12px;font-weight:600">${r.SCH_CN||r.SCH_KIND||'일정'}</div>
+          <div style="font-size:10px;color:var(--mt);margin-top:3px">
+            ${r.CMIT_NM?`<span class="assembly-badge">${r.CMIT_NM}</span> `:''}
+            ${r.EV_PLC||r.CONF_DIV||''}
+          </div>
+        </div>
+        <div>
+          ${isGRRelevant(r) ? `<span class="risk crit">GR 주목</span>` : ''}
+        </div>
+      </div>`).join('')}`;
+}
+
+function isGRRelevant(row){
+  const keywords = ['정무','과방','온플','플랫폼','AI','인공지능','개인정보','공정거래','방송통신','저작권','문체'];
+  const text = `${row.CMIT_NM||''} ${row.SCH_CN||''} ${row.SCH_KIND||''}`;
+  return keywords.some(k => text.includes(k));
+}
+
+function searchCmit(cmit){
+  go('assembly', document.querySelector('.tab:nth-child(4)'));
+  document.getElementById('cmitFilter').value = cmit;
+  loadAssemblySchedules();
+}
+
+// ═══ MEMBERS API ═══
+let currentCmit = '';
+async function loadMembers(){
+  document.getElementById('memberList').innerHTML = '<div class="loading">국회 API에서 의원 정보 불러오는 중...</div>';
+  const rows = await fetchAssembly('ALLNAMEMBER', {BLNG_CMIT_NM: currentCmit});
+  allMembers = rows;
+  renderMembers(rows);
+  document.getElementById('kpi-legs').textContent = rows.length;
+}
+
+function renderMembers(list){
+  if(!list.length){
+    document.getElementById('memberList').innerHTML = '<div style="color:var(--mt);font-size:12px;padding:16px">의원 정보를 찾을 수 없습니다.</div>';
+    return;
+  }
+  document.getElementById('memberList').innerHTML = `
+    <div style="font-size:11px;color:var(--mt);margin-bottom:10px">${list.length}명 조회됨</div>
+    <div class="member-grid">
+    ${list.map(m=>`
+      <div class="member-card">
+        <img class="member-pic" src="${m.NAAS_PIC||''}" onerror="this.style.display='none';this.nextSibling.style.display='flex'" alt="">
+        <div class="la" style="display:none;background:${m.PLPT_NM?.includes('민주')?'#2196F322':'#F4433622'};color:${m.PLPT_NM?.includes('민주')?'#2196F3':'#F44336'};flex-shrink:0">${m.NAAS_NM?.[0]||'?'}</div>
+        <div style="min-width:0">
+          <div style="font-size:12px;font-weight:700">${m.NAAS_NM||''}</div>
+          <div style="font-size:10px;color:${m.PLPT_NM?.includes('민주')?'#2196F3':m.PLPT_NM?.includes('국민')?'#F44336':'var(--mt)'}">${m.PLPT_NM||''}</div>
+          <div style="font-size:10px;color:var(--mt);margin-top:2px">${m.CMIT_NM||m.BLNG_CMIT_NM||''}</div>
+          ${m.NAAS_EMAIL_ADDR?`<div style="font-size:9px;color:var(--bl);margin-top:2px">✉️ ${m.NAAS_EMAIL_ADDR}</div>`:''}
+        </div>
+      </div>`).join('')}
+    </div>`;
+}
+
+function filterMembers(cmit, el){
+  document.querySelectorAll('.cmit-btn').forEach(b=>b.classList.remove('on'));
+  el.classList.add('on');
+  currentCmit = cmit;
+  loadMembers();
+}
+
+function searchMember(q){
+  renderMembers(q ? allMembers.filter(m=>`${m.NAAS_NM}${m.PLPT_NM}${m.CMIT_NM}`.includes(q)) : allMembers);
+}
+
+// ═══ BILLS CRUD ═══
 function renderBills(list){
   document.getElementById('billCount').textContent=`전체 모니터링 법안 (${list.length}건)`;
   document.getElementById('blist').innerHTML=list.map(b=>`
@@ -412,50 +609,12 @@ function renderBills(list){
         <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--mt);margin-bottom:3px"><span>통과 예측 ${b.predict}%</span><span>영향도 ${b.impact}/10</span></div>
         <div class="pb"><div class="pf" style="width:${b.predict}%;background:${b.risk==='crit'?'var(--rd)':b.risk==='high'?'var(--gd)':'var(--bl)'}"></div></div>
       </div>
-    </div>`).join('') || '<div style="color:var(--mt);font-size:12px;padding:16px 0">등록된 법안이 없습니다</div>';
-}
-
-function renderPredMeters(list){
-  document.getElementById('predMeters').innerHTML=list.slice(0,5).map(b=>`
-    <div class="mw">
-      <div class="ml" style="font-size:10px">${b.name.substring(0,8)}...</div>
-      <div class="mb"><div class="mf" style="width:${b.predict}%;background:${b.risk==='crit'?'var(--rd)':b.risk==='high'?'var(--gd)':'var(--bl)'}"></div></div>
-      <div class="mv" style="color:${b.risk==='crit'?'var(--rd)':b.risk==='high'?'var(--gd)':'var(--bl)'}">${b.predict}%</div>
     </div>`).join('');
 }
 
 function filterB(q){ renderBills(q?allBills.filter(b=>b.name.includes(q)||b.description?.includes(q)):allBills); }
 function filterR(r,el){ document.querySelectorAll('.fb').forEach(b=>b.classList.remove('on')); el.classList.add('on'); renderBills(r==='all'?allBills:allBills.filter(b=>b.risk===r)); }
 
-// ═══ LEGISLATORS ═══
-async function loadLegs(){
-  const {data}=await db.from('legislators').select('*').order('relation',{ascending:false});
-  if(!data)return;
-  document.getElementById('kpi-legs').textContent=data.length;
-  document.getElementById('llist').innerHTML=data.map(l=>`
-    <div class="li">
-      <div class="la" style="background:${l.color}22;color:${l.color}">${l.avatar}</div>
-      <div style="flex:1">
-        <div style="font-size:12px;font-weight:600">${l.name} <span style="font-size:10px;color:${l.color}">${l.party}</span></div>
-        <div style="font-size:10px;color:var(--mt)">${l.role}</div>
-      </div>
-      <div style="display:flex;align-items:center;gap:6px">
-        <div style="text-align:right">
-          <div style="font-size:12px;color:${l.relation>=4?'var(--g)':'var(--gd)'}">${'★'.repeat(l.relation)}${'☆'.repeat(5-l.relation)}</div>
-        </div>
-        <button class="eb" style="color:var(--rd)" onclick="deleteLeg(${l.id})">🗑</button>
-      </div>
-    </div>`).join('');
-  document.getElementById('topLegs').innerHTML=`
-    <div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid var(--br);color:var(--mt);font-weight:700;font-size:10px"><span>의원실</span><span>관계도</span></div>`+
-    data.slice(0,5).map(l=>`
-    <div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid var(--br);font-size:11px">
-      <span><span style="color:${l.color}">●</span> ${l.name}(${l.party})</span>
-      <span style="color:${l.relation>=4?'var(--g)':'var(--gd)'}">${'★'.repeat(l.relation)}${'☆'.repeat(5-l.relation)}</span>
-    </div>`).join('');
-}
-
-// ═══ CRUD ═══
 function openAddBill(){
   document.getElementById('modalContent').innerHTML=`
     <div class="mh"><div style="font-size:15px;font-weight:700">법안 추가</div><button class="mx" onclick="closeModal()">✕</button></div>
@@ -499,35 +658,10 @@ async function updateBill(id){
 
 async function deleteBill(id){
   if(!confirm('삭제하시겠습니까?'))return;
-  await db.from('bills').delete().eq('id',id);
-  showToast('삭제됨');loadBills();
+  await db.from('bills').delete().eq('id',id);showToast('삭제됨');loadBills();
 }
 
-function openAddLeg(){
-  document.getElementById('modalContent').innerHTML=`
-    <div class="mh"><div style="font-size:15px;font-weight:700">의원실 추가</div><button class="mx" onclick="closeModal()">✕</button></div>
-    <div class="field"><label class="flabel">의원 이름</label><input class="finput" id="l-name" placeholder="예: 이정문"></div>
-    <div class="field"><label class="flabel">정당</label><select class="finput" id="l-party"><option>민주</option><option>국힘</option><option>조국</option><option>정의</option><option>개혁</option></select></div>
-    <div class="field"><label class="flabel">역할/담당 이슈</label><input class="finput" id="l-role" placeholder="예: 온플법 대표발의"></div>
-    <div class="field"><label class="flabel">관계도 (1-5)</label><input class="finput" id="l-rel" type="number" min="1" max="5" value="3"></div>
-    <button class="btn-p" onclick="addLeg()">추가하기</button>`;
-  document.getElementById('ov').classList.add('on');
-}
-
-async function addLeg(){
-  const name=document.getElementById('l-name').value;
-  const party=document.getElementById('l-party').value;
-  const colors={'민주':'#2196F3','국힘':'#F44336','조국':'#9C27B0','정의':'#FF6F00','개혁':'#FF9800'};
-  const {error}=await db.from('legislators').insert({name,party,color:colors[party]||'#607D8B',role:document.getElementById('l-role').value,relation:+document.getElementById('l-rel').value,avatar:name[0]});
-  if(error){showToast('오류: '+error.message);return;}
-  closeModal();showToast('의원실 추가됨 ✅');loadLegs();
-}
-
-async function deleteLeg(id){
-  if(!confirm('삭제하시겠습니까?'))return;
-  await db.from('legislators').delete().eq('id',id);
-  showToast('삭제됨');loadLegs();
-}
+async function deleteAlert(id){ await db.from('alerts').delete().eq('id',id);showToast('삭제됨');loadAlerts(); }
 
 function openAddAlert(){
   document.getElementById('modalContent').innerHTML=`
@@ -545,11 +679,6 @@ async function addAlert(){
   const {error}=await db.from('alerts').insert({type:t,icon:icons[t],title:document.getElementById('a-title').value,body:document.getElementById('a-body').value});
   if(error){showToast('오류: '+error.message);return;}
   closeModal();showToast('알림 추가됨 ✅');loadAlerts();
-}
-
-async function deleteAlert(id){
-  await db.from('alerts').delete().eq('id',id);
-  showToast('삭제됨');loadAlerts();
 }
 
 function openAddEvent(){
@@ -570,9 +699,21 @@ async function addEvent(){
   closeModal();showToast('일정 추가됨 ✅');loadEvents();
 }
 
-async function deleteEvent(id){
-  await db.from('events').delete().eq('id',id);
-  showToast('삭제됨');loadEvents();
+// ═══ CALENDAR ═══
+function renderCalendar(events){
+  const evMap={};
+  events.forEach(e=>{if(e.day_num<=31)evMap[e.day_num]=e;});
+  let html='';
+  for(let i=0;i<6;i++)html+=`<div style="height:44px"></div>`;
+  for(let d=1;d<=31;d++){
+    const t=d===23,ev=evMap[d];
+    const cls=t?' today':ev?(ev.level==='al'?' hev':' assembly'):'';
+    html+=`<div class="cday${cls}">
+      <div style="font-size:11px;font-weight:${t?700:400};color:${t?'var(--g)':'var(--tx)'}">${d}</div>
+      ${ev?`<div style="font-size:9px;color:var(--mt);line-height:1.3;margin-top:2px">${ev.title.substring(0,7)}</div>`:''}
+    </div>`;
+  }
+  document.getElementById('cg').innerHTML=html;
 }
 
 // ═══ NAV ═══
@@ -582,7 +723,8 @@ function go(id,el){
   document.getElementById('p-'+id).classList.add('on');
   el.classList.add('on');
   if(id==='pred')setTimeout(drawGauges,50);
-  if(id==='leg')loadLegs();
+  if(id==='assembly')loadAssemblySchedules();
+  if(id==='members')loadMembers();
 }
 
 function closeModal(){document.getElementById('ov').classList.remove('on');}
@@ -599,27 +741,24 @@ function drawGauge(id,pct,color){const c=document.getElementById(id);if(!c)retur
 function drawGauges(){drawGauge('g1',72,'#D94F3B');drawGauge('g2',58,'#E8A838');drawGauge('g3',61,'#E8A838');}
 
 // ═══ AI CHAT ═══
-const SYSTEM=`당신은 NAVER 대관(GR) 전문 AI 어시스턴트입니다. 네이버 대관 실무자를 위해 법안 대응·의원실 전략·규제 분석·논거 개발을 지원합니다. 주요 이슈: 온플법(72% 통과예측), AI기본법(58%), 라인야후(일본 총무성 행정지도), 구글지도반출, 수수료규제(61%). 답변은 ①②③ 구조로 명확하게, 실무에 즉시 활용 가능하게.`;
+const SYSTEM=`당신은 NAVER 대관(GR) 전문 AI 어시스턴트입니다. 국회 OpenAPI와 실시간 연동된 시스템을 사용 중입니다. 주요 이슈: 온플법(72%), AI기본법(58%), 라인야후, 구글지도반출, 수수료규제(61%). 답변은 ①②③ 구조로 실무 활용 가능하게.`;
 
 async function ask(q){
   if(isLoading)return;
   const inp=document.getElementById('ai-in');
-  const query=q||inp.value.trim();
-  if(!query)return;
+  const query=q||inp.value.trim();if(!query)return;
   const msgs=document.getElementById('msgs');
   msgs.innerHTML+=`<div class="msg-me"><div class="b-me">${query}</div></div>`;
   inp.value='';msgs.scrollTop=msgs.scrollHeight;
   const thinkId='t'+Date.now();
   msgs.innerHTML+=`<div class="msg-ai" id="${thinkId}"><div class="av">N</div><div class="b-ai"><div class="thinking"><span></span><span></span><span></span></div></div></div>`;
-  msgs.scrollTop=msgs.scrollHeight;
   isLoading=true;document.getElementById('sendBtn').disabled=true;
   document.getElementById('aiStatus').innerHTML=`<div class="dot"></div>응답 중...`;
   chatHistory.push({role:'user',content:query});
   if(!API_KEY){
     await new Promise(r=>setTimeout(r,700));
     document.getElementById(thinkId)?.remove();
-    const r=localResp(query);
-    msgs.innerHTML+=`<div class="msg-ai"><div class="av">N</div><div class="b-ai"><span class="ai-tag">GR AI (로컬)</span><br>${r}<br><br><span style="color:var(--gd);font-size:10px">⚠️ API 키 입력 시 실제 Claude 연결</span></div></div>`;
+    msgs.innerHTML+=`<div class="msg-ai"><div class="av">N</div><div class="b-ai"><span class="ai-tag">GR AI (로컬)</span><br>${localResp(query)}<br><br><span style="color:var(--gd);font-size:10px">⚠️ API 키 입력 시 실제 Claude 연결</span></div></div>`;
   }else{
     try{
       const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':API_KEY,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1500,system:SYSTEM,messages:chatHistory.slice(-10)})});
@@ -629,7 +768,7 @@ async function ask(q){
         const text=data.content[0].text.replace(/\n/g,'<br>');
         msgs.innerHTML+=`<div class="msg-ai"><div class="av">N</div><div class="b-ai"><span class="ai-tag">GR AI · Claude</span><br>${text}</div></div>`;
         chatHistory.push({role:'assistant',content:data.content[0].text});
-      }else throw new Error(data.error?.message||'API 오류');
+      }else throw new Error(data.error?.message||'오류');
     }catch(e){
       document.getElementById(thinkId)?.remove();
       msgs.innerHTML+=`<div class="msg-ai"><div class="av">N</div><div class="b-ai" style="color:var(--rd)">⚠️ ${e.message}</div></div>`;
@@ -641,17 +780,21 @@ async function ask(q){
 }
 
 function localResp(q){
-  if(q.includes('온플법'))return `📋 <b>온플법 반론 논거</b><br><br>① <b>역차별</b> — 구글·알리는 규제 불가. 국내 플랫폼만 역차별.<br>② <b>대법원 선례</b> — 2024.10 파기환송 승소. 현행법으로 충분.<br>③ <b>통상 마찰</b> — USTR 비관세 장벽 공식 문제 제기.<br>④ <b>자율규제</b> — 자율규제위원회 보고서 운영 중.<br>⑤ <b>과징금 위헌</b> — 매출 10%는 비례원칙 위반.`;
-  if(q.includes('라인야후'))return `🌐 <b>라인야후 현황</b><br><br>📍 총무성 2차 행정지도 → 소프트뱅크 지분 인수 협상 중<br>📍 3.31 마감<br><br>① 과기정통부·외교부 공조<br>② 과방위·외통위 "한국기업 역차별" 브리핑<br>③ 협상 진행 중 → 공개 입장 최소화`;
-  if(q.includes('AI기본법'))return `🤖 <b>AI기본법 영향</b><br><br>① 고위험 AI → 검색·뉴스 추천 알고리즘 포함 우려<br>② 영향평가 → 연간 수십억 비용<br><br>대응: 고위험 범위 최소화, 자율 영향평가 인정, EU AI법 비교`;
-  if(q.includes('구글'))return `🗺 <b>구글지도 반출 반대 논거</b><br><br>① 국가 안보 — 군사시설 포함<br>② 데이터 주권 — 이용자 동선 해외 이전<br>③ 역차별 — 구글 세금 회피<br>④ 소상공인 보호 — 450만+ 플레이스 업체<br>⑤ 상호주의 — 동등 납세 조건 재검토`;
-  return `API 키를 입력하시면 실제 Claude가 "${q}"를 상세 분석합니다.`;
+  if(q.includes('온플법'))return `📋 <b>온플법 반론 논거</b><br>① 역차별 ② 대법원 선례 ③ 통상마찰 ④ 자율규제 ⑤ 과징금 위헌`;
+  if(q.includes('라인야후'))return `🌐 <b>라인야후</b> — 3.31 마감. 과기정통부·외교부 공조, 역차별 프레임`;
+  if(q.includes('AI'))return `🤖 <b>AI기본법</b> — 고위험 AI 범위 최소화, 자율 영향평가 인정, EU AI법 비교`;
+  if(q.includes('구글'))return `🗺 <b>구글지도</b> — 국가안보→데이터주권→역차별→소상공인→상호주의`;
+  return `API 키 입력 시 실제 Claude가 분석합니다.`;
 }
 
-// ═══ TOAST ═══
 function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500);}
 
-// ═══ START ═══
+// ═══ DATE FILTER DEFAULT ═══
+const today=new Date();
+if(document.getElementById('dateFilter')){
+  document.getElementById('dateFilter').value=`${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,'0')}-${String(today.getDate()).padStart(2,'0')}`;
+}
+
 loadAll();
 </script>
 </body>
