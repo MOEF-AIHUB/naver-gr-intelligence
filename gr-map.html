@@ -1,0 +1,858 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NAVER GR 전국 지도</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&display=swap');
+:root{--g:#03C75A;--bl:#1C6EF2;--rd:#D94F3B;--gd:#E8A838;--pu:#8B5CF6;--teal:#0EA5E9;--bg:#0A1628;--cd:#111E30;--cd2:#162030;--br:#1E3048;--tx:#D8E8F5;--mt:#5A7A9A}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--tx);font-family:'Noto Sans KR',sans-serif;font-size:13px;min-height:100vh}
+header{background:#0A1628;border-bottom:1px solid var(--br);padding:0 20px;height:52px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
+.logo{display:flex;align-items:center;gap:10px}
+.logo-n{background:linear-gradient(135deg,#03C75A,#00A847);color:#fff;font-weight:900;font-size:15px;width:30px;height:30px;border-radius:7px;display:flex;align-items:center;justify-content:center}
+.back-btn{background:var(--cd);border:1px solid var(--br);border-radius:7px;padding:5px 12px;color:var(--mt);font-size:11px;cursor:pointer;text-decoration:none;display:flex;align-items:center;gap:5px}
+.back-btn:hover{color:var(--g);border-color:var(--g)}
+.layout{display:grid;grid-template-columns:1fr 380px;height:calc(100vh - 52px);overflow:hidden}
+@media(max-width:1000px){.layout{grid-template-columns:1fr}}
+/* MAP AREA */
+.map-area{position:relative;background:var(--bg);overflow:hidden;display:flex;align-items:center;justify-content:center}
+.map-svg{width:100%;height:100%;max-width:700px}
+/* REGION */
+.region{fill:#1A2535;stroke:#243244;stroke-width:1;cursor:pointer;transition:.2s}
+.region:hover{fill:#243244;stroke:var(--g);stroke-width:1.5}
+.region.highlight{fill:rgba(3,199,90,.12);stroke:var(--g);stroke-width:2}
+/* NAVER PINS */
+.naver-pin{cursor:pointer;filter:drop-shadow(0 0 6px rgba(3,199,90,.6))}
+.naver-pin:hover{filter:drop-shadow(0 0 12px rgba(3,199,90,.9))}
+.pin-hq{fill:#03C75A}
+.pin-dc{fill:#1C6EF2}
+.pin-office{fill:#E8A838}
+.pin-lab{fill:#8B5CF6}
+.pin-global{fill:#0EA5E9}
+/* TOOLTIP */
+.tooltip{position:absolute;background:var(--cd);border:1px solid var(--br);border-radius:10px;padding:14px;min-width:280px;max-width:360px;pointer-events:none;z-index:200;box-shadow:0 8px 32px rgba(0,0,0,.5);display:none}
+.tooltip.show{display:block}
+.tt-title{font-size:13px;font-weight:700;margin-bottom:8px;display:flex;align-items:center;gap:7px}
+.tt-badge{font-size:9px;padding:2px 7px;border-radius:10px;font-weight:700}
+.tt-section{margin-bottom:8px}
+.tt-label{font-size:9px;color:var(--mt);font-weight:700;margin-bottom:4px;text-transform:uppercase;letter-spacing:.4px}
+.tt-item{display:flex;align-items:flex-start;gap:6px;padding:4px 0;border-bottom:1px solid var(--br);font-size:10px}
+.tt-item:last-child{border-bottom:none}
+.tt-role{font-size:9px;color:var(--mt);min-width:60px;flex-shrink:0}
+.tt-name{font-weight:600}
+.tt-party{font-size:9px;margin-left:4px}
+.tt-issues{display:flex;gap:4px;flex-wrap:wrap;margin-top:5px}
+.tt-issue{font-size:9px;padding:2px 6px;border-radius:8px;font-weight:600}
+/* RIGHT PANEL */
+.right-panel{background:var(--cd);border-left:1px solid var(--br);overflow-y:auto;display:flex;flex-direction:column}
+.right-panel::-webkit-scrollbar{width:4px}
+.right-panel::-webkit-scrollbar-thumb{background:var(--br);border-radius:2px}
+.panel-header{padding:14px;border-bottom:1px solid var(--br);position:sticky;top:0;background:var(--cd);z-index:10}
+.panel-body{padding:14px;flex:1}
+/* LEGEND */
+.legend{display:flex;flex-direction:column;gap:7px;margin-bottom:14px}
+.leg-item{display:flex;align-items:center;gap:8px;font-size:11px}
+.leg-dot{width:12px;height:12px;border-radius:50%;flex-shrink:0}
+/* FILTER */
+.filter-row{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:12px}
+.fb{background:var(--cd2);border:1px solid var(--br);border-radius:12px;padding:3px 9px;color:var(--mt);font-size:10px;cursor:pointer}
+.fb.on{border-color:var(--g);color:var(--g);background:rgba(3,199,90,.08)}
+/* LOCATION CARDS */
+.loc-card{background:var(--cd2);border:1px solid var(--br);border-radius:8px;padding:11px;margin-bottom:8px;cursor:pointer;transition:.15s}
+.loc-card:hover{border-color:var(--g)}
+.loc-card.active{border-color:var(--g);background:rgba(3,199,90,.06)}
+.loc-title{font-size:12px;font-weight:700;margin-bottom:4px;display:flex;align-items:center;gap:6px}
+.loc-type{font-size:9px;padding:1px 6px;border-radius:8px;font-weight:700}
+.loc-addr{font-size:10px;color:var(--mt);margin-bottom:6px}
+.loc-issues{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:6px}
+.loc-issue{font-size:9px;padding:2px 6px;border-radius:8px;font-weight:600}
+.loc-channels{font-size:10px;color:var(--mt);border-top:1px solid var(--br);padding-top:6px;margin-top:2px;line-height:1.7}
+/* CHANNEL SECTION */
+.channel-card{background:rgba(3,199,90,.05);border:1px solid rgba(3,199,90,.2);border-radius:8px;padding:11px;margin-top:10px}
+.channel-title{font-size:11px;font-weight:700;color:var(--g);margin-bottom:8px;display:flex;align-items:center;gap:5px}
+.channel-item{display:flex;align-items:flex-start;gap:8px;padding:6px 0;border-bottom:1px solid rgba(3,199,90,.1);font-size:10px}
+.channel-item:last-child{border-bottom:none}
+.channel-level{min-width:65px;color:var(--mt);font-size:9px;flex-shrink:0}
+.channel-name{font-weight:600}
+.channel-sub{font-size:9px;color:var(--mt);margin-top:1px}
+/* MEMBERS SECTION */
+.members-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:8px}
+.mem-mini{background:var(--cd2);border:1px solid var(--br);border-radius:6px;padding:7px;font-size:10px}
+.mem-mini-name{font-weight:700;margin-bottom:2px}
+.mem-mini-role{font-size:9px;color:var(--mt)}
+/* COMMITTEE SECTION */
+.cmit-section{margin-bottom:12px}
+.cmit-header{font-size:10px;font-weight:700;color:var(--mt);letter-spacing:.4px;text-transform:uppercase;margin-bottom:6px;padding-bottom:4px;border-bottom:1px solid var(--br)}
+.mem-row{display:flex;align-items:center;gap:6px;padding:4px 0;border-bottom:1px solid var(--br);font-size:10px}
+.mem-row:last-child{border-bottom:none}
+.mem-badge{font-size:8px;padding:1px 5px;border-radius:6px;font-weight:700;white-space:nowrap}
+.badge-d{background:rgba(33,150,243,.2);color:#2196F3}
+.badge-p{background:rgba(244,67,54,.2);color:#F44336}
+.badge-o{background:rgba(156,39,176,.2);color:#9C27B0}
+.badge-s{background:rgba(90,122,154,.2);color:var(--mt)}
+hr{border:none;border-top:1px solid var(--br);margin:10px 0}
+.stat-row{display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid var(--br);font-size:10px}
+.stat-row:last-child{border-bottom:none}
+.stat-val{font-weight:700}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <div class="logo-n">N</div>
+    <div>
+      <div style="font-size:13px;font-weight:700">GR 전국 지도</div>
+      <div style="font-size:10px;color:var(--mt)">네이버 시설 × 지역 GR 채널 × 22대 국회의원</div>
+    </div>
+  </div>
+  <a href="index.html" class="back-btn">← 메인으로</a>
+</header>
+
+<div class="layout">
+
+  <!-- 지도 영역 -->
+  <div class="map-area" id="mapArea">
+    <div class="tooltip" id="tooltip"></div>
+    <svg class="map-svg" viewBox="0 0 500 620" id="mainMap" xmlns="http://www.w3.org/2000/svg">
+      <!-- 한반도 지도 (남한 간략화) -->
+      <!-- 서울 -->
+      <path class="region" id="r-seoul" d="M220,135 L235,128 L248,133 L252,145 L240,153 L225,150 L217,142 Z" onclick="selectRegion('seoul')" title="서울"/>
+      <text x="234" y="143" text-anchor="middle" fill="#7A8FA6" font-size="8" font-weight="600">서울</text>
+      <!-- 경기 -->
+      <path class="region" id="r-gyeonggi" d="M190,110 L240,100 L280,108 L300,130 L295,165 L275,180 L255,185 L230,180 L200,175 L180,160 L170,140 L175,120 Z" onclick="selectRegion('gyeonggi')"/>
+      <text x="230" y="165" text-anchor="middle" fill="#7A8FA6" font-size="8.5" font-weight="600">경기</text>
+      <!-- 인천 -->
+      <path class="region" id="r-incheon" d="M170,140 L195,135 L200,150 L185,158 L170,155 Z" onclick="selectRegion('incheon')"/>
+      <text x="183" y="150" text-anchor="middle" fill="#7A8FA6" font-size="7.5">인천</text>
+      <!-- 강원 -->
+      <path class="region" id="r-gangwon" d="M280,100 L340,95 L370,110 L380,140 L370,175 L350,185 L320,185 L295,170 L300,130 Z" onclick="selectRegion('gangwon')"/>
+      <text x="335" y="148" text-anchor="middle" fill="#7A8FA6" font-size="8.5" font-weight="600">강원</text>
+      <!-- 충북 -->
+      <path class="region" id="r-chungbuk" d="M255,185 L295,180 L320,185 L325,215 L310,235 L285,240 L260,230 L250,210 Z" onclick="selectRegion('chungbuk')"/>
+      <text x="288" y="213" text-anchor="middle" fill="#7A8FA6" font-size="8">충북</text>
+      <!-- 충남 -->
+      <path class="region" id="r-chungnam" d="M175,180 L230,180 L255,185 L250,210 L235,230 L210,245 L180,235 L160,210 L165,190 Z" onclick="selectRegion('chungnam')"/>
+      <text x="210" y="213" text-anchor="middle" fill="#7A8FA6" font-size="8">충남</text>
+      <!-- 대전 -->
+      <path class="region" id="r-daejeon" d="M235,230 L255,225 L265,240 L255,252 L238,250 L228,240 Z" onclick="selectRegion('daejeon')"/>
+      <text x="247" y="242" text-anchor="middle" fill="#7A8FA6" font-size="7">대전</text>
+      <!-- 세종 -->
+      <path class="region" id="r-sejong" d="M228,220 L243,218 L248,230 L237,235 L225,230 Z" onclick="selectRegion('sejong')"/>
+      <text x="236" y="228" text-anchor="middle" fill="#7A8FA6" font-size="6.5">세종</text>
+      <!-- 전북 -->
+      <path class="region" id="r-jeonbuk" d="M180,250 L235,245 L265,250 L270,280 L255,305 L225,310 L195,300 L170,275 L172,255 Z" onclick="selectRegion('jeonbuk')"/>
+      <text x="220" y="280" text-anchor="middle" fill="#7A8FA6" font-size="8">전북</text>
+      <!-- 전남 -->
+      <path class="region" id="r-jeonnam" d="M170,305 L225,310 L255,315 L260,345 L250,375 L220,385 L190,375 L165,355 L150,330 L155,310 Z" onclick="selectRegion('jeonnam')"/>
+      <text x="208" y="348" text-anchor="middle" fill="#7A8FA6" font-size="8">전남</text>
+      <!-- 광주 -->
+      <path class="region" id="r-gwangju" d="M195,320 L215,316 L220,332 L208,340 L193,335 Z" onclick="selectRegion('gwangju')"/>
+      <text x="207" y="330" text-anchor="middle" fill="#7A8FA6" font-size="7">광주</text>
+      <!-- 경북 -->
+      <path class="region" id="r-gyeongbuk" d="M310,185 L370,180 L400,200 L410,235 L400,270 L375,290 L345,290 L315,270 L305,240 L310,210 Z" onclick="selectRegion('gyeongbuk')"/>
+      <text x="358" y="238" text-anchor="middle" fill="#7A8FA6" font-size="8">경북</text>
+      <!-- 경남 -->
+      <path class="region" id="r-gyeongnam" d="M285,295 L345,295 L380,300 L395,320 L390,350 L365,365 L330,360 L300,345 L275,320 L278,300 Z" onclick="selectRegion('gyeongnam')"/>
+      <text x="335" y="330" text-anchor="middle" fill="#7A8FA6" font-size="8">경남</text>
+      <!-- 대구 -->
+      <path class="region" id="r-daegu" d="M340,255 L365,252 L372,268 L358,280 L338,278 L330,265 Z" onclick="selectRegion('daegu')"/>
+      <text x="351" y="268" text-anchor="middle" fill="#7A8FA6" font-size="7">대구</text>
+      <!-- 울산 -->
+      <path class="region" id="r-ulsan" d="M375,275 L400,272 L408,292 L395,305 L375,300 L368,286 Z" onclick="selectRegion('ulsan')"/>
+      <text x="388" y="290" text-anchor="middle" fill="#7A8FA6" font-size="7">울산</text>
+      <!-- 부산 -->
+      <path class="region" id="r-busan" d="M365,340 L395,335 L405,355 L395,372 L370,375 L355,360 Z" onclick="selectRegion('busan')"/>
+      <text x="380" y="358" text-anchor="middle" fill="#7A8FA6" font-size="7.5">부산</text>
+      <!-- 제주 -->
+      <path class="region" id="r-jeju" d="M195,480 L235,472 L260,478 L265,495 L245,507 L210,508 L190,498 Z" onclick="selectRegion('jeju')"/>
+      <text x="228" y="492" text-anchor="middle" fill="#7A8FA6" font-size="8">제주</text>
+
+      <!-- 바다 표시 -->
+      <text x="100" y="300" fill="#1E3048" font-size="10" font-weight="600">서해</text>
+      <text x="420" y="280" fill="#1E3048" font-size="10" font-weight="600">동해</text>
+      <text x="280" y="440" fill="#1E3048" font-size="10" font-weight="600">남해</text>
+
+      <!-- === 네이버 시설 핀 === -->
+
+      <!-- 본사/그린팩토리 - 성남 분당 -->
+      <g class="naver-pin" onclick="selectLocation('hq')" transform="translate(260,170)">
+        <circle r="10" fill="#03C75A" opacity=".2"/>
+        <circle r="6" fill="#03C75A"/>
+        <text y="4" text-anchor="middle" fill="#fff" font-size="7" font-weight="900">HQ</text>
+        <circle r="10" fill="none" stroke="#03C75A" stroke-width="1.5" opacity=".6">
+          <animate attributeName="r" values="10;18;10" dur="2.5s" repeatCount="indefinite"/>
+          <animate attributeName="opacity" values=".6;0;.6" dur="2.5s" repeatCount="indefinite"/>
+        </circle>
+      </g>
+      <text x="260" y="162" text-anchor="middle" fill="#03C75A" font-size="8" font-weight="700">그린팩토리</text>
+
+      <!-- 제2사옥 1784 - 성남 분당 -->
+      <g class="naver-pin" onclick="selectLocation('1784')" transform="translate(272,172)">
+        <circle r="5" fill="#03C75A" opacity=".8"/>
+        <text y="3" text-anchor="middle" fill="#fff" font-size="5" font-weight="900">1784</text>
+      </g>
+
+      <!-- 각산 데이터센터 - 춘천 -->
+      <g class="naver-pin" onclick="selectLocation('dc-chuncheon')" transform="translate(320,140)">
+        <circle r="9" fill="#1C6EF2" opacity=".2"/>
+        <circle r="5" fill="#1C6EF2"/>
+        <text y="3" text-anchor="middle" fill="#fff" font-size="5.5" font-weight="900">DC</text>
+        <circle r="9" fill="none" stroke="#1C6EF2" stroke-width="1" opacity=".5">
+          <animate attributeName="r" values="9;15;9" dur="3s" repeatCount="indefinite"/>
+          <animate attributeName="opacity" values=".5;0;.5" dur="3s" repeatCount="indefinite"/>
+        </circle>
+      </g>
+      <text x="320" y="131" text-anchor="middle" fill="#1C6EF2" font-size="7.5" font-weight="700">각산DC</text>
+
+      <!-- 세종 데이터센터 (건설중) -->
+      <g class="naver-pin" onclick="selectLocation('dc-sejong')" transform="translate(233,225)">
+        <circle r="9" fill="#1C6EF2" opacity=".15"/>
+        <circle r="5" fill="#1C6EF2" opacity=".7" stroke-dasharray="3,2" stroke="#1C6EF2"/>
+        <text y="3" text-anchor="middle" fill="#fff" font-size="5" font-weight="900">DC2</text>
+      </g>
+      <text x="248" y="222" text-anchor="middle" fill="#1C6EF2" font-size="7" font-weight="700">세종DC(예정)</text>
+
+      <!-- 서울 사무소 (강남) -->
+      <g class="naver-pin" onclick="selectLocation('office-seoul')" transform="translate(238,142)">
+        <circle r="7" fill="#E8A838" opacity=".2"/>
+        <circle r="4" fill="#E8A838"/>
+        <text y="3" text-anchor="middle" fill="#fff" font-size="5" font-weight="900">오피스</text>
+      </g>
+      <text x="238" y="133" text-anchor="middle" fill="#E8A838" font-size="7" font-weight="700">서울오피스</text>
+
+      <!-- 라인플러스 - 성남 -->
+      <g class="naver-pin" onclick="selectLocation('lineplus')" transform="translate(253,182)">
+        <circle r="5" fill="#EC4899" opacity=".8"/>
+        <text y="3" text-anchor="middle" fill="#fff" font-size="4.5" font-weight="900">LINE</text>
+      </g>
+
+      <!-- 부산 지사 -->
+      <g class="naver-pin" onclick="selectLocation('office-busan')" transform="translate(380,352)">
+        <circle r="6" fill="#E8A838" opacity=".2"/>
+        <circle r="4" fill="#E8A838"/>
+        <text y="3" text-anchor="middle" fill="#fff" font-size="4.5">부산</text>
+      </g>
+
+      <!-- 제주 사무소 -->
+      <g class="naver-pin" onclick="selectLocation('office-jeju')" transform="translate(228,490)">
+        <circle r="5" fill="#E8A838" opacity=".8"/>
+      </g>
+      <text x="240" y="487" text-anchor="middle" fill="#E8A838" font-size="7">제주</text>
+
+      <!-- 커넥트재단 - 서울 -->
+      <g class="naver-pin" onclick="selectLocation('connect')" transform="translate(228,135)">
+        <rect x="-4" y="-4" width="8" height="8" rx="2" fill="#8B5CF6"/>
+        <text y="3" text-anchor="middle" fill="#fff" font-size="4.5" font-weight="900">재단</text>
+      </g>
+
+      <!-- 웹툰엔터 - 서울 -->
+      <g class="naver-pin" onclick="selectLocation('webtoon')" transform="translate(243,138)">
+        <rect x="-4" y="-4" width="8" height="8" rx="2" fill="#EC4899"/>
+        <text y="3" text-anchor="middle" fill="#fff" font-size="4" font-weight="900">웹툰</text>
+      </g>
+
+      <!-- 강원 거점 (스프링캠프) -->
+      <g class="naver-pin" onclick="selectLocation('springcamp')" transform="translate(310,155)">
+        <circle r="5" fill="#8B5CF6" opacity=".8"/>
+      </g>
+      <text x="315" y="152" text-anchor="middle" fill="#8B5CF6" font-size="7">스프링캠프</text>
+
+      <!-- 지도 범례 -->
+      <g transform="translate(15,500)">
+        <rect x="0" y="-5" width="130" height="78" rx="6" fill="#111E30" stroke="#1E3048"/>
+        <circle cx="12" cy="8" r="5" fill="#03C75A"/><text x="22" y="12" fill="#D8E8F5" font-size="8">본사/사옥</text>
+        <circle cx="12" cy="24" r="5" fill="#1C6EF2"/><text x="22" y="28" fill="#D8E8F5" font-size="8">데이터센터</text>
+        <circle cx="12" cy="40" r="5" fill="#E8A838"/><text x="22" y="44" fill="#D8E8F5" font-size="8">지사/사무소</text>
+        <circle cx="12" cy="56" r="5" fill="#8B5CF6"/><text x="22" y="60" fill="#D8E8F5" font-size="8">계열사/재단</text>
+        <circle cx="12" cy="68" r="5" fill="#EC4899"/><text x="22" y="72" fill="#D8E8F5" font-size="8">콘텐츠/글로벌</text>
+      </g>
+    </svg>
+  </div>
+
+  <!-- 오른쪽 패널 -->
+  <div class="right-panel">
+    <div class="panel-header">
+      <div style="font-size:12px;font-weight:700;margin-bottom:6px">📍 지역 GR 채널 가이드</div>
+      <div style="font-size:10px;color:var(--mt)">시설 또는 지역 클릭 시 해당 GR 채널 표시</div>
+      <!-- 필터 -->
+      <div class="filter-row" style="margin-top:8px;margin-bottom:0">
+        <button class="fb on" onclick="filterPanel('all',this)">전체</button>
+        <button class="fb" onclick="filterPanel('hq',this)">본사</button>
+        <button class="fb" onclick="filterPanel('dc',this)">데이터센터</button>
+        <button class="fb" onclick="filterPanel('office',this)">지사</button>
+        <button class="fb" onclick="filterPanel('member',this)">의원 명단</button>
+      </div>
+    </div>
+    <div class="panel-body" id="panelBody">
+      <!-- 기본 화면 -->
+      <div id="defaultPanel">
+        <div style="font-size:11px;font-weight:700;margin-bottom:10px;color:var(--g)">🏢 네이버 전국 시설 현황</div>
+        <div id="locationList"></div>
+        <hr>
+        <div style="font-size:11px;font-weight:700;margin-bottom:10px;color:var(--mt)">🏛 GR 핵심 위원회 현황</div>
+        <div id="cmitSummary"></div>
+      </div>
+      <!-- 선택된 위치/지역 상세 -->
+      <div id="detailPanel" style="display:none"></div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// ═══ 네이버 시설 데이터 ═══
+const LOCATIONS = {
+  hq: {
+    name: '그린팩토리 (본사)',
+    type: 'hq', typeLabel: '본사',
+    typeColor: '#03C75A',
+    address: '경기도 성남시 분당구 불정로 6',
+    region: 'gyeonggi',
+    desc: '네이버 본사. 임직원 약 4,000명. HyperCLOVAX, 서치·커머스 BM 핵심 시설.',
+    issues: ['온플법 자사우대', 'AI기본법 고위험 AI', '에이전트N 규제'],
+    channels: [
+      {level:'국회', name:'성남 분당甲 국회의원', person:'이광희 (더불어민주당)', tel:'02-788-2871', note:'정무위·분당 지역구'},
+      {level:'국회', name:'성남 분당乙 국회의원', person:'김병기 (더불어민주당)', tel:'02-788-2591', note:'국방위·분당 지역구'},
+      {level:'광역', name:'경기도지사', person:'김동연 (더불어민주당)', tel:'031-8008-2300', note:'경기도 규제 창구'},
+      {level:'기초', name:'성남시장', person:'신상진 (국민의힘)', tel:'031-729-2114', note:'성남시 인허가'},
+      {level:'기초', name:'분당구청장', person:'신승원 (국민의힘)', tel:'031-729-4000', note:'분당구 행정'},
+      {level:'부처', name:'과학기술정보통신부', person:'과기정통부 AI정책실', tel:'02-2110-0800', note:'AI·플랫폼 정책'},
+      {level:'부처', name:'공정거래위원회', person:'시장감시국 디지털경제과', tel:'044-200-4000', note:'온플법 소관'},
+    ]
+  },
+  '1784': {
+    name: '1784 (제2사옥)',
+    type: 'hq', typeLabel: '제2사옥',
+    typeColor: '#03C75A',
+    address: '경기도 성남시 분당구 판교역로 235',
+    region: 'gyeonggi',
+    desc: '네이버 제2사옥. 로봇·AI 연구개발 중심. 브레인 AI 리서치 랩 입주.',
+    issues: ['AI기본법', '에이전트N', '로봇규제'],
+    channels: [
+      {level:'국회', name:'성남 분당甲 국회의원', person:'이광희 (더불어민주당)', tel:'02-788-2871', note:'분당 지역구'},
+      {level:'광역', name:'경기도지사', person:'김동연', tel:'031-8008-2300', note:''},
+      {level:'기초', name:'성남시장', person:'신상진', tel:'031-729-2114', note:''},
+    ]
+  },
+  'dc-chuncheon': {
+    name: '각산 데이터센터',
+    type: 'dc', typeLabel: '데이터센터',
+    typeColor: '#1C6EF2',
+    address: '강원도 춘천시 동산면 각산리',
+    region: 'gangwon',
+    desc: '네이버 1호 자체 데이터센터. 전기·냉각·보안 인프라. 국가 보안시설 수준 관리. RE100 핵심 거점.',
+    issues: ['CSAP 요건 강화', 'RE100·ESG 규제', '국가안보시설 지정'],
+    channels: [
+      {level:'국회', name:'춘천시 갑 국회의원', person:'허영 (더불어민주당)', tel:'02-788-2591', note:'행안위·춘천갑'},
+      {level:'국회', name:'춘천시 을 국회의원', person:'이양수 (국민의힘)', tel:'02-788-2891', note:'정무위·춘천을'},
+      {level:'광역', name:'강원도지사', person:'김진태 (국민의힘)', tel:'033-249-2114', note:''},
+      {level:'기초', name:'춘천시장', person:'육동한 (국민의힘)', tel:'033-250-3000', note:''},
+      {level:'부처', name:'과학기술정보통신부', person:'데이터·클라우드정책과', tel:'02-2110-0800', note:'CSAP 인증'},
+      {level:'부처', name:'산업통상자원부', person:'에너지전환정책과', tel:'044-203-3000', note:'RE100·에너지'},
+    ]
+  },
+  'dc-sejong': {
+    name: '세종 데이터센터 (건설중)',
+    type: 'dc', typeLabel: '데이터센터(예정)',
+    typeColor: '#1C6EF2',
+    address: '세종특별자치시 (위치 미확정)',
+    region: 'sejong',
+    desc: '2호 데이터센터. 건설 계획 단계. 세종시 행정중심복합도시 인근 예정지 협의중.',
+    issues: ['데이터센터 인허가', '환경영향평가', 'RE100'],
+    channels: [
+      {level:'국회', name:'세종시 갑 국회의원', person:'강준현 (더불어민주당)', tel:'02-788-2622', note:'정무위 간사·세종갑'},
+      {level:'국회', name:'세종시 을 국회의원', person:'오기형 (더불어민주당)', tel:'02-788-2751', note:'정무위·세종을'},
+      {level:'광역', name:'세종시장', person:'최민호 (국민의힘)', tel:'044-300-2000', note:''},
+      {level:'부처', name:'환경부', person:'환경영향평가과', tel:'044-201-6500', note:'환경영향평가'},
+    ]
+  },
+  'office-seoul': {
+    name: '서울 오피스 (강남/종로)',
+    type: 'office', typeLabel: '서울 사무소',
+    typeColor: '#E8A838',
+    address: '서울특별시 강남구 테헤란로 (다수)',
+    region: 'seoul',
+    desc: '서울 내 복수 사무소. 대관·법무·홍보 핵심 부서. 국회 접근성 최우선 거점.',
+    issues: ['온플법 대관 활동', '공청회 대응', '의원실 브리핑'],
+    channels: [
+      {level:'국회', name:'강남갑 국회의원', person:'이경규 (국민의힘)', tel:'02-788-2671', note:''},
+      {level:'국회', name:'종로 국회의원', person:'최강욱 (더불어민주당)', tel:'02-788-2801', note:''},
+      {level:'광역', name:'서울시장', person:'오세훈 (국민의힘)', tel:'02-120', note:'서울시 규제·인허가'},
+      {level:'부처', name:'공정거래위원회', person:'서울사무소', tel:'02-3415-2800', note:'현장 조사 대응'},
+    ]
+  },
+  'office-busan': {
+    name: '부산 지사',
+    type: 'office', typeLabel: '지사',
+    typeColor: '#E8A838',
+    address: '부산광역시 해운대구',
+    region: 'busan',
+    desc: '부산 권역 영업·파트너십. 동남권 스타트업 생태계 연계.',
+    issues: ['지역 사업자 지원', '스타트업 생태계'],
+    channels: [
+      {level:'국회', name:'해운대갑 국회의원', person:'주진우 (국민의힘)', tel:'02-788-2521', note:'법사위'},
+      {level:'광역', name:'부산시장', person:'박형준 (국민의힘)', tel:'051-120', note:''},
+    ]
+  },
+  'office-jeju': {
+    name: '제주 사무소',
+    type: 'office', typeLabel: '지사',
+    typeColor: '#E8A838',
+    address: '제주특별자치도 제주시',
+    region: 'jeju',
+    desc: '제주 권역 서비스·관광 플랫폼 연계. 제주테크노파크 협력.',
+    issues: ['관광 플랫폼 규제', '지역 SME 지원'],
+    channels: [
+      {level:'국회', name:'제주시 갑 국회의원', person:'문대림 (더불어민주당)', tel:'02-788-2841', note:''},
+      {level:'국회', name:'제주시 을 국회의원', person:'위성곤 (더불어민주당)', tel:'02-788-2591', note:''},
+      {level:'광역', name:'제주도지사', person:'오영훈 (더불어민주당)', tel:'064-710-2114', note:''},
+    ]
+  },
+  'lineplus': {
+    name: '라인플러스',
+    type: 'lab', typeLabel: '계열사',
+    typeColor: '#EC4899',
+    address: '경기도 성남시 분당구 판교역로',
+    region: 'gyeonggi',
+    desc: '라인 글로벌 서비스 개발. 라인야후 지배구조 재편 이슈 직결 법인.',
+    issues: ['라인야후 지배구조', '개인정보 국경간 이전', 'GDPR'],
+    channels: [
+      {level:'국회', name:'외통위 (라인야후 관련)', person:'김석기 위원장 (국민의힘)', tel:'02-788-2781', note:''},
+      {level:'국회', name:'과방위 (AI·개인정보)', person:'최민희 위원장 (더불어민주당)', tel:'02-788-2741', note:''},
+      {level:'부처', name:'과학기술정보통신부', person:'디지털경제정책실', tel:'02-2110-0800', note:'라인야후 협의'},
+      {level:'부처', name:'개인정보보호위원회', person:'국제협력과', tel:'02-2100-2600', note:'GDPR 적정성'},
+    ]
+  },
+  'connect': {
+    name: '네이버 커넥트재단',
+    type: 'lab', typeLabel: '재단',
+    typeColor: '#8B5CF6',
+    address: '서울특별시 중구',
+    region: 'seoul',
+    desc: '디지털 교육·소상공인 지원 재단. 교육부·중소벤처기업부 협력 채널 핵심.',
+    issues: ['디지털 교육 규제', '소상공인 지원 정책'],
+    channels: [
+      {level:'부처', name:'교육부', person:'디지털교육기획관', tel:'044-203-6000', note:''},
+      {level:'부처', name:'중소벤처기업부', person:'소상공인정책과', tel:'044-204-7000', note:''},
+      {level:'국회', name:'교육위 (교육 정책)', person:'고민정 간사 (더불어민주당)', tel:'02-788-2901', note:''},
+    ]
+  },
+  'webtoon': {
+    name: '웹툰엔터테인먼트',
+    type: 'lab', typeLabel: '계열사',
+    typeColor: '#EC4899',
+    address: '서울 + 미국 LA',
+    region: 'seoul',
+    desc: '글로벌 웹툰 플랫폼. 북미 저작권 분쟁·AI 학습 저작권 이슈 직결.',
+    issues: ['웹툰 수익배분법', 'AI학습 저작권 TDM', '북미 저작권 분쟁'],
+    channels: [
+      {level:'국회', name:'문체위 (저작권)', person:'임오경 간사 (더불어민주당)', tel:'02-788-2841', note:''},
+      {level:'부처', name:'문화체육관광부', person:'저작권정책과', tel:'044-203-2000', note:'TDM 허용 여부'},
+      {level:'부처', name:'외교부', person:'다자통상과', tel:'02-2100-7000', note:'북미 분쟁'},
+    ]
+  },
+  'springcamp': {
+    name: '스프링캠프 (R&D)',
+    type: 'lab', typeLabel: '연구시설',
+    typeColor: '#8B5CF6',
+    address: '강원도 춘천시 인근',
+    region: 'gangwon',
+    desc: '연구개발 캠퍼스. 각산 데이터센터와 인접. AI·로봇 연구 거점.',
+    issues: ['연구시설 규제', 'AI R&D 지원'],
+    channels: [
+      {level:'국회', name:'춘천시 갑 국회의원', person:'허영 (더불어민주당)', tel:'02-788-2591', note:''},
+      {level:'광역', name:'강원도지사', person:'김진태 (국민의힘)', tel:'033-249-2114', note:''},
+    ]
+  }
+};
+
+// ═══ 지역별 GR 채널 ═══
+const REGIONS = {
+  seoul: {
+    name: '서울특별시',
+    naverFacilities: ['서울 오피스', '커넥트재단', '웹툰엔터'],
+    governor: {title:'서울시장', name:'오세훈', party:'국힘', tel:'02-120'},
+    localGov: [{title:'강남구청장', name:'조성명', party:'국힘'},{title:'종로구청장', name:'정문헌', party:'국힘'}],
+    assemblyMembers: ['강남갑 이경규(국힘)', '강남을 박수민(국힘)', '강남병 박진(국힘)', '강남정 고동진(국힘·과방위)', '서초갑 조은희(국힘)', '서초을 박성중(국힘)', '종로 최강욱(민주)', '중구성동갑 박성준(민주)', '마포갑 이지은(민주)', '노원갑 우원식(민주)'],
+    keyIssues: ['온플법 대관 거점', '공청회·국회 접근성', '공정위 서울사무소 대응']
+  },
+  gyeonggi: {
+    name: '경기도',
+    naverFacilities: ['그린팩토리(본사)', '1784(제2사옥)', '라인플러스', '네이버랩스'],
+    governor: {title:'경기도지사', name:'김동연', party:'민주', tel:'031-8008-2300'},
+    localGov: [{title:'성남시장', name:'신상진', party:'국힘', tel:'031-729-2114'},{title:'분당구청장', name:'신승원', party:'국힘'}],
+    assemblyMembers: ['성남 분당갑 이광희(민주)', '성남 분당을 김병기(민주)', '성남 수정 양향자(무소속)', '수원갑 김영진(민주)', '용인갑 이탄희(민주)'],
+    keyIssues: ['본사 직결 규제 대응', '경기도 AI 스타트업 생태계', '분당 지역구 의원실 채널']
+  },
+  gangwon: {
+    name: '강원도',
+    naverFacilities: ['각산 데이터센터', '스프링캠프'],
+    governor: {title:'강원도지사', name:'김진태', party:'국힘', tel:'033-249-2114'},
+    localGov: [{title:'춘천시장', name:'육동한', party:'국힘', tel:'033-250-3000'}],
+    assemblyMembers: ['춘천갑 허영(민주)', '춘천을 이양수(국힘)', '원주갑 이광재(민주)'],
+    keyIssues: ['데이터센터 전력·환경 규제', 'CSAP 인증', 'RE100 협력']
+  },
+  sejong: {
+    name: '세종특별자치시',
+    naverFacilities: ['세종 데이터센터(건설중)'],
+    governor: {title:'세종시장', name:'최민호', party:'국힘', tel:'044-300-2000'},
+    localGov: [],
+    assemblyMembers: ['세종갑 강준현(민주·정무위간사)', '세종을 오기형(민주·정무위)'],
+    keyIssues: ['데이터센터 인허가', '환경영향평가', '세종 정책 중심지 대관']
+  },
+  busan: {
+    name: '부산광역시',
+    naverFacilities: ['부산 지사'],
+    governor: {title:'부산시장', name:'박형준', party:'국힘', tel:'051-120'},
+    localGov: [{title:'해운대구청장', name:'홍순헌', party:'국힘'}],
+    assemblyMembers: ['해운대갑 주진우(국힘·법사위)', '해운대을 장미란(국힘)', '부산진갑 이헌승(국힘·정무위)', '북강서갑 전재수(민주)'],
+    keyIssues: ['동남권 스타트업 생태계', '부산 엑스포 디지털 협력', '지역 소상공인 지원']
+  },
+  jeju: {
+    name: '제주특별자치도',
+    naverFacilities: ['제주 사무소'],
+    governor: {title:'제주도지사', name:'오영훈', party:'민주', tel:'064-710-2114'},
+    localGov: [],
+    assemblyMembers: ['제주갑 문대림(민주)', '제주을 위성곤(민주)'],
+    keyIssues: ['관광 플랫폼 규제', '지역 SME 지원', '제주 디지털 전환']
+  }
+};
+
+// ═══ 22대 상임위 전체 명단 (PDF 기반) ═══
+const COMMITTEES_22 = {
+  '정무위': {
+    chair: '윤한홍(국힘)',
+    members: [
+      {name:'강준현',party:'민주',role:'△간사',badge:'d'},{name:'김남근',party:'민주',role:'위원',badge:'d'},
+      {name:'김승원',party:'민주',role:'위원',badge:'d'},{name:'김용만',party:'민주',role:'위원',badge:'d'},
+      {name:'김현정',party:'민주',role:'위원',badge:'d'},{name:'민병덕',party:'민주',role:'위원',badge:'d'},
+      {name:'박범계',party:'민주',role:'위원',badge:'d'},{name:'박상혁',party:'민주',role:'위원',badge:'d'},
+      {name:'박찬대',party:'민주',role:'위원',badge:'d'},{name:'유동수',party:'민주',role:'위원',badge:'d'},
+      {name:'이강일',party:'민주',role:'위원',badge:'d'},{name:'이인영',party:'민주',role:'위원',badge:'d'},
+      {name:'이정문',party:'민주',role:'위원',badge:'d'},{name:'허영',party:'민주',role:'위원',badge:'d'},
+      {name:'강민국',party:'국힘',role:'△간사',badge:'p'},{name:'강명구',party:'국힘',role:'위원',badge:'p'},
+      {name:'김상훈',party:'국힘',role:'위원',badge:'p'},{name:'유영하',party:'국힘',role:'위원',badge:'p'},
+      {name:'이양수',party:'국힘',role:'위원',badge:'p'},{name:'이헌승',party:'국힘',role:'위원',badge:'p'},
+      {name:'추경호',party:'국힘',role:'위원',badge:'p'},{name:'신장식',party:'기타',role:'위원',badge:'o'},
+      {name:'한창민',party:'기타',role:'위원',badge:'o'}
+    ]
+  },
+  '과방위': {
+    chair: '최민희(민주)',
+    members: [
+      {name:'김현',party:'민주',role:'△간사',badge:'d'},{name:'김우영',party:'민주',role:'위원',badge:'d'},
+      {name:'노종면',party:'민주',role:'위원',badge:'d'},{name:'박홍근',party:'민주',role:'위원',badge:'d'},
+      {name:'이정헌',party:'민주',role:'위원',badge:'d'},{name:'이주희',party:'민주',role:'위원',badge:'d'},
+      {name:'이훈기',party:'민주',role:'위원',badge:'d'},{name:'정동영',party:'민주',role:'위원',badge:'d'},
+      {name:'한민수',party:'민주',role:'위원',badge:'d'},{name:'황정아',party:'민주',role:'위원',badge:'d'},
+      {name:'최형두',party:'국힘',role:'△간사',badge:'p'},{name:'김장겸',party:'국힘',role:'위원',badge:'p'},
+      {name:'박정훈',party:'국힘',role:'위원',badge:'p'},{name:'박충권',party:'국힘',role:'위원',badge:'p'},
+      {name:'신성범',party:'국힘',role:'위원',badge:'p'},{name:'이상휘',party:'국힘',role:'위원',badge:'p'},
+      {name:'최수진',party:'국힘',role:'위원',badge:'p'},{name:'이해민',party:'기타',role:'위원',badge:'o'},
+      {name:'강선우',party:'기타',role:'위원',badge:'o'},{name:'이준석',party:'기타',role:'위원',badge:'o'}
+    ]
+  },
+  '문체위': {
+    chair: '김교흥(민주)',
+    members: [
+      {name:'임오경',party:'민주',role:'△간사',badge:'d'},{name:'김윤덕',party:'민주',role:'위원',badge:'d'},
+      {name:'민형배',party:'민주',role:'위원',badge:'d'},{name:'박수현',party:'민주',role:'위원',badge:'d'},
+      {name:'양문석',party:'민주',role:'위원',badge:'d'},{name:'이기헌',party:'민주',role:'위원',badge:'d'},
+      {name:'조계원',party:'민주',role:'위원',badge:'d'},{name:'박정하',party:'국힘',role:'△간사',badge:'p'},
+      {name:'김승수',party:'국힘',role:'위원',badge:'p'},{name:'이소희',party:'국힘',role:'위원',badge:'p'},
+      {name:'정연욱',party:'국힘',role:'위원',badge:'p'},{name:'조은희',party:'국힘',role:'위원',badge:'p'},
+      {name:'진종오',party:'국힘',role:'위원',badge:'p'},{name:'민병덕',party:'기타',role:'위원',badge:'o'},
+      {name:'손솔',party:'기타',role:'위원',badge:'o'},{name:'전종덕',party:'기타',role:'위원',badge:'o'}
+    ]
+  },
+  '외통위': {
+    chair: '김석기(국힘)',
+    members: [
+      {name:'김영배',party:'민주',role:'△간사',badge:'d'},{name:'김상욱',party:'민주',role:'위원',badge:'d'},
+      {name:'윤후덕',party:'민주',role:'위원',badge:'d'},{name:'이용선',party:'민주',role:'위원',badge:'d'},
+      {name:'이재강',party:'민주',role:'위원',badge:'d'},{name:'이재정',party:'민주',role:'위원',badge:'d'},
+      {name:'조정식',party:'민주',role:'위원',badge:'d'},{name:'차지호',party:'민주',role:'위원',badge:'d'},
+      {name:'한정애',party:'민주',role:'위원',badge:'d'},{name:'홍기원',party:'민주',role:'위원',badge:'d'},
+      {name:'김건',party:'국힘',role:'△간사',badge:'p'},{name:'김기웅',party:'국힘',role:'위원',badge:'p'},
+      {name:'김기현',party:'국힘',role:'위원',badge:'p'},{name:'김태호',party:'국힘',role:'위원',badge:'p'},
+      {name:'배현진',party:'국힘',role:'위원',badge:'p'},{name:'송언석',party:'국힘',role:'위원',badge:'p'},
+      {name:'안철수',party:'국힘',role:'위원',badge:'p'},{name:'이준석',party:'기타',role:'위원',badge:'o'},
+      {name:'강선우',party:'기타',role:'위원',badge:'o'},{name:'김준형',party:'기타',role:'위원',badge:'o'},
+      {name:'이춘석',party:'기타',role:'위원',badge:'o'}
+    ]
+  },
+  '법사위': {
+    chair: '추미애(민주)',
+    members: [
+      {name:'김용민',party:'민주',role:'△간사',badge:'d'},{name:'김기표',party:'민주',role:'위원',badge:'d'},
+      {name:'박균택',party:'민주',role:'위원',badge:'d'},{name:'박지원',party:'민주',role:'위원',badge:'d'},
+      {name:'서영교',party:'민주',role:'위원',badge:'d'},{name:'이성윤',party:'민주',role:'위원',badge:'d'},
+      {name:'전현희',party:'민주',role:'위원',badge:'d'},{name:'곽규택',party:'국힘',role:'△간사',badge:'p'},
+      {name:'김재섭',party:'국힘',role:'위원',badge:'p'},{name:'나경원',party:'국힘',role:'위원',badge:'p'},
+      {name:'송석준',party:'국힘',role:'위원',badge:'p'},{name:'신동욱',party:'국힘',role:'위원',badge:'p'},
+      {name:'윤상현',party:'국힘',role:'위원',badge:'p'},{name:'조배숙',party:'국힘',role:'위원',badge:'p'},
+      {name:'신장식',party:'기타',role:'위원',badge:'o'},{name:'한창민',party:'기타',role:'위원',badge:'o'},
+      {name:'차규근',party:'기타',role:'위원',badge:'o'},{name:'천하람',party:'기타',role:'위원',badge:'o'}
+    ]
+  },
+  '기재위': {
+    chair: '임이자(국힘)',
+    members: [
+      {name:'정태호',party:'민주',role:'△간사',badge:'d'},{name:'김영진',party:'민주',role:'위원',badge:'d'},
+      {name:'김영환',party:'민주',role:'위원',badge:'d'},{name:'김태년',party:'민주',role:'위원',badge:'d'},
+      {name:'박민규',party:'민주',role:'위원',badge:'d'},{name:'안규백',party:'민주',role:'위원',badge:'d'},
+      {name:'안도걸',party:'민주',role:'위원',badge:'d'},{name:'오기형',party:'민주',role:'위원',badge:'d'},
+      {name:'이소영',party:'민주',role:'위원',badge:'d'},{name:'정성호',party:'민주',role:'위원',badge:'d'},
+      {name:'정일영',party:'민주',role:'위원',badge:'d'},{name:'조승래',party:'민주',role:'위원',badge:'d'},
+      {name:'조인철',party:'민주',role:'위원',badge:'d'},{name:'진성준',party:'민주',role:'위원',badge:'d'},
+      {name:'최기상',party:'민주',role:'위원',badge:'d'},{name:'박수영',party:'국힘',role:'△간사',badge:'p'},
+      {name:'권영세',party:'국힘',role:'위원',badge:'p'},{name:'박대출',party:'국힘',role:'위원',badge:'p'},
+      {name:'박성훈',party:'국힘',role:'위원',badge:'p'},{name:'유상범',party:'국힘',role:'위원',badge:'p'},
+      {name:'윤영석',party:'국힘',role:'위원',badge:'p'},{name:'이인선',party:'국힘',role:'위원',badge:'p'},
+      {name:'최은석',party:'국힘',role:'위원',badge:'p'},{name:'강경숙',party:'기타',role:'위원',badge:'o'},
+      {name:'천하람',party:'기타',role:'위원',badge:'o'},{name:'박은정',party:'기타',role:'위원',badge:'o'}
+    ]
+  },
+  '산자중기위': {
+    chair: '이철규(국힘)',
+    members: [
+      {name:'김원이',party:'민주',role:'△간사',badge:'d'},{name:'권향엽',party:'민주',role:'위원',badge:'d'},
+      {name:'김동아',party:'민주',role:'위원',badge:'d'},{name:'김성환',party:'민주',role:'위원',badge:'d'},
+      {name:'김한규',party:'민주',role:'위원',badge:'d'},{name:'박지혜',party:'민주',role:'위원',badge:'d'},
+      {name:'송재봉',party:'민주',role:'위원',badge:'d'},{name:'오세희',party:'민주',role:'위원',badge:'d'},
+      {name:'이언주',party:'민주',role:'위원',badge:'d'},{name:'장철민',party:'민주',role:'위원',badge:'d'},
+      {name:'전재수',party:'민주',role:'위원',badge:'d'},{name:'정진욱',party:'민주',role:'위원',badge:'d'},
+      {name:'한병도',party:'민주',role:'위원',badge:'d'},{name:'허성무',party:'민주',role:'위원',badge:'d'},
+      {name:'박성민',party:'국힘',role:'△간사',badge:'p'},{name:'강승규',party:'국힘',role:'위원',badge:'p'},
+      {name:'구자근',party:'국힘',role:'위원',badge:'p'},{name:'김성원',party:'국힘',role:'위원',badge:'p'},
+      {name:'박상웅',party:'국힘',role:'위원',badge:'p'},{name:'서일준',party:'국힘',role:'위원',badge:'p'},
+      {name:'장동혁',party:'국힘',role:'위원',badge:'p'},{name:'정동만',party:'국힘',role:'위원',badge:'p'},
+      {name:'이준석',party:'기타',role:'위원',badge:'o'},{name:'김종민',party:'기타',role:'위원',badge:'o'}
+    ]
+  }
+};
+
+let selectedLoc = null;
+let selectedRegion = null;
+let panelMode = 'all';
+
+// ═══ INIT ═══
+function init(){
+  renderLocationList();
+  renderCmitSummary();
+}
+
+function renderLocationList(){
+  const locs = Object.entries(LOCATIONS);
+  document.getElementById('locationList').innerHTML = locs.map(([key,loc])=>`
+    <div class="loc-card" id="lc-${key}" onclick="selectLocation('${key}')">
+      <div class="loc-title">
+        <span style="width:8px;height:8px;border-radius:50%;background:${loc.typeColor};flex-shrink:0;display:inline-block"></span>
+        ${loc.name}
+        <span class="loc-type" style="background:${loc.typeColor}22;color:${loc.typeColor};border:1px solid ${loc.typeColor}44">${loc.typeLabel}</span>
+      </div>
+      <div class="loc-addr">📍 ${loc.address}</div>
+      <div class="loc-issues">
+        ${loc.issues.map(i=>`<span class="loc-issue" style="background:rgba(217,79,59,.1);color:#FF8080;border:1px solid rgba(217,79,59,.2)">${i}</span>`).join('')}
+      </div>
+    </div>`).join('');
+}
+
+function renderCmitSummary(){
+  const grCmits = ['정무위','과방위','문체위','외통위'];
+  document.getElementById('cmitSummary').innerHTML = grCmits.map(k=>{
+    const c = COMMITTEES_22[k];
+    const chairText = c.chair;
+    const cnt = c.members.length;
+    const dCnt = c.members.filter(m=>m.badge==='d').length;
+    const pCnt = c.members.filter(m=>m.badge==='p').length;
+    const oCnt = c.members.filter(m=>m.badge==='o').length;
+    return `<div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--br);cursor:pointer" onclick="showCmitDetail('${k}')">
+      <div style="flex:1">
+        <div style="font-size:11px;font-weight:700">${k}</div>
+        <div style="font-size:9px;color:var(--mt)">위원장: ${chairText} · 총 ${cnt}인</div>
+      </div>
+      <div style="display:flex;gap:3px">
+        <span style="font-size:9px;padding:1px 5px;border-radius:6px;background:rgba(33,150,243,.2);color:#2196F3">민 ${dCnt}</span>
+        <span style="font-size:9px;padding:1px 5px;border-radius:6px;background:rgba(244,67,54,.2);color:#F44336">국 ${pCnt}</span>
+        ${oCnt>0?`<span style="font-size:9px;padding:1px 5px;border-radius:6px;background:rgba(156,39,176,.2);color:#9C27B0">기 ${oCnt}</span>`:''}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ═══ SELECT LOCATION ═══
+function selectLocation(key){
+  const loc = LOCATIONS[key];
+  if(!loc) return;
+  // 이전 선택 해제
+  document.querySelectorAll('.loc-card').forEach(c=>c.classList.remove('active'));
+  const card = document.getElementById('lc-'+key);
+  if(card) card.classList.add('active');
+  // 지역 하이라이트
+  document.querySelectorAll('.region').forEach(r=>r.classList.remove('highlight'));
+  const regionEl = document.getElementById('r-'+loc.region);
+  if(regionEl) regionEl.classList.add('highlight');
+  // 패널 업데이트
+  showLocationDetail(loc);
+}
+
+function showLocationDetail(loc){
+  document.getElementById('defaultPanel').style.display='none';
+  document.getElementById('detailPanel').style.display='block';
+  const channelHtml = loc.channels.map(ch=>`
+    <div class="channel-item">
+      <div class="channel-level">${ch.level}</div>
+      <div>
+        <div class="channel-name">${ch.name}</div>
+        <div class="channel-sub">${ch.person} · ☎ ${ch.tel}</div>
+        ${ch.note?`<div class="channel-sub" style="color:var(--g)">${ch.note}</div>`:''}
+      </div>
+    </div>`).join('');
+  document.getElementById('detailPanel').innerHTML=`
+    <div style="display:flex;align-items:center;gap:7px;margin-bottom:12px">
+      <div style="width:10px;height:10px;border-radius:50%;background:${loc.typeColor}"></div>
+      <div style="font-size:13px;font-weight:700">${loc.name}</div>
+      <span style="font-size:9px;padding:2px 7px;border-radius:10px;background:${loc.typeColor}22;color:${loc.typeColor};border:1px solid ${loc.typeColor}44;font-weight:700">${loc.typeLabel}</span>
+    </div>
+    <div style="font-size:10px;color:var(--mt);margin-bottom:6px">📍 ${loc.address}</div>
+    <div style="font-size:11px;color:var(--tx);line-height:1.7;margin-bottom:10px;background:var(--cd2);border-radius:7px;padding:10px">${loc.desc}</div>
+    <div style="margin-bottom:10px">
+      <div style="font-size:9px;font-weight:700;color:var(--mt);text-transform:uppercase;letter-spacing:.4px;margin-bottom:5px">🚨 관련 규제 이슈</div>
+      <div style="display:flex;gap:4px;flex-wrap:wrap">${loc.issues.map(i=>`<span style="font-size:10px;padding:3px 8px;border-radius:8px;background:rgba(217,79,59,.1);color:#FF8080;border:1px solid rgba(217,79,59,.2);font-weight:600">${i}</span>`).join('')}</div>
+    </div>
+    <div class="channel-card">
+      <div class="channel-title">📞 즉시 연락 가능한 GR 채널</div>
+      ${channelHtml}
+    </div>
+    <div style="margin-top:10px">
+      <button onclick="showRegionDetail('${loc.region}')" style="width:100%;background:var(--cd2);border:1px solid var(--br);border-radius:7px;padding:8px;color:var(--mt);font-size:10px;cursor:pointer">🗺 ${REGIONS[loc.region]?.name||''} 지역 전체 GR 채널 보기 →</button>
+    </div>
+    <div style="margin-top:8px">
+      <button onclick="showDefaultPanel()" style="width:100%;background:none;border:none;color:var(--mt);font-size:10px;cursor:pointer">← 전체 목록으로</button>
+    </div>`;
+}
+
+// ═══ SELECT REGION ═══
+function selectRegion(key){
+  document.querySelectorAll('.region').forEach(r=>r.classList.remove('highlight'));
+  const regionEl = document.getElementById('r-'+key);
+  if(regionEl) regionEl.classList.add('highlight');
+  showRegionDetail(key);
+}
+
+function showRegionDetail(key){
+  const reg = REGIONS[key];
+  if(!reg){ showDefaultPanel(); return; }
+  document.getElementById('defaultPanel').style.display='none';
+  document.getElementById('detailPanel').style.display='block';
+  const assemblyHtml = reg.assemblyMembers.map(m=>`
+    <div style="font-size:10px;padding:3px 0;border-bottom:1px solid var(--br)">${m}</div>`).join('');
+  document.getElementById('detailPanel').innerHTML=`
+    <div style="font-size:13px;font-weight:700;margin-bottom:10px">📍 ${reg.name}</div>
+    <div style="background:rgba(3,199,90,.06);border:1px solid rgba(3,199,90,.2);border-radius:7px;padding:10px;margin-bottom:10px">
+      <div style="font-size:9px;font-weight:700;color:var(--g);margin-bottom:5px">🏢 네이버 시설</div>
+      <div style="font-size:11px;line-height:1.7">${reg.naverFacilities.join(' · ')}</div>
+    </div>
+    <div class="channel-card">
+      <div class="channel-title">📞 지역 GR 채널</div>
+      <div class="channel-item">
+        <div class="channel-level">광역단체</div>
+        <div>
+          <div class="channel-name">${reg.governor.title}</div>
+          <div class="channel-sub">${reg.governor.name} (${reg.governor.party}) · ☎ ${reg.governor.tel}</div>
+        </div>
+      </div>
+      ${reg.localGov.map(g=>`
+        <div class="channel-item">
+          <div class="channel-level">기초단체</div>
+          <div>
+            <div class="channel-name">${g.title}</div>
+            <div class="channel-sub">${g.name} (${g.party})</div>
+          </div>
+        </div>`).join('')}
+    </div>
+    <div style="margin-top:10px">
+      <div style="font-size:9px;font-weight:700;color:var(--mt);text-transform:uppercase;letter-spacing:.4px;margin-bottom:6px">🏛 지역구 국회의원</div>
+      ${assemblyHtml}
+    </div>
+    <div style="margin-top:10px">
+      <div style="font-size:9px;font-weight:700;color:var(--mt);text-transform:uppercase;margin-bottom:5px">🚨 지역 핵심 GR 이슈</div>
+      <div style="display:flex;gap:4px;flex-wrap:wrap">${reg.keyIssues.map(i=>`<span style="font-size:10px;padding:2px 8px;border-radius:8px;background:rgba(232,168,56,.1);color:var(--gd);border:1px solid rgba(232,168,56,.2);font-weight:600">${i}</span>`).join('')}</div>
+    </div>
+    <div style="margin-top:10px">
+      <button onclick="showDefaultPanel()" style="width:100%;background:none;border:none;color:var(--mt);font-size:10px;cursor:pointer">← 전체 목록으로</button>
+    </div>`;
+}
+
+// ═══ COMMITTEE DETAIL ═══
+function showCmitDetail(key){
+  const c = COMMITTEES_22[key];
+  if(!c) return;
+  document.getElementById('defaultPanel').style.display='none';
+  document.getElementById('detailPanel').style.display='block';
+  const memberHtml = c.members.map(m=>`
+    <div class="mem-row">
+      <span class="mem-badge badge-${m.badge}">${m.party}</span>
+      <span style="font-weight:${m.role.includes('△')?700:400}">${m.name}</span>
+      <span style="font-size:9px;color:var(--mt);margin-left:auto">${m.role}</span>
+    </div>`).join('');
+  document.getElementById('detailPanel').innerHTML=`
+    <div style="font-size:13px;font-weight:700;margin-bottom:4px">${key}</div>
+    <div style="font-size:10px;color:var(--mt);margin-bottom:12px">위원장: ${c.chair} · 전체 ${c.members.length}인</div>
+    <div style="max-height:420px;overflow-y:auto;scrollbar-width:thin">
+      ${memberHtml}
+    </div>
+    <div style="margin-top:10px">
+      <button onclick="showDefaultPanel()" style="width:100%;background:none;border:none;color:var(--mt);font-size:10px;cursor:pointer">← 전체 목록으로</button>
+    </div>`;
+}
+
+function showDefaultPanel(){
+  document.getElementById('defaultPanel').style.display='block';
+  document.getElementById('detailPanel').style.display='none';
+  document.querySelectorAll('.region').forEach(r=>r.classList.remove('highlight'));
+  document.querySelectorAll('.loc-card').forEach(c=>c.classList.remove('active'));
+}
+
+function filterPanel(f,el){
+  panelMode = f;
+  document.querySelectorAll('.filter-row .fb').forEach(b=>b.classList.remove('on'));
+  el.classList.add('on');
+  if(f==='member'){
+    document.getElementById('defaultPanel').style.display='none';
+    document.getElementById('detailPanel').style.display='block';
+    showAllMembers();
+  } else {
+    showDefaultPanel();
+  }
+}
+
+function showAllMembers(){
+  const grCmits = ['정무위','과방위','문체위','외통위','법사위','기재위','산자중기위'];
+  document.getElementById('detailPanel').innerHTML=`
+    <div style="font-size:12px;font-weight:700;margin-bottom:10px;color:var(--g)">🏛 22대 국회 GR 핵심 위원회 전체 명단</div>
+    ${grCmits.map(k=>{
+      const c=COMMITTEES_22[k];if(!c)return'';
+      return `<div style="margin-bottom:12px">
+        <div style="font-size:11px;font-weight:700;color:var(--mt);border-bottom:2px solid var(--br);padding-bottom:4px;margin-bottom:6px;display:flex;justify-content:space-between">
+          <span>${k}</span><span style="font-size:9px">위원장: ${c.chair}</span>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:3px">
+          ${c.members.map(m=>`<div style="display:flex;align-items:center;gap:4px;font-size:10px;padding:3px 0">
+            <span class="mem-badge badge-${m.badge}" style="font-size:8px">${m.party}</span>
+            <span style="font-weight:${m.role.includes('△')?700:400}">${m.name}</span>
+            ${m.role.includes('△')?`<span style="font-size:8px;color:var(--g)">간사</span>`:''}
+          </div>`).join('')}
+        </div>
+      </div>`;
+    }).join('')}`;
+}
+
+init();
+</script>
+</body>
+</html>
