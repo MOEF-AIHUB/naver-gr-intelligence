@@ -106,10 +106,42 @@ mark{background:rgba(3,199,90,.2);color:var(--g);border-radius:2px;padding:0 1px
     </table>
   </div>
   <div class="rpanel" id="rpanel">
-    <div class="rempty">
-      <div style="font-size:34px">👤</div>
-      <div style="font-size:12px;font-weight:600">의원을 클릭하세요</div>
-      <div style="font-size:10px;line-height:1.8;color:var(--mt)">직통전화 · 보좌진 전체<br>GR 이슈 연결</div>
+    <div style="padding:14px">
+      <div style="font-size:9px;font-weight:700;color:var(--mt);text-transform:uppercase;letter-spacing:.7px;margin-bottom:10px">🔴 지금 당장 접촉해야 할 의원</div>
+
+      <!-- 핵심 의원 카드 3장 -->
+      <div id="keyMemberCards"></div>
+
+      <div style="border-top:1px solid var(--br);margin:12px 0 10px"></div>
+      <div style="font-size:9px;font-weight:700;color:var(--mt);text-transform:uppercase;letter-spacing:.7px;margin-bottom:8px">📋 오늘의 GR 체크리스트</div>
+      <div style="display:flex;flex-direction:column;gap:6px">
+        <div style="background:rgba(217,79,59,.06);border:1px solid rgba(217,79,59,.2);border-left:3px solid var(--rd);border-radius:0 7px 7px 0;padding:8px 10px">
+          <div style="font-size:9px;font-weight:700;color:var(--rd);margin-bottom:3px">🚨 D-DAY · 오늘 18:00</div>
+          <div style="font-size:11px;font-weight:700;margin-bottom:2px">온플법 서면 의견서 제출</div>
+          <div style="font-size:9px;color:var(--mt)">정무위 법안2소위 담당 → 이정문·강준현 의원실</div>
+        </div>
+        <div style="background:rgba(232,168,56,.05);border:1px solid rgba(232,168,56,.15);border-left:3px solid var(--gd);border-radius:0 7px 7px 0;padding:8px 10px">
+          <div style="font-size:9px;font-weight:700;color:var(--gd);margin-bottom:3px">⚠️ D-9 · 3월 31일</div>
+          <div style="font-size:11px;font-weight:700;margin-bottom:2px">라인야후 외통위 브리핑</div>
+          <div style="font-size:9px;color:var(--mt)">외통위 → 김석기·김영배 의원실 사전 접촉</div>
+        </div>
+        <div style="background:rgba(28,110,242,.05);border:1px solid rgba(28,110,242,.15);border-left:3px solid var(--bl);border-radius:0 7px 7px 0;padding:8px 10px">
+          <div style="font-size:9px;font-weight:700;color:var(--bl);margin-bottom:3px">📋 D-11 · 4월 3일</div>
+          <div style="font-size:11px;font-weight:700;margin-bottom:2px">AI기본법 공청회 준비</div>
+          <div style="font-size:9px;color:var(--mt)">과방위 → 고동진·황정아·최민희 의원실</div>
+        </div>
+      </div>
+
+      <div style="border-top:1px solid var(--br);margin:12px 0 10px"></div>
+      <div style="font-size:9px;font-weight:700;color:var(--mt);text-transform:uppercase;letter-spacing:.7px;margin-bottom:6px">📊 위원회별 현황</div>
+      <div id="cmitSummary"></div>
+
+      <div style="margin-top:10px;padding:9px;background:var(--cd2);border-radius:7px;font-size:9px;color:var(--mt);line-height:1.8">
+        <b style="color:var(--tx)">💡 사용 방법</b><br>
+        왼쪽 위원회 클릭 → 의원 필터링<br>
+        상단 검색창 → 이름·비서관·전화번호 검색<br>
+        의원 클릭 → 직통전화·보좌진 전체 확인
+      </div>
     </div>
   </div>
 </div>
@@ -352,9 +384,83 @@ function buildPartyBtns(){
   });
 }
 
+
+// ── 첫화면 카드 ──
+var KEY_MEMBERS = [
+  {name:'윤한홍',role:'정무위원장',issue:'온플법 심사 총괄'},
+  {name:'최민희',role:'과방위원장',issue:'AI기본법·라인야후 현안질의'},
+  {name:'고동진',role:'과방위 위원',issue:'AI기본법 발의·네이버 의견 청취 희망'},
+];
+
+function buildDefaultPanel(){
+  var kEl = document.getElementById('keyMemberCards');
+  if(!kEl) return;
+  kEl.innerHTML = '';
+  KEY_MEMBERS.forEach(function(km){
+    var found = D.find(function(r){return r.name===km.name;});
+    var tel = found ? found.tel : '';
+    var div = document.createElement('div');
+    div.style.cssText = 'background:rgba(217,79,59,.05);border:1px solid rgba(217,79,59,.2);border-radius:7px;padding:9px 11px;margin-bottom:6px;cursor:pointer';
+    div.dataset.memname = km.name;
+    div.innerHTML = '<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:3px">'
+      +'<div><span style="font-size:14px;font-weight:900">'+km.name+'</span><span style="font-size:9px;color:var(--mt);margin-left:6px">'+km.role+'</span></div>'
+      +(tel?'<a href="tel:'+tel+'" style="font-size:10px;background:var(--g);color:#fff;padding:2px 9px;border-radius:5px;text-decoration:none;font-weight:700" onclick="event.stopPropagation()">전화</a>':'')
+      +'</div>'
+      +'<div style="font-size:10px;color:var(--gd);margin-top:2px">→ '+km.issue+'</div>';
+    kEl.appendChild(div);
+  });
+
+  var cEl = document.getElementById('cmitSummary');
+  if(!cEl) return;
+  var grData = [
+    {name:'정무위',full:'정무위원회',color:'var(--rd)'},
+    {name:'과방위',full:'과학기술정보방송통신위원회',color:'var(--gd)'},
+    {name:'문체위',full:'문화체육관광위원회',color:'var(--pu)'},
+    {name:'외통위',full:'외교통일위원회',color:'var(--bl)'},
+    {name:'법사위',full:'법제사법위원회',color:'var(--mt)'},
+  ];
+  cEl.innerHTML = '';
+  grData.forEach(function(g){
+    var cnt = D.filter(function(r){return r.cmit===g.full;}).length;
+    var chair = D.filter(function(r){return r.cmit===g.full&&r.role==='위원장';}).map(function(r){return r.name;}).join('');
+    var row = document.createElement('div');
+    row.style.cssText = 'display:flex;align-items:center;gap:8px;margin-bottom:5px;cursor:pointer;padding:3px 0';
+    row.dataset.cmit = g.full;
+    row.innerHTML = '<span style="font-size:10px;font-weight:700;color:'+g.color+';width:38px">'+g.name+'</span>'
+      +'<div style="flex:1;height:4px;background:var(--br);border-radius:2px"><div style="width:'+(Math.min(cnt/30*100,100)).toFixed(0)+'%;height:100%;background:'+g.color+';border-radius:2px"></div></div>'
+      +'<span style="font-size:9px;color:var(--mt);width:28px;text-align:right">'+cnt+'명</span>'
+      +(chair?'<span style="font-size:9px;color:var(--mt)">'+chair+'</span>':'');
+    cEl.appendChild(row);
+  });
+}
+
+function findAndSelect(name){
+  var r = D.find(function(x){return x.name===name;});
+  if(!r) return;
+  document.getElementById('q').value = name;
+  selNo = r.no;
+  render();
+  showDetail(r);
+}
+
+function filterCmit(cmit){
+  curCmit = cmit;
+  buildNav();
+  render();
+}
+
+
 buildPartyBtns();
 buildNav();
 render();
+buildDefaultPanel();
+// Event delegation for default panel
+document.getElementById('rpanel').addEventListener('click', function(e){
+  var mc = e.target.closest('[data-memname]');
+  if(mc) findAndSelect(mc.dataset.memname);
+  var cc = e.target.closest('[data-cmit]');
+  if(cc) filterCmit(cc.dataset.cmit);
+});
 </script>
 </body>
 </html>
