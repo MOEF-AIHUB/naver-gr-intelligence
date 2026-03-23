@@ -262,6 +262,51 @@ header{background:#0A1628;border-bottom:1px solid var(--br);padding:0 16px;heigh
 const ISSUES = [{"id":1,"name":"온플법 자사우대 금지","domain":"플랫폼·공정거래","bm":["검색광고","커머스","플레이스"],"risk":9.5,"predict":72,"ready":58,"cmit":"정무위원회","status":"소위상정","predictReason":"야당 단독발의·소위 상정 확정·여당 수정 협상 중","actions":["법무팀 의견서 제출","정무위 소위 브리핑 자료 준비","윤한홍·강준현 의원실 접촉"]},{"id":2,"name":"온플법 증명책임 전환","domain":"플랫폼·공정거래","bm":["검색광고","커머스"],"risk":8.5,"predict":55,"ready":52,"cmit":"정무위원회","status":"병합심사","predictReason":"증명책임 전환은 헌법 논란으로 여당 제동 가능","actions":["헌법 논거 자료 준비","법무팀 검토"]},{"id":3,"name":"온플법 과징금 10%","domain":"플랫폼·공정거래","bm":["전사"],"risk":9.0,"predict":60,"ready":55,"cmit":"정무위원회","status":"병합심사","predictReason":"과징금 10% 위헌 논거·여당 반발로 수정 가능성","actions":["과징금 비례성 논거 준비","공정위 실무 채널 접촉"]},{"id":4,"name":"온플법 사전지정제","domain":"플랫폼·공정거래","bm":["전사"],"risk":8.0,"predict":58,"ready":60,"cmit":"정무위원회","status":"논의중","predictReason":"EU DMA 선례·여야 이견 좁혀지는 중","actions":["EU DMA 비교 분석 자료","산업부 의견 조율"]},{"id":5,"name":"배달앱 수수료 상한제","domain":"플랫폼·공정거래","bm":["커머스","플레이스"],"risk":7.5,"predict":65,"ready":62,"cmit":"정무위원회","status":"논의중","predictReason":"배달플랫폼 선례 있어 확산 가능성 높음","actions":["네이버 플레이스 영향 분석","소상공인 상생 레퍼런스 준비"]},{"id":6,"name":"알고리즘 투명성 공개","domain":"플랫폼·공정거래","bm":["검색광고","뉴스"],"risk":7.0,"predict":45,"ready":65,"cmit":"과학기술정보방송통신위원회","status":"논의중","predictReason":"알고리즘 공개 논의 지속·강제화는 시간 필요","actions":["알고리즘 자율규제 방안 준비"]},{"id":7,"name":"플랫폼 수수료 공시제","domain":"플랫폼·공정거래","bm":["커머스","플레이스"],"risk":6.5,"predict":62,"ready":68,"cmit":"정무위원회","status":"논의중","predictReason":"수수료 규제 분위기 확산 중·적용 범위 협상 변수","actions":["수수료 공시 자율 선제 시행 검토"]},{"id":8,"name":"광고 공정성 규제","domain":"플랫폼·공정거래","bm":["검색광고"],"risk":6.0,"predict":40,"ready":70,"cmit":"정무위원회","status":"초기","predictReason":"광고 공정성 이슈 공론화 초기 단계","actions":["광고 표시 기준 자율 강화"]},{"id":9,"name":"끼워팔기 금지","domain":"플랫폼·공정거래","bm":["커머스","핀테크"],"risk":7.0,"predict":38,"ready":60,"cmit":"정무위원회","status":"초기","predictReason":"끼워팔기 입증 어려워 독립 법안화 가능성 낮음","actions":["서비스 번들링 법적 검토"]},{"id":10,"name":"플랫폼 시장지배력 남용","domain":"플랫폼·공정거래","bm":["전사"],"risk":8.0,"predict":42,"ready":55,"cmit":"정무위원회","status":"조사중","predictReason":"직접 증거 부족으로 현재는 조사 단계","actions":["공정위 조사 대응팀 구성"]},{"id":11,"name":"최혜대우 금지","domain":"플랫폼·공정거래","bm":["커머스"],"risk":6.5,"predict":68,"ready":65,"cmit":"정무위원회","status":"논의중","predictReason":"EU 선례로 통과 유력","actions":["최혜대우 조항 현황 파악"]},{"id":12,"name":"다크패턴 규제","domain":"플랫폼·공정거래","bm":["커머스","멤버십"],"risk":6.0,"predict":63,"ready":72,"cmit":"정무위원회","status":"논의중","predictReason":"다크패턴 규제는 여야 공감대 형성 중","actions":["UX 자율 개선 선제 시행"]},{"id":13,"name":"멀티호밍 금지","domain":"플랫폼·공정거래","bm":["커머스"],"risk":5.5,"predict":35,"ready":75,"cmit":"정무위원회","status":"초기","predictReason":"멀티호밍 금지는 산업 영향 커 신중론 있음","actions":["멀티호밍 현황 분석"]},{"id":14,"name":"EU DMA 역외 적용","domain":"글로벌·외교","bm":["전사"],"risk":6.0,"predict":28,"ready":70,"cmit":"외교통일위원회","status":"모니터링","predictReason":"EU DMA 직접 적용은 외교·법적 장벽 높음","actions":["EU DMA 모니터링 지속"]},{"id":15,"name":"AI기본법 고위험AI 지정","domain":"AI·데이터","bm":["AI서비스","클라우드"],"risk":8.5,"predict":75,"ready":48,"cmit":"과학기술정보방송통신위원회","status":"공청회예정","predictReason":"고위험 AI 범위 공청회 후 확정 예정·네이버 포함 여부 미정","actions":["고위험 AI 반론 초안 준비","고동진·황정아 의원실 브리핑"]},{"id":16,"name":"AI 영향평가 의무화","domain":"AI·데이터","bm":["AI서비스"],"risk":7.5,"predict":65,"ready":52,"cmit":"과학기술정보방송통신위원회","status":"논의중","predictReason":"영향평가 의무화는 기업 부담 크나 AI기본법 핵심 조항","actions":["영향평가 자율 시행 방안 검토"]},{"id":17,"name":"AI 설명의무","domain":"AI·데이터","bm":["AI서비스","검색"],"risk":6.5,"predict":60,"ready":58,"cmit":"과학기술정보방송통신위원회","status":"논의중","predictReason":"설명의무 국제 추세 따라 통과 가능성 있음","actions":["AI 설명가능성 기술 현황 정리"]},{"id":18,"name":"AI학습 데이터 합법화","domain":"AI·데이터","bm":["AI서비스"],"risk":7.0,"predict":55,"ready":60,"cmit":"과학기술정보방송통신위원회","status":"논의중","predictReason":"AI 학습 데이터 합법화 산업 요구 강해 진전 중","actions":["데이터 학습 현황 투명 공개"]},{"id":19,"name":"딥페이크 삭제권","domain":"AI·데이터","bm":["AI서비스","뉴스"],"risk":5.5,"predict":85,"ready":78,"cmit":"과학기술정보방송통신위원회","status":"통과임박","predictReason":"딥페이크 삭제권은 여야 초당적 지지","actions":["딥페이크 탐지·삭제 시스템 강화"]},{"id":20,"name":"아동 개인정보 보호","domain":"AI·데이터","bm":["전사"],"risk":5.0,"predict":90,"ready":82,"cmit":"과학기술정보방송통신위원회","status":"통과임박","predictReason":"아동 개인정보는 여야 이견 없어 통과 확실","actions":["아동 개인정보 처리 기준 점검"]},{"id":21,"name":"AI 에이전트 규제","domain":"AI·데이터","bm":["AI서비스"],"risk":6.0,"predict":30,"ready":55,"cmit":"과학기술정보방송통신위원회","status":"초기","predictReason":"에이전트 규제 프레임 아직 초기 논의 단계","actions":["AI 에이전트 자율규제 방안 선제 준비"]},{"id":22,"name":"AI 광고 표시제","domain":"AI·데이터","bm":["검색광고"],"risk":5.5,"predict":70,"ready":75,"cmit":"과학기술정보방송통신위원회","status":"논의중","predictReason":"AI 광고 표시제는 소비자 보호 명목으로 통과 유력","actions":["AI 생성 광고 표시 자율 강화"]},{"id":23,"name":"데이터 현지화","domain":"AI·데이터","bm":["클라우드"],"risk":7.0,"predict":35,"ready":65,"cmit":"과학기술정보방송통신위원회","status":"모니터링","predictReason":"데이터 로컬라이제이션은 WTO 통상 마찰 우려 있음","actions":["데이터 센터 현황 파악"]},{"id":24,"name":"CSAP 요건 강화","domain":"AI·데이터","bm":["클라우드"],"risk":7.5,"predict":62,"ready":58,"cmit":"과학기술정보방송통신위원회","status":"논의중","predictReason":"CSAP 요건 강화는 공공 보안 이슈로 추진 중","actions":["CSAP 인증 현황 점검","과기정통부 실무 채널 접촉"]},{"id":25,"name":"마이데이터 확대","domain":"AI·데이터","bm":["핀테크","클라우드"],"risk":5.0,"predict":72,"ready":75,"cmit":"정무위원회","status":"진행중","predictReason":"마이데이터 확대는 금융 당국 주도로 진행 중","actions":["마이데이터 서비스 확장 준비"]},{"id":26,"name":"EU 개인정보 적정성","domain":"AI·데이터","bm":["글로벌"],"risk":5.5,"predict":78,"ready":80,"cmit":"외교통일위원회","status":"유지","predictReason":"EU 적정성 결정은 외교 채널로 유지 예상","actions":["EU 개인정보 적정성 모니터링"]},{"id":27,"name":"AI학습 저작권","domain":"미디어·저작권","bm":["AI서비스","뉴스"],"risk":8.0,"predict":55,"ready":45,"cmit":"문화체육관광위원회","status":"소송중","predictReason":"AI 학습 저작권 소송 진행 중·입법화는 판결 후 본격화","actions":["저작권 소송 현황 모니터링","문체위 임오경 의원실 브리핑"]},{"id":28,"name":"뉴스 인접권","domain":"미디어·저작권","bm":["뉴스"],"risk":7.5,"predict":48,"ready":52,"cmit":"문화체육관광위원회","status":"논의중","predictReason":"인접권은 EU 선례 있으나 국내 언론 생태계 논란","actions":["언론사 상생 방안 제시"]},{"id":29,"name":"뉴스 알고리즘 규제","domain":"미디어·저작권","bm":["뉴스"],"risk":7.0,"predict":58,"ready":55,"cmit":"과학기술정보방송통신위원회","status":"논의중","predictReason":"뉴스 알고리즘 규제는 방통위 추진 의지 있음","actions":["알고리즘 편집 자율규제 강화"]},{"id":30,"name":"아웃링크 전환","domain":"미디어·저작권","bm":["뉴스"],"risk":6.5,"predict":42,"ready":60,"cmit":"문화체육관광위원회","status":"논의중","predictReason":"아웃링크 전환은 언론사 요구 강하나 포털 반발 심함","actions":["아웃링크 전환 영향 분석"]},{"id":31,"name":"허위정보 플랫폼 책임","domain":"미디어·저작권","bm":["뉴스","검색"],"risk":6.0,"predict":55,"ready":65,"cmit":"과학기술정보방송통신위원회","status":"논의중","predictReason":"허위정보 플랫폼 책임은 선거철 앞두고 주목도 높음","actions":["팩트체크 시스템 강화"]},{"id":32,"name":"AI 생성물 표시제","domain":"미디어·저작권","bm":["AI서비스","뉴스"],"risk":5.5,"predict":75,"ready":78,"cmit":"문화체육관광위원회","status":"통과임박","predictReason":"AI 생성물 표시제는 여야 공감대 형성·통과 유력","actions":["AI 생성물 표시 자율 시행"]},{"id":33,"name":"웹툰 수익배분","domain":"미디어·저작권","bm":["커머스"],"risk":5.5,"predict":45,"ready":70,"cmit":"문화체육관광위원회","status":"논의중","predictReason":"웹툰 수익배분 창작자 요구 강하나 계약 자율성 논란","actions":["웹툰 창작자 상생 방안 준비"]},{"id":34,"name":"OSP 면책 축소","domain":"미디어·저작권","bm":["전사"],"risk":7.0,"predict":38,"ready":55,"cmit":"문화체육관광위원회","status":"초기","predictReason":"OSP 면책 축소는 법리 논쟁 커 시간 걸림","actions":["OSP 면책 현황 법적 검토"]},{"id":35,"name":"댓글 조작 책임","domain":"미디어·저작권","bm":["뉴스","검색"],"risk":6.0,"predict":52,"ready":68,"cmit":"과학기술정보방송통신위원회","status":"논의중","predictReason":"댓글 조작 책임은 선거 관련 여야 관심 높음","actions":["댓글 모니터링 시스템 점검"]},{"id":36,"name":"게임 저작권","domain":"미디어·저작권","bm":["커머스"],"risk":4.5,"predict":35,"ready":75,"cmit":"문화체육관광위원회","status":"모니터링","predictReason":"게임 저작권은 스트리밍 산업 관행 고려 신중론","actions":["게임 저작권 현황 모니터링"]},{"id":37,"name":"라인야후 지배구조","domain":"글로벌·외교","bm":["글로벌"],"risk":9.5,"predict":48,"ready":35,"cmit":"외교통일위원회","status":"협상중","predictReason":"일본 총무성 행정지도·외교 협상 결과에 따라 유동적","actions":["과기정통부 공조 요청","외교부 채널 가동","과방위·외통위 브리핑"]},{"id":38,"name":"구글 지도 반출 허용","domain":"글로벌·외교","bm":["지도"],"risk":8.5,"predict":32,"ready":68,"cmit":"외교통일위원회","status":"정부반대","predictReason":"구글 반출 허용 시 안보 우려·정부 반대 기조 유지","actions":["국가안보 논거 강화","국토부 협력 채널 유지"]},{"id":39,"name":"라인 행정지도 위법성","domain":"글로벌·외교","bm":["글로벌"],"risk":8.0,"predict":40,"ready":42,"cmit":"외교통일위원회","status":"대응중","predictReason":"행정지도 위법성 논란·외교 채널 대응 주력","actions":["외교부 공조","법무팀 국제법 검토"]},{"id":40,"name":"USTR 비관세장벽","domain":"글로벌·외교","bm":["전사"],"risk":7.5,"predict":45,"ready":50,"cmit":"외교통일위원회","status":"모니터링","predictReason":"USTR 압박 강화·한미 협상 의제 포함 가능성","actions":["통상부 모니터링","미국 로펌 자문"]},{"id":41,"name":"EU AI법 역외 적용","domain":"글로벌·외교","bm":["AI서비스","글로벌"],"risk":6.5,"predict":55,"ready":62,"cmit":"외교통일위원회","status":"모니터링","predictReason":"EU AI법 역외 적용은 법적 강제력 약해 대응 여유 있음","actions":["EU AI법 영향 범위 분석"]},{"id":42,"name":"글로벌 최저한세","domain":"글로벌·외교","bm":["전사"],"risk":6.0,"predict":88,"ready":72,"cmit":"기재위원회","status":"이행중","predictReason":"OECD Pillar 2 국제 합의·이행 거의 확정적","actions":["세무팀 이행 현황 점검"]},{"id":43,"name":"미국 FTC 규제","domain":"글로벌·외교","bm":["글로벌"],"risk":5.5,"predict":40,"ready":65,"cmit":"외교통일위원회","status":"모니터링","predictReason":"미국 FTC 규제는 포시마크 현지 법무팀 대응 중","actions":["미국 현지 법무팀 현황 파악"]},{"id":44,"name":"북미 저작권 분쟁","domain":"글로벌·외교","bm":["AI서비스","글로벌"],"risk":6.0,"predict":42,"ready":58,"cmit":"외교통일위원회","status":"소송중","predictReason":"북미 저작권 분쟁은 법원 판결 진행 중","actions":["소송 현황 모니터링"]},{"id":45,"name":"빅테크 금융겸업 규제","domain":"금융·핀테크","bm":["핀테크"],"risk":7.5,"predict":55,"ready":52,"cmit":"정무위원회","status":"논의중","predictReason":"빅테크 금융 겸업 우려 커지나 혁신 저해 논란 병존","actions":["핀테크 분리 방안 검토","금융위 채널 접촉"]},{"id":46,"name":"간편결제 수수료 상한","domain":"금융·핀테크","bm":["핀테크"],"risk":7.0,"predict":50,"ready":55,"cmit":"정무위원회","status":"논의중","predictReason":"간편결제 수수료 상한제는 핀테크 업계 반발 거셈","actions":["수수료 체계 합리성 자료 준비"]},{"id":47,"name":"대출비교 플랫폼 규제","domain":"금융·핀테크","bm":["핀테크"],"risk":6.5,"predict":58,"ready":60,"cmit":"정무위원회","status":"논의중","predictReason":"대출비교 플랫폼 금융 당국 관리 강화 기조","actions":["금융위 실무 채널 대응"]},{"id":48,"name":"선불충전금 규제","domain":"금융·핀테크","bm":["핀테크"],"risk":5.5,"predict":65,"ready":68,"cmit":"정무위원회","status":"논의중","predictReason":"선불충전금 규제는 소비자 보호 명목으로 추진 중","actions":["선불충전금 운용 현황 점검"]},{"id":49,"name":"마이데이터 금융 확대","domain":"금융·핀테크","bm":["핀테크","클라우드"],"risk":5.0,"predict":72,"ready":75,"cmit":"정무위원회","status":"진행중","predictReason":"마이데이터 활성화는 정책 방향과 일치해 진전 예상","actions":["마이데이터 연동 서비스 준비"]},{"id":50,"name":"가상자산 제도화","domain":"금융·핀테크","bm":["핀테크"],"risk":5.5,"predict":38,"ready":60,"cmit":"정무위원회","status":"초기","predictReason":"두나무 협력 가상자산은 제도화 논의 초기 단계","actions":["가상자산 법제화 동향 모니터링"]}];
 const MEMBER_GR = {"윤한홍":{"cmit":"정무위원회","role":"위원장","interests":["온라인플랫폼 규제","공정거래"],"bills":["온라인플랫폼 공정화법"]},"이정문":{"cmit":"정무위원회","role":"위원","interests":["플랫폼 수수료","소상공인 보호"],"bills":["온라인플랫폼 중개거래 공정화법"]},"강준현":{"cmit":"정무위원회","role":"위원","interests":["공정거래","소비자보호"],"bills":["공정거래법 개정안"]},"최민희":{"cmit":"과학기술정보방송통신위원회","role":"위원장","interests":["AI기본법","방송통신정책","라인야후"],"bills":["인공지능 기본법","방송법 전부개정안"]},"고동진":{"cmit":"과학기술정보방송통신위원회","role":"위원","interests":["AI 산업육성","반도체","디지털전환"],"bills":["인공지능 진흥법"]},"황정아":{"cmit":"과학기술정보방송통신위원회","role":"위원","interests":["AI 거버넌스","데이터 주권"],"bills":["AI기본법 수정안"]},"이해민":{"cmit":"문화체육관광위원회","role":"위원","interests":["저작권","문화콘텐츠","OTT"],"bills":["저작권법 개정안(AI학습)"]},"조인철":{"cmit":"문화체육관광위원회","role":"위원","interests":["언론","미디어정책","포털 뉴스"],"bills":["포털뉴스 알고리즘 공개법"]},"김석기":{"cmit":"외교통일위원회","role":"위원","interests":["한일관계","외교","안보"],"bills":["재외동포법 개정안"]},"김영배":{"cmit":"외교통일위원회","role":"위원","interests":["한일외교","한미관계","통상"],"bills":["외교부 설치법 개정안"]},"한기호":{"cmit":"정무위원회","role":"위원","interests":["핀테크","금융혁신"],"bills":["전자금융거래법 개정안"]},"이강일":{"cmit":"정무위원회","role":"위원","interests":["빅테크 규제","디지털세"],"bills":["플랫폼 독과점 규제법"]}};
 const HARD_NEWS = [{"id":1,"date":"2026-03-23","source":"조선일보","src_color":"#c0392b","title":"온플법 정무위 소위 상정 확정…네이버 긴장","tags":["온플법"],"impact":"high"},{"id":2,"date":"2026-03-22","source":"한겨레","src_color":"#e74c3c","title":"AI기본법 과방위 공청회 4월 3일 개최 확정","tags":["AI기본법"],"impact":"high"},{"id":3,"date":"2026-03-22","source":"이데일리","src_color":"#2980b9","title":"라인야후 소프트뱅크 답변 마감 D-9","tags":["라인야후"],"impact":"high"},{"id":4,"date":"2026-03-21","source":"ZDNet Korea","src_color":"#16a085","title":"구글 지도 반출 허용 재논의…정부 신중론","tags":["구글지도"],"impact":"med"},{"id":5,"date":"2026-03-21","source":"디지털데일리","src_color":"#2c3e50","title":"AI 학습 저작권 소송 1심 판결 임박","tags":["저작권"],"impact":"med"},{"id":6,"date":"2026-03-20","source":"연합뉴스","src_color":"#27ae60","title":"네이버 공정위 자사우대 조사 본격화","tags":["온플법"],"impact":"high"},{"id":7,"date":"2026-03-20","source":"한국경제","src_color":"#e67e22","title":"핀테크 겸업규제 완화 논의 재개","tags":["핀테크"],"impact":"med"}];
+
+const NAVER_KW = [
+  // CRITICAL - 네이버 직접 규제
+  {kw:'온라인플랫폼',score:100},
+  {kw:'자사우대',score:100},
+  {kw:'플랫폼 규제',score:95},
+  {kw:'라인야후',score:95},
+  {kw:'온플법',score:95},
+  // HIGH - 사업 영향
+  {kw:'인공지능',score:80},
+  {kw:'AI기본법',score:80},
+  {kw:'저작권',score:75},
+  {kw:'TDM',score:75},
+  {kw:'알고리즘',score:75},
+  {kw:'포털',score:70},
+  {kw:'검색',score:70},
+  {kw:'뉴스알고리즘',score:70},
+  {kw:'개인정보',score:65},
+  {kw:'데이터',score:65},
+  {kw:'핀테크',score:60},
+  {kw:'전자금융',score:60},
+  {kw:'간편결제',score:60},
+  {kw:'클라우드',score:55},
+  {kw:'공정거래',score:55},
+  {kw:'광고',score:50},
+  {kw:'커머스',score:50},
+  {kw:'콘텐츠',score:45},
+  {kw:'OTT',score:45},
+  {kw:'미디어',score:40},
+  {kw:'통신',score:35},
+  // 일반 IT/디지털
+  {kw:'디지털',score:30},
+  {kw:'소프트웨어',score:25},
+  {kw:'정보통신',score:20},
+];
+
+function naverScore(bill){
+  var name = (bill.BILL_NAME||'') + (bill.RST_PROPOSER||'') + (bill.COMMITTEE||'');
+  var score = 0;
+  NAVER_KW.forEach(function(k){
+    if(name.indexOf(k.kw)>-1) score = Math.max(score, k.score);
+  });
+  return score;
+}
+
 const BMS = ['검색광고','커머스','AI클라우드','콘텐츠','핀테크','글로벌자산'];
 const DOMAINS = [
   {key:'플랫폼·공정거래',color:'#D94F3B',desc:'온플법·자사우대·수수료'},
@@ -793,7 +838,7 @@ function renderMembersTable(){
 }
 
 // ════ BILLS ════
-var BILL_KWS=['all','온라인플랫폼','인공지능','저작권','데이터보호','핀테크','알고리즘'];
+var BILL_KWS=['all','온라인플랫폼','인공지능','저작권','데이터','핀테크','알고리즘','포털','공정거래','개인정보','클라우드','전자금융','광고','콘텐츠'];
 
 function renderBillsFilters(){
   var el=$('billsFilters'); if(!el)return;
@@ -820,15 +865,41 @@ async function loadBills(){
     renderBillsList(); return;
   }
   $('billsLoading').style.display='block';
-  $('billsStatus').innerHTML='<span style="color:var(--g)">🔄 국회 API 로딩...</span>';
+  $('billsStatus').innerHTML='<span style="color:var(--g)">🔄 22대 국회 전체 법안 수집 중...</span>';
+  
+  // 네이버 관련 키워드 전체로 병렬 요청
+  var fetchKws = ['온라인플랫폼','인공지능','저작권','개인정보','핀테크','알고리즘','포털','공정거래','데이터','전자금융','클라우드','광고','콘텐츠','디지털','통신'];
+  var seen = new Set();
+  var collected = [];
+  
   try{
-    var res=await fetch(w+'/assembly/bills',{headers:{'X-Assembly-Key':k}});
-    if(!res.ok) throw new Error('HTTP '+res.status);
-    var data=await res.json();
-    if(data.error) throw new Error(data.error);
-    allBills=(data.bills||[]).map(enrichBill);
-    $('billsStatus').innerHTML='<span style="color:var(--g)">🟢 실시간 · '+allBills.length+'건</span>';
-    showToast('📋 법안 '+allBills.length+'건');
+    // 5개씩 병렬 처리
+    for(var i=0; i<fetchKws.length; i+=5){
+      var batch = fetchKws.slice(i, i+5);
+      var results = await Promise.all(batch.map(function(kw){
+        return fetch(w+'/assembly/bills?kw='+encodeURIComponent(kw), {
+          headers:{'X-Assembly-Key':k}
+        }).then(function(r){ return r.ok?r.json():{bills:[]}; })
+          .catch(function(){ return {bills:[]}; });
+      }));
+      results.forEach(function(data){
+        (data.bills||[]).forEach(function(b){
+          var id = b.BILL_ID||b.BILL_NAME||'';
+          if(id && !seen.has(id)){
+            seen.add(id);
+            collected.push(b);
+          }
+        });
+      });
+      $('billsStatus').innerHTML='<span style="color:var(--g)">🔄 수집 중... '+collected.length+'건</span>';
+    }
+    
+    // 네이버 관련도 점수로 정렬
+    allBills = collected.map(enrichBill)
+      .sort(function(a,b){ return b._naverScore - a._naverScore; });
+    
+    $('billsStatus').innerHTML='<span style="color:var(--g)">🟢 '+allBills.length+'건 · 네이버 관련 우선 정렬</span>';
+    showToast('📋 법안 '+allBills.length+'건 로드');
   }catch(e){
     $('billsStatus').innerHTML='<span style="color:var(--rd)">❌ '+e.message+'</span>';
     console.error('bills:',e);
@@ -839,41 +910,74 @@ async function loadBills(){
 }
 
 function enrichBill(b){
-  var t=(b.BILL_NAME||'')+(b.PROPOSER||'');
-  var risk='low',rc_='var(--mt)';
-  if(/온라인플랫폼|자사우대|플랫폼규제/.test(t)){risk='critical';rc_='var(--rd)';}
-  else if(/인공지능|AI기본|고위험/.test(t)){risk='high';rc_='var(--gd)';}
-  else if(/저작권|TDM|라인야후/.test(t)){risk='high';rc_='var(--gd)';}
-  else if(/데이터|개인정보|핀테크|알고리즘/.test(t)){risk='medium';rc_='var(--bl)';}
+  var t=(b.BILL_NAME||'')+(b.PROPOSER||'')+(b.RST_PROPOSER||'');
+  var ns = naverScore(b);
+  var risk,rc_;
+  if(ns>=90){risk='🔴 Critical';rc_='var(--rd)';}
+  else if(ns>=70){risk='🟠 High';rc_='var(--gd)';}
+  else if(ns>=50){risk='🟡 Medium';rc_='var(--bl)';}
+  else{risk='⚪ Low';rc_='var(--mt)';}
   var proc=b.PROC_RESULT||b.PROC_RESULT_CD||'';
   var status='심사중',sc='var(--gd)';
   if(/가결|통과/.test(proc)){status='가결';sc='var(--rd)';}
   else if(/부결|폐기|철회/.test(proc)){status='폐기';sc='var(--mt)';}
-  return Object.assign({},b,{_risk:risk,_rc:rc_,_status:status,_sc:sc});
+  return Object.assign({},b,{_risk:risk,_rc:rc_,_status:status,_sc:sc,_naverScore:ns});
 }
 
 function renderBillsList(){
   var el=$('billsContent'); if(!el)return;
   if(!allBills.length){
-    el.innerHTML=AK()?'<div class="empty"><div style="font-size:24px;margin-bottom:8px">⏳</div>🔄 새로고침 버튼을 눌러주세요</div>'
-      :'<div class="empty"><div style="font-size:24px;margin-bottom:8px">📋</div>⚙️ 설정 → 국회 OpenAPI 키 입력<br><small style="color:var(--mt)">키: cdc6bd117117408183d464fc0b32b02c</small></div>';
+    if(AK()&&W()){
+      el.innerHTML='<div class="empty"><div style="font-size:28px;margin-bottom:8px">📋</div>'
+        +'<div style="margin-bottom:6px;font-weight:700">🔄 새로고침 버튼을 클릭하세요</div>'
+        +'<button class="btn" onclick="loadBills()" style="margin-top:4px">지금 로드하기</button></div>';
+    } else {
+      el.innerHTML='<div class="empty"><div style="font-size:28px;margin-bottom:8px">⚙️</div>'
+        +'<div style="margin-bottom:6px;font-weight:700">API 설정이 필요합니다</div>'
+        +'<div style="font-size:10px;color:var(--mt);line-height:1.8">'
+        +'Worker URL: https://nvgc-proxy.sebi1126.workers.dev<br>'
+        +'국회 API 키: cdc6bd117117408183d464fc0b32b02c</div>'
+        +'<button class="btn" onclick="openSettings()" style="margin-top:8px">⚙️ 설정 열기</button></div>';
+    }
     return;
   }
-  var src=curBillKw==='all'?allBills:allBills.filter(function(b){return (b.BILL_NAME||'').indexOf(curBillKw)>-1;});
-  el.innerHTML=src.slice(0,50).map(function(b){
-    var url=b.LINK_URL?'href="'+b.LINK_URL+'" target="_blank"':'';
-    return '<div class="card" style="margin-bottom:7px">'
-      +'<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:5px">'
-      +'<a '+url+' style="font-size:12px;font-weight:700;flex:1;line-height:1.4">'+b.BILL_NAME+'</a>'
-      +'<span style="font-size:9px;font-weight:700;color:'+b._rc+';background:'+b._rc+'18;padding:2px 7px;border-radius:7px;white-space:nowrap;flex-shrink:0">'+b._risk+'</span>'
-      +'</div>'
-      +'<div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center">'
-      +'<span style="font-size:9px;font-weight:700;color:'+b._sc+';background:'+b._sc+'15;padding:1px 6px;border-radius:5px">'+b._status+'</span>'
-      +'<span style="font-size:9px;color:var(--mt)">대표: '+(b.RST_PROPOSER||b.PROPOSER||'-')+'</span>'
-      +((b.PROPOSE_DT||'').substring(0,10)?'<span style="font-size:9px;color:var(--mt)">📅 '+(b.PROPOSE_DT||'').substring(0,10)+'</span>':'')
-      +(b.LINK_URL?'<a href="'+b.LINK_URL+'" target="_blank" style="font-size:9px;color:var(--bl);margin-left:auto">원문 →</a>':'')
-      +'</div></div>';
-  }).join('');
+  var src = curBillKw==='all' ? allBills
+    : allBills.filter(function(b){ return (b.BILL_NAME||'').indexOf(curBillKw)>-1; });
+  
+  // 상단에 네이버 관련도 높은 것 강조
+  var topNaver = src.filter(function(b){ return b._naverScore>=70; });
+  var rest = src.filter(function(b){ return b._naverScore<70; });
+  
+  var html = '';
+  if(topNaver.length && curBillKw==='all'){
+    html += '<div style="font-size:9px;font-weight:700;color:var(--rd);text-transform:uppercase;letter-spacing:.7px;padding:8px 0 5px">🔴 네이버 직결 법안 · '+topNaver.length+'건</div>';
+    html += topNaver.slice(0,30).map(function(b){ return billCard(b); }).join('');
+    html += '<div style="font-size:9px;font-weight:700;color:var(--mt);text-transform:uppercase;letter-spacing:.7px;padding:12px 0 5px;border-top:1px solid var(--br);margin-top:4px">기타 IT·디지털 법안 · '+rest.length+'건</div>';
+    html += rest.slice(0,20).map(function(b){ return billCard(b); }).join('');
+  } else {
+    html += src.slice(0,50).map(function(b){ return billCard(b); }).join('');
+  }
+  el.innerHTML = html;
+}
+
+function billCard(b){
+  var url = b.LINK_URL ? 'href="'+b.LINK_URL+'" target="_blank"' : '';
+  var scoreBar = b._naverScore>0
+    ? '<div style="width:'+Math.min(b._naverScore,100)+'px;height:2px;background:'+b._rc+';border-radius:1px;margin-top:4px" title="네이버 관련도 '+b._naverScore+'점"></div>'
+    : '';
+  return '<div class="card" style="margin-bottom:6px;border-left:2px solid '+b._rc+'">'
+    +'<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:4px">'
+    +'<a '+url+' style="font-size:12px;font-weight:700;flex:1;line-height:1.4;color:var(--tx)">'+b.BILL_NAME+'</a>'
+    +'<span style="font-size:9px;font-weight:700;color:'+b._rc+';background:'+b._rc+'18;padding:2px 7px;border-radius:7px;white-space:nowrap;flex-shrink:0">'+b._risk+'</span>'
+    +'</div>'
+    +scoreBar
+    +'<div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-top:4px">'
+    +'<span style="font-size:9px;font-weight:700;color:'+b._sc+';background:'+b._sc+'15;padding:1px 6px;border-radius:5px">'+b._status+'</span>'
+    +'<span style="font-size:9px;color:var(--mt)">대표: '+(b.RST_PROPOSER||b.PROPOSER||'-')+'</span>'
+    +(b.COMMITTEE?'<span style="font-size:9px;color:var(--mt)">'+b.COMMITTEE+'</span>':'')
+    +((b.PROPOSE_DT||'').substring(0,10)?'<span style="font-size:9px;color:var(--mt)">📅 '+(b.PROPOSE_DT||'').substring(0,10)+'</span>':'')
+    +(b.LINK_URL?'<a href="'+b.LINK_URL+'" target="_blank" style="font-size:9px;color:var(--bl);margin-left:auto">원문 →</a>':'')
+    +'</div></div>';
 }
 
 // ════ AI ════
