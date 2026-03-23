@@ -1350,6 +1350,7 @@ function go(id,el){
   document.getElementById('p-'+id).classList.add('on');
   if(el)el.classList.add('on');
   if(id==='news'){renderNewsList();renderKeywordCloud();loadRealtimeNews();updateRealtimeStatus();}
+  if(id==='bills'){loadBills();}
   if(id==='heatmap')renderHeatmap();
   if(id==='bm')renderBMDetail();
   if(id==='issues'){renderIssueList2();renderBMBars();renderDomainMini();renderDomainTabs2();renderDomainTable();}
@@ -1407,6 +1408,119 @@ function updateRealtimeStatus(){
   else if(w) el.innerHTML = '<span style="color:var(--gd)">🟡 Worker 연결됨 (API 키 미입력)</span>';
   else el.innerHTML = '⚪ 실시간 미연동 — ⚙️ 설정에서 Worker URL 입력';
 }
+
+// ═══ BILLS (의안정보시스템) ═══
+let allBills = [];
+let billsLoaded = false;
+let curBillKw = 'all';
+
+function setBillKw(kw, btn){
+  curBillKw = kw;
+  document.querySelectorAll('#billKeywordBtns .fb').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+  renderBillsList();
+}
+
+async function loadBills(force=false){
+  const w = WORKER_URL(), k = ASSEMBLY_KEY();
+  if(!w || !k){
+    document.getElementById('billsStatus').innerHTML='⚪ 설정 필요 — ⚙️에서 국회 API 키 입력';
+    return;
+  }
+  if(billsLoaded && !force) return;
+
+  const loading = document.getElementById('billsLoading');
+  if(loading) loading.style.display='flex';
+  document.getElementById('billsStatus').innerHTML='<span style="color:var(--g)">🔄 로딩 중...</span>';
+
+  try{
+    const res = await fetch(w+'/assembly/bills', {
+      headers:{'X-Assembly-Key': k}
+    });
+    const data = await res.json();
+    allBills = (data.bills||[]).map(b => enrichBill(b));
+    billsLoaded = true;
+    renderBillsStats();
+    renderBillsList();
+    document.getElementById('billsStatus').innerHTML=
+      '<span style="color:var(--g)">🟢 실시간 연동 · '+allBills.length+'건</span>';
+    showToast('📋 법안 '+allBills.length+'건 로드됨');
+  }catch(e){
+    document.getElementById('billsStatus').innerHTML='❌ 연결 실패';
+    console.warn('Bills error:',e);
+  }finally{
+    if(loading) loading.style.display='none';
+  }
+}
+
+function ASSEMBLY_KEY(){ return localStorage.getItem('assembly_key')||''; }
+
+function enrichBill(b){
+  // GR 리스크 분류
+  const title = (b.BILL_NAME||'')+(b.PROPOSER||'');
+  let risk='low', riskLabel='모니터링', riskColor='var(--mt)';
+  if(/온라인플랫폼|자사우대|플랫폼규제|온플/.test(title)){ risk='critical'; riskLabel='🔴 Critical'; riskColor='var(--rd)'; }
+  else if(/인공지능|AI기본|고위험/.test(title)){ risk='high'; riskLabel='🟠 High'; riskColor='var(--gd)'; }
+  else if(/저작권|TDM|학습데이터|라인야후/.test(title)){ risk='high'; riskLabel='🟠 High'; riskColor='var(--gd)'; }
+  else if(/데이터보호|개인정보|핀테크|알고리즘/.test(title)){ risk='medium'; riskLabel='🟡 Medium'; riskColor='var(--bl)'; }
+
+  // 진행상태
+  const proc = b.PROC_RESULT_CD||b.PROC_RESULT||'';
+  let status='심사중', statusColor='var(--gd)';
+  if(/가결|통과/.test(proc)){ status='가결'; statusColor='var(--rd)'; }
+  else if(/부결|폐기/.test(proc)){ status='폐기'; statusColor='var(--mt)'; }
+  else if(/철회/.test(proc)){ status='철회'; statusColor='var(--mt)'; }
+
+  return {...b, _risk:risk, _riskLabel:riskLabel, _riskColor:riskColor, _status:status, _statusColor:statusColor};
+}
+
+function renderBillsStats(){
+  const stats = document.getElementById('billsStats');
+  if(stats) stats.style.display='grid';
+  const el = id => document.getElementById(id);
+  if(el('bsTotal')) el('bsTotal').textContent = allBills.length;
+  if(el('bsPending')) el('bsPending').textContent = allBills.filter(b=>b._status==='심사중').length;
+  if(el('bsPassed')) el('bsPassed').textContent = allBills.filter(b=>b._status==='가결').length;
+  if(el('bsHigh')) el('bsHigh').textContent = allBills.filter(b=>b._risk==='critical'||b._risk==='high').length;
+}
+
+function renderBillsList(){
+  const el = document.getElementById('billsList');
+  if(!el) return;
+  let list = allBills;
+  if(curBillKw !== 'all'){
+    list = list.filter(b=>(b.BILL_NAME||'').includes(curBillKw)||(b.PROPOSER||'').includes(curBillKw));
+  }
+  if(!list.length){
+    el.innerHTML='<div style="text-align:center;padding:30px;color:var(--mt)">해당 키워드 법안 없음</div>';
+    return;
+  }
+
+  el.innerHTML = list.slice(0,50).map(b=>{
+    const propDate = (b.PROPOSE_DT||'').substring(0,10);
+    const cmit = b.CURR_COMMITTEE||b.COMMITTEE_NAME||'';
+    const url = b.LINK_URL ? 'href="'+b.LINK_URL+'" target="_blank"' : '';
+    return '<div class="pcard" style="margin-bottom:8px">'
+      +'<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:6px">'
+      +'<div style="flex:1">'
+      +'<a '+url+' style="font-size:12px;font-weight:700;color:var(--tx);text-decoration:none;line-height:1.5;display:block">'+
+        (b.BILL_NAME||'법안명 없음')+'</a>'
+      +'<div style="font-size:10px;color:var(--mt);margin-top:3px">'
+      +'대표발의: <b style="color:var(--tx)">'+( b.RST_PROPOSER||b.PROPOSER||'-')+'</b>'
+      +(cmit?' · '+cmit:'')
+      +'</div></div>'
+      +'<span style="font-size:9px;padding:2px 7px;border-radius:8px;font-weight:700;background:'+b._riskColor+'18;color:'+b._riskColor+';border:1px solid '+b._riskColor+'33;white-space:nowrap">'+b._riskLabel+'</span>'
+      +'</div>'
+      +'<div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center">'
+      +'<span style="font-size:9px;padding:1px 7px;border-radius:8px;background:'+b._statusColor+'15;color:'+b._statusColor+';border:1px solid '+b._statusColor+'33;font-weight:700">'+b._status+'</span>'
+      +(propDate?'<span style="font-size:9px;color:var(--mt)">📅 '+propDate+'</span>':'')
+      +(b.BILL_NO?'<span style="font-size:9px;color:var(--mt)">No. '+b.BILL_NO+'</span>':'')
+      +(b.LINK_URL?'<a href="'+b.LINK_URL+'" target="_blank" style="font-size:9px;color:var(--bl);margin-left:auto">의안원문 →</a>':'')
+      +'</div>'
+      +'</div>';
+  }).join('');
+}
+
 // ═══ INIT ═══
 allMemData=[...MEMBERS_DATA];
 const savedUserNews = loadFromLocal('user_news', []);
