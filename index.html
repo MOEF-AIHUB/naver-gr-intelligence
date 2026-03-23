@@ -1,0 +1,1009 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NAVER GR Intelligence · 실시간</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&display=swap');
+:root{
+  --g:#03C75A;--dk:#0D1B2A;--bl:#1C6EF2;--rd:#D94F3B;--gd:#E8A838;--pu:#8B5CF6;
+  --bg:#0A1628;--cd:#111E30;--cd2:#162030;--br:#1E3048;--tx:#D8E8F5;--mt:#5A7A9A;
+  --glow:0 0 20px rgba(3,199,90,.15);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--tx);font-family:'Noto Sans KR',sans-serif;font-size:13px;min-height:100vh}
+/* HEADER */
+header{
+  background:linear-gradient(90deg,#0A1628 0%,#111E30 100%);
+  border-bottom:1px solid var(--br);
+  padding:0 24px;height:58px;
+  display:flex;align-items:center;justify-content:space-between;
+  position:sticky;top:0;z-index:100;
+  box-shadow:0 2px 20px rgba(0,0,0,.4);
+}
+.logo{display:flex;align-items:center;gap:12px}
+.logo-n{
+  background:linear-gradient(135deg,#03C75A,#00A847);
+  color:#fff;font-weight:900;font-size:17px;
+  width:34px;height:34px;border-radius:9px;
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 0 15px rgba(3,199,90,.3);
+}
+.logo-t{font-size:14px;font-weight:700;letter-spacing:-.3px}
+.logo-s{font-size:10px;color:var(--mt);margin-top:1px}
+.hright{display:flex;align-items:center;gap:14px}
+.live{background:rgba(3,199,90,.12);border:1px solid rgba(3,199,90,.4);color:var(--g);font-size:10px;font-weight:700;padding:4px 12px;border-radius:20px;display:flex;align-items:center;gap:5px}
+.dot{width:5px;height:5px;background:var(--g);border-radius:50%;animation:pulse 1.5s infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.8)}}
+.dtext{font-size:10px;color:var(--mt)}
+/* API KEY BANNER */
+.api-banner{background:rgba(232,168,56,.08);border:1px solid rgba(232,168,56,.2);padding:10px 24px;display:flex;align-items:center;gap:12px;font-size:11px;color:var(--gd)}
+.api-input{flex:1;max-width:400px;background:rgba(0,0,0,.3);border:1px solid rgba(232,168,56,.3);border-radius:6px;padding:6px 12px;color:var(--tx);font-size:11px;outline:none}
+.api-input::placeholder{color:var(--mt)}
+.api-input:focus{border-color:var(--gd)}
+.api-btn{background:var(--gd);color:#000;border:none;border-radius:6px;padding:6px 14px;font-size:11px;font-weight:700;cursor:pointer}
+.api-ok{color:var(--g);font-size:11px}
+/* TABS */
+.tabs{display:flex;gap:1px;padding:10px 24px 0;background:var(--bg);border-bottom:1px solid var(--br);overflow-x:auto;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab{padding:8px 18px;border-radius:8px 8px 0 0;font-size:12px;font-weight:600;cursor:pointer;color:var(--mt);border:none;background:transparent;white-space:nowrap;transition:.2s;letter-spacing:-.2px}
+.tab:hover{color:var(--tx)}
+.tab.on{background:var(--cd);color:var(--g);border:1px solid var(--br);border-bottom:1px solid var(--cd);margin-bottom:-1px}
+/* LAYOUT */
+.main{padding:20px 24px}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:18px}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:18px}
+.g2{display:grid;grid-template-columns:2fr 1fr;gap:14px;margin-bottom:18px}
+.g2r{display:grid;grid-template-columns:1fr 2fr;gap:14px;margin-bottom:18px}
+@media(max-width:900px){.g4,.g3,.g2,.g2r{grid-template-columns:1fr}}
+/* CARD */
+.card{
+  background:var(--cd);
+  border:1px solid var(--br);
+  border-radius:12px;padding:18px;
+  transition:.2s;
+}
+.card:hover{border-color:rgba(28,110,242,.2)}
+.ch{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.ct{font-size:10px;font-weight:700;color:var(--mt);letter-spacing:.8px;text-transform:uppercase}
+.ca{font-size:11px;color:var(--bl);cursor:pointer;padding:3px 8px;border-radius:5px;border:1px solid rgba(28,110,242,.3);transition:.15s}
+.ca:hover{background:rgba(28,110,242,.1)}
+/* KPI */
+.kv{font-size:30px;font-weight:900;line-height:1;margin-bottom:4px;letter-spacing:-1px}
+.kl{font-size:11px;color:var(--mt)}.kc{font-size:11px;margin-top:8px}
+.up{color:var(--rd)}.dn{color:var(--g)}.neu{color:var(--mt)}
+/* RISK BADGE */
+.risk{display:inline-flex;align-items:center;padding:3px 9px;border-radius:20px;font-size:10px;font-weight:700;white-space:nowrap}
+.crit{background:rgba(217,79,59,.12);color:var(--rd);border:1px solid rgba(217,79,59,.25)}
+.high{background:rgba(232,168,56,.12);color:var(--gd);border:1px solid rgba(232,168,56,.25)}
+.med{background:rgba(28,110,242,.12);color:var(--bl);border:1px solid rgba(28,110,242,.25)}
+.low{background:rgba(3,199,90,.12);color:var(--g);border:1px solid rgba(3,199,90,.25)}
+/* ALERT */
+.alert{border-radius:8px;padding:11px 13px;margin-bottom:9px;font-size:11px;line-height:1.55;display:flex;gap:9px}
+.ac{background:rgba(217,79,59,.07);border-left:3px solid var(--rd)}
+.aw{background:rgba(232,168,56,.07);border-left:3px solid var(--gd)}
+.ai-a{background:rgba(28,110,242,.07);border-left:3px solid var(--bl)}
+.at{font-weight:700;margin-bottom:2px}
+/* PROGRESS */
+.pb{height:5px;background:var(--br);border-radius:3px;overflow:hidden;margin-top:5px}
+.pf{height:100%;border-radius:3px;transition:.5s}
+/* METER */
+.mw{display:flex;align-items:center;gap:10px;margin:7px 0}
+.ml{font-size:11px;min-width:82px;color:var(--mt)}
+.mb{flex:1;height:6px;background:var(--br);border-radius:3px;overflow:hidden}
+.mf{height:100%;border-radius:3px}
+.mv{font-size:11px;font-weight:700;min-width:34px;text-align:right}
+/* TIMELINE */
+.tl{position:relative;padding-left:22px}
+.tl::before{content:'';position:absolute;left:4px;top:0;bottom:0;width:1px;background:var(--br)}
+.tli{position:relative;margin-bottom:16px}
+.tli::before{content:'';position:absolute;left:-15px;top:5px;width:7px;height:7px;border-radius:50%;background:var(--br);border:1px solid var(--br)}
+.tli.al::before{background:var(--rd);border-color:var(--rd);box-shadow:0 0 8px rgba(217,79,59,.5);animation:pulse 1.5s infinite}
+.tli.sn::before{background:var(--gd);border-color:var(--gd)}
+.tli.dn::before{background:var(--g);border-color:var(--g)}
+.td{font-size:10px;color:var(--mt);margin-bottom:1px}.tt{font-size:12px;font-weight:600}.ts{font-size:10px;color:var(--mt)}
+/* BILL */
+.bi{padding:12px 0;border-bottom:1px solid var(--br);cursor:pointer;transition:.15s}
+.bi:last-child{border-bottom:none}
+.bi:hover{padding:12px 8px;margin:0 -8px;border-radius:8px;background:rgba(255,255,255,.02)}
+.btop{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:6px}
+.bn{font-size:12px;font-weight:600;line-height:1.4}
+.bm{display:flex;gap:5px;flex-wrap:wrap}
+.tag{font-size:9px;padding:2px 7px;border-radius:10px;font-weight:600}
+.tb{background:rgba(28,110,242,.15);color:var(--bl)}
+.tg{background:rgba(3,199,90,.15);color:var(--g)}
+.tgr{background:rgba(90,122,154,.2);color:var(--mt)}
+.bd{font-size:11px;color:var(--mt);line-height:1.6;margin-top:5px}
+/* LEG */
+.li{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--br)}
+.li:last-child{border-bottom:none}
+.la{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex-shrink:0}
+/* SEARCH */
+.sb{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap}
+.si{flex:1;min-width:200px;background:var(--cd);border:1px solid var(--br);border-radius:8px;padding:9px 14px;color:var(--tx);font-size:12px;outline:none;transition:.2s}
+.si::placeholder{color:var(--mt)}.si:focus{border-color:var(--g)}
+.fb{background:var(--cd);border:1px solid var(--br);border-radius:8px;padding:8px 14px;color:var(--mt);font-size:11px;cursor:pointer;transition:.15s}
+.fb:hover{border-color:var(--g);color:var(--g)}.fb.on{border-color:var(--g);color:var(--g);background:rgba(3,199,90,.08)}
+/* CHAT */
+.msgs{background:var(--bg);border:1px solid var(--br);border-radius:10px;padding:14px;min-height:280px;max-height:400px;overflow-y:auto;margin-bottom:10px}
+.msg-ai{display:flex;gap:10px;margin-bottom:12px}
+.msg-me{display:flex;justify-content:flex-end;margin-bottom:12px}
+.av{width:28px;height:28px;background:linear-gradient(135deg,var(--g),#00A847);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;box-shadow:0 0 10px rgba(3,199,90,.2)}
+.b-ai{background:var(--cd2);border:1px solid var(--br);border-radius:10px;padding:10px 14px;font-size:11px;line-height:1.7;max-width:90%}
+.b-me{background:rgba(28,110,242,.15);border:1px solid rgba(28,110,242,.25);border-radius:10px;padding:10px 14px;font-size:11px;max-width:80%}
+.ai-tag{display:inline-block;background:rgba(3,199,90,.12);color:var(--g);font-size:9px;padding:2px 8px;border-radius:10px;margin-bottom:7px;font-weight:700;border:1px solid rgba(3,199,90,.2)}
+.thinking{display:flex;gap:4px;align-items:center;padding:10px 14px}
+.thinking span{width:6px;height:6px;background:var(--mt);border-radius:50%;animation:bounce .8s infinite}
+.thinking span:nth-child(2){animation-delay:.15s}
+.thinking span:nth-child(3){animation-delay:.3s}
+@keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+.qbtns{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
+.qb{background:var(--cd2);border:1px solid var(--br);border-radius:7px;padding:6px 11px;color:var(--mt);font-size:10px;cursor:pointer;transition:.15s}
+.qb:hover{border-color:var(--g);color:var(--g)}
+.aiw{display:flex;gap:8px}
+.ainput{flex:1;background:var(--cd);border:1px solid var(--br);border-radius:8px;padding:9px 14px;color:var(--tx);font-size:11px;outline:none;transition:.2s}
+.ainput:focus{border-color:var(--g)}
+.asend{background:linear-gradient(135deg,var(--g),#00A847);border:none;border-radius:8px;padding:9px 18px;color:#fff;font-size:11px;cursor:pointer;font-weight:700;transition:.2s;box-shadow:0 0 12px rgba(3,199,90,.2)}
+.asend:hover{box-shadow:0 0 20px rgba(3,199,90,.35)}
+.asend:disabled{opacity:.5;cursor:not-allowed}
+/* PAGE */
+.page{display:none}.page.on{display:block}
+/* CALENDAR */
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px}
+.cday{min-height:46px;background:var(--bg);border:1px solid var(--br);border-radius:6px;padding:4px 5px;cursor:pointer;transition:.15s}
+.cday:hover{border-color:var(--mt)}
+.cday.today{border-color:var(--g);background:rgba(3,199,90,.06)}
+.cday.hev{border-color:rgba(217,79,59,.35)}
+.cn{font-size:11px;font-weight:500}.cev{font-size:9px;color:var(--mt);line-height:1.3;margin-top:2px}
+/* SCENARIO */
+.sc{display:flex;align-items:flex-start;gap:12px;padding:12px;border-radius:8px;margin-bottom:8px}
+.sc-bad{background:rgba(217,79,59,.06);border-left:3px solid var(--rd)}
+.sc-mid{background:rgba(232,168,56,.06);border-left:3px solid var(--gd)}
+.sc-good{background:rgba(3,199,90,.06);border-left:3px solid var(--g)}
+/* DIVIDER */
+hr{border:none;border-top:1px solid var(--br);margin:14px 0}
+/* CHART */
+.cw{position:relative;height:190px}
+/* EDIT BADGE */
+.edit-btn{background:none;border:1px solid var(--br);border-radius:5px;padding:3px 9px;font-size:10px;color:var(--mt);cursor:pointer;transition:.15s}
+.edit-btn:hover{border-color:var(--gd);color:var(--gd)}
+/* FAB */
+.fab{position:fixed;bottom:22px;right:22px;width:48px;height:48px;background:linear-gradient(135deg,var(--g),#00A847);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:22px;cursor:pointer;box-shadow:0 4px 20px rgba(3,199,90,.4);border:none;color:#fff;z-index:200;transition:.2s}
+.fab:hover{transform:scale(1.08);box-shadow:0 6px 28px rgba(3,199,90,.5)}
+/* MODAL */
+.ov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:300;align-items:center;justify-content:center;backdrop-filter:blur(3px)}
+.ov.on{display:flex}
+.modal{background:var(--cd);border:1px solid var(--br);border-radius:16px;width:92%;max-width:520px;max-height:85vh;overflow-y:auto;padding:24px;box-shadow:0 20px 60px rgba(0,0,0,.5)}
+.mh{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}
+.mx{background:none;border:none;color:var(--mt);font-size:20px;cursor:pointer;transition:.15s}
+.mx:hover{color:var(--tx)}
+.field{margin-bottom:13px}
+.flabel{color:var(--mt);font-size:11px;margin-bottom:5px;display:block}
+.finput{width:100%;background:var(--bg);border:1px solid var(--br);border-radius:7px;padding:9px 13px;color:var(--tx);font-size:12px;outline:none;transition:.2s}
+.finput:focus{border-color:var(--g)}
+.btn-p{width:100%;background:linear-gradient(135deg,var(--g),#00A847);color:#fff;border:none;border-radius:9px;padding:12px;font-size:13px;font-weight:700;cursor:pointer;margin-top:10px;box-shadow:0 4px 16px rgba(3,199,90,.3)}
+.btn-p:hover{box-shadow:0 6px 24px rgba(3,199,90,.45)}
+/* SCROLLBAR */
+::-webkit-scrollbar{width:4px;height:4px}
+::-webkit-scrollbar-thumb{background:var(--br);border-radius:2px}
+/* DATA EDIT PANEL */
+.data-panel{background:var(--bg);border:1px solid var(--br);border-radius:10px;padding:16px;margin-top:14px}
+.data-row{display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid var(--br)}
+.data-row:last-child{border-bottom:none}
+/* TOAST */
+.toast{position:fixed;bottom:80px;right:22px;background:var(--cd);border:1px solid var(--g);color:var(--g);padding:10px 18px;border-radius:8px;font-size:12px;font-weight:700;z-index:500;transform:translateY(20px);opacity:0;transition:.3s;pointer-events:none}
+.toast.show{transform:translateY(0);opacity:1}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <div class="logo">
+    <div class="logo-n">N</div>
+    <div>
+      <div class="logo-t">GR Intelligence</div>
+      <div class="logo-s">대관 인텔리전스 시스템 · 실시간</div>
+    </div>
+  </div>
+  <div class="hright">
+    <div class="live"><div class="dot"></div>LIVE</div>
+    <div class="dtext" id="nowTime">2026.03.22</div>
+  </div>
+</header>
+
+<!-- API KEY BANNER -->
+<div class="api-banner" id="apiBanner">
+  <span>🔑 AI 인텔 탭 사용을 위해 Anthropic API 키를 입력하세요 (한 번만 저장됩니다)</span>
+  <input class="api-input" id="apiKeyInput" type="password" placeholder="sk-ant-...">
+  <button class="api-btn" onclick="saveKey()">저장</button>
+  <span class="api-ok" id="apiOk" style="display:none">✅ 저장됨</span>
+</div>
+
+<!-- TABS -->
+<div class="tabs">
+  <button class="tab on" onclick="go('dash',this)">📊 대시보드</button>
+  <button class="tab" onclick="go('bills',this)">📋 법안 추적</button>
+  <button class="tab" onclick="go('pred',this)">🔮 규제 예측</button>
+  <button class="tab" onclick="go('leg',this)">🏛 의원실</button>
+  <button class="tab" onclick="go('cal',this)">📅 일정</button>
+  <button class="tab" onclick="go('intel',this)">🤖 AI 인텔 <span style="background:var(--g);color:#000;font-size:8px;padding:1px 5px;border-radius:8px;font-weight:900;margin-left:3px">LIVE</span></button>
+</div>
+
+<div class="main">
+
+<!-- ═══ DASHBOARD ═══ -->
+<div class="page on" id="p-dash">
+  <div class="g4">
+    <div class="card">
+      <div class="ch"><div class="ct">모니터링 법안</div><span style="font-size:22px">📋</span></div>
+      <div class="kv" style="color:var(--bl)" id="kpi-bills">17</div>
+      <div class="kl">22대 국회 계류</div><div class="kc up">▲ 3건 증가 (vs 전월)</div>
+    </div>
+    <div class="card">
+      <div class="ch"><div class="ct">Critical 이슈</div><span style="font-size:22px">🔴</span></div>
+      <div class="kv" style="color:var(--rd)">3</div>
+      <div class="kl">즉시 대응 필요</div><div class="kc up">▲ 1건 등급 상향</div>
+    </div>
+    <div class="card">
+      <div class="ch"><div class="ct">이번 주 일정</div><span style="font-size:22px">📅</span></div>
+      <div class="kv" style="color:var(--gd)" id="kpi-events">5</div>
+      <div class="kl">미팅·소위·공청회</div><div class="kc neu">정무위 소위 3.24</div>
+    </div>
+    <div class="card">
+      <div class="ch"><div class="ct">관리 의원실</div><span style="font-size:22px">🏛</span></div>
+      <div class="kv" style="color:var(--g)" id="kpi-legs">28</div>
+      <div class="kl">정기 관리 대상</div><div class="kc dn">평균 신뢰도 7.2/10</div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-bottom:18px">
+    <div class="ch">
+      <div class="ct">⚡ 긴급 알림 · 오늘의 액션 아이템</div>
+      <button class="edit-btn" onclick="openAlertEditor()">✏️ 편집</button>
+    </div>
+    <div id="alertList"></div>
+  </div>
+
+  <div class="g2">
+    <div class="card">
+      <div class="ch"><div class="ct">이슈 리스크 레이더</div></div>
+      <div class="cw"><canvas id="rc"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="ch"><div class="ct">🗓 향후 30일 주요 일정</div><button class="edit-btn" onclick="openEventEditor()">✏️ 편집</button></div>
+      <div class="tl" id="timelineList"></div>
+    </div>
+  </div>
+
+  <div class="g3">
+    <div class="card"><div class="ch"><div class="ct">법안 단계별 현황</div></div><div class="cw" style="height:160px"><canvas id="fc"></canvas></div></div>
+    <div class="card">
+      <div class="ch"><div class="ct">통과 예측 확률</div></div>
+      <div id="predMeters"></div>
+    </div>
+    <div class="card">
+      <div class="ch"><div class="ct">우선 대응 의원실 TOP5</div></div>
+      <div id="topLegs"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ BILLS ═══ -->
+<div class="page" id="p-bills">
+  <div class="sb">
+    <input class="si" placeholder="🔍 법안명·의원명·키워드 검색..." oninput="filterB(this.value)">
+    <button class="fb on" onclick="filterR('all',this)">전체</button>
+    <button class="fb" onclick="filterR('crit',this)">🔴 Critical</button>
+    <button class="fb" onclick="filterR('high',this)">🟡 High</button>
+    <button class="fb" onclick="filterR('med',this)">🔵 Medium</button>
+    <button class="fb" onclick="exportData()">📤 내보내기</button>
+  </div>
+  <div class="card">
+    <div class="ch"><div class="ct" id="billCount">전체 법안</div><div class="ca" onclick="openAddBill()">+ 법안 추가</div></div>
+    <div id="blist"></div>
+  </div>
+</div>
+
+<!-- ═══ PREDICT ═══ -->
+<div class="page" id="p-pred">
+  <div class="g3">
+    <div class="card" style="text-align:center;padding:22px">
+      <div class="ct" style="margin-bottom:12px">온플법 통과 예측</div>
+      <canvas id="g1" width="140" height="140" style="display:block;margin:0 auto"></canvas>
+      <div style="font-size:38px;font-weight:900;color:var(--rd);margin:8px 0;letter-spacing:-2px">72%</div>
+      <div style="font-size:11px;color:var(--mt)">2026년 내 본회의 통과</div>
+      <div style="margin-top:10px"><span class="risk crit">Critical Risk</span></div>
+    </div>
+    <div class="card" style="text-align:center;padding:22px">
+      <div class="ct" style="margin-bottom:12px">AI기본법 통과 예측</div>
+      <canvas id="g2" width="140" height="140" style="display:block;margin:0 auto"></canvas>
+      <div style="font-size:38px;font-weight:900;color:var(--gd);margin:8px 0;letter-spacing:-2px">58%</div>
+      <div style="font-size:11px;color:var(--mt)">2026년 내 본회의 통과</div>
+      <div style="margin-top:10px"><span class="risk high">High Risk</span></div>
+    </div>
+    <div class="card" style="text-align:center;padding:22px">
+      <div class="ct" style="margin-bottom:12px">수수료 규제 통과 예측</div>
+      <canvas id="g3" width="140" height="140" style="display:block;margin:0 auto"></canvas>
+      <div style="font-size:38px;font-weight:900;color:var(--gd);margin:8px 0;letter-spacing:-2px">61%</div>
+      <div style="font-size:11px;color:var(--mt)">2026년 내 본회의 통과</div>
+      <div style="margin-top:10px"><span class="risk high">High Risk</span></div>
+    </div>
+  </div>
+  <div class="g2">
+    <div class="card">
+      <div class="ch"><div class="ct">📈 예측 변수 분석 (온플법 기준)</div></div>
+      <div class="mw"><div class="ml">여당 의석 지지</div><div class="mb"><div class="mf" style="width:85%;background:var(--rd)"></div></div><div class="mv" style="color:var(--rd)">85%</div></div>
+      <div class="mw"><div class="ml">여론 지지도</div><div class="mb"><div class="mf" style="width:68%;background:var(--gd)"></div></div><div class="mv" style="color:var(--gd)">68%</div></div>
+      <div class="mw"><div class="ml">한미 통상 압박</div><div class="mb"><div class="mf" style="width:35%;background:var(--g)"></div></div><div class="mv" style="color:var(--g)">35%</div></div>
+      <div class="mw"><div class="ml">업계 반대 강도</div><div class="mb"><div class="mf" style="width:72%;background:var(--bl)"></div></div><div class="mv" style="color:var(--bl)">72%</div></div>
+      <div class="mw"><div class="ml">법사위 통과 가능</div><div class="mb"><div class="mf" style="width:55%;background:var(--pu)"></div></div><div class="mv" style="color:var(--pu)">55%</div></div>
+      <hr>
+      <div class="ct" style="margin-bottom:10px">예측 신뢰도 추이 (6개월)</div>
+      <div class="cw" style="height:120px"><canvas id="tc"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="ch"><div class="ct">📊 리스크 시나리오 분기</div></div>
+      <div class="sc sc-bad"><div style="font-size:22px">😱</div><div><div style="font-size:12px;font-weight:700;color:var(--rd)">최악 시나리오 · 28%</div><div style="font-size:11px;color:var(--mt);margin-top:3px">온플법 원안 통과. 자사우대 전면 금지 + 과징금 10%. 수조 원 BM 타격.</div></div></div>
+      <div class="sc sc-mid"><div style="font-size:22px">😐</div><div><div style="font-size:12px;font-weight:700;color:var(--gd)">중간 시나리오 · 51%</div><div style="font-size:11px;color:var(--mt);margin-top:3px">핵심 독소 조항 완화 통과. 과징금 5%, 사전지정 기준 완화. 관리 가능 범위.</div></div></div>
+      <div class="sc sc-good"><div style="font-size:22px">😊</div><div><div style="font-size:12px;font-weight:700;color:var(--g)">최선 시나리오 · 21%</div><div style="font-size:11px;color:var(--mt);margin-top:3px">통상 마찰·자율규제 실적으로 심사 장기화 또는 조건부 유예.</div></div></div>
+      <hr>
+      <div style="font-size:11px;color:var(--mt);line-height:2">
+        📌 의안정보시스템 발의·심사 이력<br>
+        📌 의원 국감 질의 패턴 분석<br>
+        📌 언론 보도 빈도·논조 분석<br>
+        📌 업계 협회 공동 입장문 이력<br>
+        📌 해외 유사 입법 타임라인 (EU·일본)
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ LEGISLATORS ═══ -->
+<div class="page" id="p-leg">
+  <div class="g2r">
+    <div class="card">
+      <div class="ch"><div class="ct">관리 의원실 현황</div><div class="ca" onclick="openAddLeg()">+ 추가</div></div>
+      <div id="llist"></div>
+    </div>
+    <div class="card">
+      <div class="ch"><div class="ct">이슈별 의원 분포</div></div>
+      <div class="cw"><canvas id="ic"></canvas></div>
+      <hr>
+      <div class="ct" style="margin-bottom:12px">의원실 이슈 네트워크</div>
+      <svg width="100%" height="190" viewBox="0 0 300 190" style="background:var(--bg);border-radius:10px;border:1px solid var(--br)">
+        <line x1="150" y1="95" x2="65" y2="55" stroke="#1E3048" stroke-width="1.5"/>
+        <line x1="150" y1="95" x2="235" y2="55" stroke="#1E3048" stroke-width="1.5"/>
+        <line x1="150" y1="95" x2="65" y2="148" stroke="#1E3048" stroke-width="1.5"/>
+        <line x1="150" y1="95" x2="235" y2="148" stroke="#1E3048" stroke-width="1.5"/>
+        <line x1="150" y1="95" x2="150" y2="22" stroke="#1E3048" stroke-width="1.5"/>
+        <circle cx="150" cy="95" r="30" fill="rgba(3,199,90,.1)" stroke="#03C75A" stroke-width="1.5"/>
+        <text x="150" y="91" text-anchor="middle" fill="#03C75A" font-size="10" font-weight="bold">온플법</text>
+        <text x="150" y="104" text-anchor="middle" fill="#03C75A" font-size="9">72%</text>
+        <circle cx="65" cy="55" r="22" fill="rgba(28,110,242,.1)" stroke="#1C6EF2" stroke-width="1.5"/>
+        <text x="65" y="52" text-anchor="middle" fill="#1C6EF2" font-size="9" font-weight="bold">AI기본법</text>
+        <text x="65" y="63" text-anchor="middle" fill="#1C6EF2" font-size="8">58%</text>
+        <circle cx="235" cy="55" r="22" fill="rgba(217,79,59,.1)" stroke="#D94F3B" stroke-width="1.5"/>
+        <text x="235" y="52" text-anchor="middle" fill="#D94F3B" font-size="9" font-weight="bold">라인야후</text>
+        <text x="235" y="63" text-anchor="middle" fill="#D94F3B" font-size="8">48%</text>
+        <circle cx="65" cy="148" r="17" fill="rgba(232,168,56,.1)" stroke="#E8A838" stroke-width="1.5"/>
+        <text x="65" y="145" text-anchor="middle" fill="#E8A838" font-size="8" font-weight="bold">수수료</text>
+        <text x="65" y="156" text-anchor="middle" fill="#E8A838" font-size="7">61%</text>
+        <circle cx="235" cy="148" r="17" fill="rgba(139,92,246,.1)" stroke="#8B5CF6" stroke-width="1.5"/>
+        <text x="235" y="145" text-anchor="middle" fill="#8B5CF6" font-size="8" font-weight="bold">저작권</text>
+        <text x="235" y="156" text-anchor="middle" fill="#8B5CF6" font-size="7">40%</text>
+        <circle cx="150" cy="22" r="14" fill="rgba(28,110,242,.1)" stroke="#1C6EF2" stroke-width="1.5"/>
+        <text x="150" y="24" text-anchor="middle" fill="#1C6EF2" font-size="7" font-weight="bold">구글지도</text>
+        <circle cx="105" cy="74" r="12" fill="rgba(33,150,243,.2)" stroke="#2196F3" stroke-width="1"/>
+        <text x="105" y="77" text-anchor="middle" fill="#2196F3" font-size="7">이정문</text>
+        <circle cx="192" cy="78" r="11" fill="rgba(244,67,54,.2)" stroke="#F44336" stroke-width="1"/>
+        <text x="192" y="81" text-anchor="middle" fill="#F44336" font-size="7">고동진</text>
+        <circle cx="112" cy="124" r="11" fill="rgba(33,150,243,.2)" stroke="#2196F3" stroke-width="1"/>
+        <text x="112" y="127" text-anchor="middle" fill="#2196F3" font-size="7">강준현</text>
+        <circle cx="188" cy="120" r="11" fill="rgba(33,150,243,.2)" stroke="#2196F3" stroke-width="1"/>
+        <text x="188" y="123" text-anchor="middle" fill="#2196F3" font-size="7">황정아</text>
+      </svg>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ CALENDAR ═══ -->
+<div class="page" id="p-cal">
+  <div class="g2">
+    <div class="card">
+      <div class="ch"><div class="ct">📅 2026년 3월</div><button class="edit-btn" onclick="openEventEditor()">✏️ 일정 편집</button></div>
+      <div class="cal-grid" style="margin-bottom:8px" id="calHeaders"></div>
+      <div id="cg" class="cal-grid"></div>
+    </div>
+    <div class="card">
+      <div class="ch"><div class="ct">이번 주 상세 일정</div></div>
+      <div class="tl" id="weekTl"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ AI INTEL (실시간 Claude 연결) ═══ -->
+<div class="page" id="p-intel">
+  <div class="g2">
+    <div class="card">
+      <div class="ch">
+        <div>
+          <div class="ct">🤖 GR AI 어시스턴트 · Claude 실시간 연결</div>
+          <div style="font-size:10px;color:var(--mt);margin-top:2px">Anthropic API 직접 연결 · 실제 Claude 응답</div>
+        </div>
+        <div class="live" id="aiStatus"><div class="dot"></div>대기 중</div>
+      </div>
+      <div class="msgs" id="msgs">
+        <div class="msg-ai">
+          <div class="av">N</div>
+          <div class="b-ai">
+            <span class="ai-tag">GR AI · Claude</span><br>
+            안녕하세요, 회장님. 실시간 GR Intelligence입니다.<br><br>
+            상단에 API 키를 입력하시면 실제 Claude와 대화하실 수 있습니다.<br><br>
+            현재 주요 이슈:<br>
+            🔴 <b>온플법 서면의견서</b> — 오늘 18:00 마감<br>
+            ⚠️ <b>라인야후 협상</b> — 3.31 마감<br>
+            📋 <b>AI기본법 공청회</b> — 4.3 과방위 예정
+          </div>
+        </div>
+      </div>
+      <div class="qbtns">
+        <button class="qb" onclick="ask('온플법 반론 논거 5가지를 구체적으로 정리해줘')">온플법 논거</button>
+        <button class="qb" onclick="ask('라인야후 대관 대응 방향 정리해줘')">라인야후</button>
+        <button class="qb" onclick="ask('AI기본법이 네이버에 미치는 영향을 조항별로 분석해줘')">AI기본법</button>
+        <button class="qb" onclick="ask('오늘 강준현 의원실 미팅용 브리핑 자료 초안 만들어줘')">의원실 브리핑</button>
+        <button class="qb" onclick="ask('구글 지도 반출 반대 논거를 국가안보→데이터주권→역차별→소상공인 순으로 정리해줘')">구글지도</button>
+        <button class="qb" onclick="ask('온플법 서면 의견서 초안을 500자로 작성해줘')">의견서 초안</button>
+      </div>
+      <div class="aiw">
+        <input class="ainput" id="ai-in" placeholder="무엇이든 질문하세요... (Shift+Enter: 줄바꿈)" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();ask();}">
+        <button class="asend" id="sendBtn" onclick="ask()">전송 →</button>
+      </div>
+    </div>
+    <div>
+      <div class="card" style="margin-bottom:14px">
+        <div class="ch"><div class="ct">📰 오늘의 규제 인텔리전스</div></div>
+        <div class="alert ai-a"><div><div class="at">한겨레 | 온플법 소위 3.24 상정 확인</div><div style="font-size:10px;color:var(--mt)">이정문안 등 3건 병합. 수수료 조항 완화 여부가 핵심 쟁점.</div></div></div>
+        <div class="alert aw"><div><div class="at">이코노미스트 | 총무성, 라인야후 추가 요구 검토</div><div style="font-size:10px;color:var(--mt)">소프트뱅크 주도 전환 요구 구체화. 3월말이 분수령.</div></div></div>
+        <div class="alert ai-a"><div><div class="at">ZDNet | 과방위 AI기본법 4월 공청회 확정</div><div style="font-size:10px;color:var(--mt)">고동진·황정아 의원 주도. 고위험 AI 정의 집중 논의.</div></div></div>
+      </div>
+      <div class="card">
+        <div class="ch"><div class="ct">🔧 데이터 관리</div></div>
+        <div style="font-size:11px;line-height:1.9;color:var(--mt)">
+          법안·의원실·일정 데이터는 이 브라우저의 로컬에 저장됩니다.<br>
+          다른 기기에서 사용하려면 <b>내보내기 → 가져오기</b>를 사용하세요.
+        </div>
+        <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap">
+          <button class="edit-btn" style="font-size:11px;padding:6px 12px" onclick="exportData()">📤 데이터 내보내기</button>
+          <button class="edit-btn" style="font-size:11px;padding:6px 12px" onclick="document.getElementById('importFile').click()">📥 데이터 가져오기</button>
+          <button class="edit-btn" style="font-size:11px;padding:6px 12px;border-color:rgba(217,79,59,.4);color:var(--rd)" onclick="resetData()">🗑 초기화</button>
+        </div>
+        <input type="file" id="importFile" accept=".json" style="display:none" onchange="importData(event)">
+      </div>
+    </div>
+  </div>
+</div>
+
+</div><!-- end main -->
+
+<!-- FAB -->
+<button class="fab" onclick="openAddBill()" title="법안 추가">+</button>
+
+<!-- MODAL -->
+<div class="ov" id="ov" onclick="if(event.target===this)closeModal()">
+  <div class="modal" id="modalContent"></div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ═══════════════════════════════════════════════════════════
+// DATA — localStorage에서 불러오거나 기본값 사용
+// ═══════════════════════════════════════════════════════════
+const DEFAULT_DATA = {
+  bills: [
+    {id:1,n:'온라인플랫폼공정화법 (온플법)',a:'이정문·김남근·오기형 외',c:'정무위 법안2소위',s:'소위 상정',r:'crit',imp:9.5,pr:72,d:'자사우대·끼워팔기 금지, 증명책임 전환, 과징금 매출 10%.',t:['공정거래','플랫폼','BM직격']},
+    {id:2,n:'AI 발전과 신뢰 기반 조성에 관한 법률 (AI기본법)',a:'조승래·황정아·이해민 외',c:'과방위',s:'공청회 예정',r:'high',imp:8.0,pr:58,d:'고위험 AI 사전 지정, 영향평가 의무, 생성형 AI 별도 규율.',t:['AI','클라우드','혁신저해']},
+    {id:3,n:'전자상거래법 개정안 (수수료 규제)',a:'이강일·김원이 외',c:'정무위/산자중기위',s:'법안 발의',r:'high',imp:7.5,pr:61,d:'배달앱 수수료 상한제. 커머스 수수료 확산 가능성.',t:['커머스','수수료','소상공인']},
+    {id:4,n:'개인정보보호법 일부개정법률안',a:'개보위 입법예고',c:'정무위',s:'입법예고',r:'med',imp:6.5,pr:80,d:'AI 학습 데이터 적법 근거, 딥페이크 삭제권, 아동 정보 강화.',t:['개인정보','AI','핀테크']},
+    {id:5,n:'정보통신망법 개정 (허위조작정보)',a:'전용기·김상훈 외',c:'과방위→법사위',s:'과방위 통과',r:'high',imp:7.0,pr:65,d:'AI 생성물 표시제, 플랫폼 이차책임, 24시간 차단 의무.',t:['미디어','딥페이크','콘텐츠']},
+    {id:6,n:'저작권법 일부개정 (AI 학습)',a:'문체위 논의 중',c:'문체위',s:'논의 중',r:'med',imp:6.0,pr:40,d:'AI 학습 TDM 허용 vs 저작권자 동의 의무화 대립.',t:['저작권','AI','뉴스']},
+    {id:7,n:'라인야후 거버넌스 외교 현안',a:'(행정·외교)',c:'과방위/외통위',s:'외교 협상 중',r:'crit',imp:9.0,pr:48,d:'일본 총무성 행정지도. 네이버 지분 축소 압박. 3.31 협상 마감.',t:['글로벌','외교','자산']},
+    {id:8,n:'구글 지도 데이터 반출 허용 여부',a:'(정부 재검토)',c:'과기정통부 결정',s:'정부 검토 중',r:'high',imp:8.5,pr:35,d:'반출 허용 시 플레이스 광고 연간 수천억 위협.',t:['지도','광고','역차별']},
+  ],
+  legislators: [
+    {id:1,n:'이정문',p:'민주',c:'#2196F3',r:'온플법 대표발의',rel:3,av:'이'},
+    {id:2,n:'강준현',p:'민주',c:'#2196F3',r:'정무위 야당 간사',rel:4,av:'강'},
+    {id:3,n:'최민희',p:'민주',c:'#2196F3',r:'과방위 위원장',rel:3,av:'최'},
+    {id:4,n:'황정아',p:'민주',c:'#2196F3',r:'AI기본법 핵심',rel:4,av:'황'},
+    {id:5,n:'고동진',p:'국힘',c:'#F44336',r:'삼성 출신 IT전문',rel:5,av:'고'},
+    {id:6,n:'윤한홍',p:'국힘',c:'#F44336',r:'정무위 위원장',rel:3,av:'윤'},
+    {id:7,n:'이해민',p:'조국',c:'#9C27B0',r:'구글 출신 ICT',rel:4,av:'이'},
+    {id:8,n:'김남근',p:'민주',c:'#2196F3',r:'공정거래 전문가',rel:3,av:'김'},
+  ],
+  events: [
+    {id:1,date:'3.23',level:'al',tt:'온플법 서면 의견서 마감',ts:'정무위 법안2소위 제출 · 18:00',day:23},
+    {id:2,date:'3.24',level:'al',tt:'정무위 법안2소위 — 온플법 상정',ts:'이정문·김남근 병합심사 · 10:00',day:24},
+    {id:3,date:'3.27',level:'sn',tt:'과기정통부 AI정책과 면담',ts:'AI기본법 고위험 AI 범위 협의 · 14:00',day:27},
+    {id:4,date:'3.31',level:'sn',tt:'라인야후 협상 최종 마감',ts:'소프트뱅크 최종 답변 기한',day:31},
+    {id:5,date:'4.3',level:'sn',tt:'AI기본법 과방위 공청회',ts:'고동진·황정아 의원 주도',day:34},
+    {id:6,date:'4.10',level:'',tt:'자율규제위 2차 회의',ts:'1분기 활동 중간 보고',day:41},
+  ],
+  alerts: [
+    {id:1,type:'ac',icon:'🚨',title:'온플법 정무위 법안2소위 — 3.24(월) 상정 확인',body:'이정문·김남근 병합심사. 서면 의견서 마감 <b>오늘 18:00</b>. 홍보팀·법무팀 공유 요망.'},
+    {id:2,type:'aw',icon:'⚠️',title:'라인야후 협상 — 3.31 마감 접근',body:'소프트뱅크 최종 답변 기한. 과기정통부 공조 협의 필요.'},
+    {id:3,type:'ai-a',icon:'ℹ️',title:'AI기본법 공청회 — 4.3(금) 과방위 예정',body:'고동진 의원 "네이버 측 의견 청취 희망" 전달. 서면 의견서 초안 착수 요망.'},
+  ]
+};
+
+let DATA = JSON.parse(localStorage.getItem('grData') || 'null') || JSON.parse(JSON.stringify(DEFAULT_DATA));
+let API_KEY = localStorage.getItem('grApiKey') || '';
+
+function saveData(){localStorage.setItem('grData',JSON.stringify(DATA));}
+function saveKey(){
+  const k=document.getElementById('apiKeyInput').value.trim();
+  if(!k)return;
+  API_KEY=k; localStorage.setItem('grApiKey',k);
+  document.getElementById('apiOk').style.display='inline';
+  document.getElementById('apiBanner').style.background='rgba(3,199,90,.05)';
+  showToast('API 키가 저장되었습니다');
+}
+
+// ═══════════════════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════════════════
+if(API_KEY){
+  document.getElementById('apiKeyInput').value='••••••••••••••';
+  document.getElementById('apiOk').style.display='inline';
+}
+
+// 현재 시각
+function updateTime(){
+  const now=new Date();
+  document.getElementById('nowTime').textContent=
+    `${now.getFullYear()}.${String(now.getMonth()+1).padStart(2,'0')}.${String(now.getDate()).padStart(2,'0')} `+
+    `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+}
+updateTime(); setInterval(updateTime,60000);
+
+// ═══════════════════════════════════════════════════════════
+// RENDER FUNCTIONS
+// ═══════════════════════════════════════════════════════════
+function renderAll(){
+  renderAlerts(); renderTimeline(); renderPredMeters(); renderTopLegs();
+  renderBills(DATA.bills); renderLegislators(); renderCalendar(); renderWeekTl();
+  document.getElementById('kpi-bills').textContent=DATA.bills.length;
+  document.getElementById('kpi-events').textContent=DATA.events.filter(e=>e.level==='al'||e.level==='sn').length;
+  document.getElementById('kpi-legs').textContent=DATA.legislators.length;
+  document.getElementById('billCount').textContent=`전체 모니터링 법안 (${DATA.bills.length}건)`;
+}
+
+function renderAlerts(){
+  document.getElementById('alertList').innerHTML=DATA.alerts.map(a=>`
+    <div class="alert ${a.type}" style="position:relative">
+      <div>${a.icon}</div>
+      <div><div class="at">${a.title}</div>${a.body}</div>
+    </div>`).join('');
+}
+
+function renderTimeline(){
+  document.getElementById('timelineList').innerHTML=DATA.events.map(e=>`
+    <div class="tli ${e.level}"><div class="td">${e.date}</div><div class="tt">${e.tt}</div><div class="ts">${e.ts}</div></div>`).join('');
+}
+
+function renderPredMeters(){
+  const critBills=DATA.bills.filter(b=>b.r==='crit'||b.r==='high').slice(0,5);
+  document.getElementById('predMeters').innerHTML=critBills.map(b=>`
+    <div class="mw">
+      <div class="ml" style="font-size:10px">${b.n.substring(0,9)}...</div>
+      <div class="mb"><div class="mf" style="width:${b.pr}%;background:${b.r==='crit'?'var(--rd)':b.r==='high'?'var(--gd)':'var(--bl)'}"></div></div>
+      <div class="mv" style="color:${b.r==='crit'?'var(--rd)':b.r==='high'?'var(--gd)':'var(--bl)'}">${b.pr}%</div>
+    </div>`).join('');
+}
+
+function renderTopLegs(){
+  document.getElementById('topLegs').innerHTML=`
+    <div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid var(--br);color:var(--mt);font-weight:700;font-size:10px"><span>의원실</span><span>관계도</span></div>`+
+    DATA.legislators.slice(0,5).map(l=>`
+    <div style="display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid var(--br);font-size:11px">
+      <span><span style="color:${l.c}">●</span> ${l.n}(${l.p})</span>
+      <span style="color:${l.rel>=4?'var(--g)':'var(--gd)'}">${'★'.repeat(l.rel)}${'☆'.repeat(5-l.rel)}</span>
+    </div>`).join('');
+}
+
+function renderBills(list){
+  document.getElementById('billCount').textContent=`전체 모니터링 법안 (${list.length}건)`;
+  document.getElementById('blist').innerHTML=list.map(b=>`
+    <div class="bi" id="bill-${b.id}">
+      <div class="btop">
+        <div class="bn">${b.n}</div>
+        <div style="display:flex;gap:5px;align-items:center">
+          <span class="risk ${b.r}">${b.r==='crit'?'🔴 Critical':b.r==='high'?'🟡 High':b.r==='med'?'🔵 Medium':'🟢 Low'}</span>
+          <button class="edit-btn" onclick="editBill(${b.id});event.stopPropagation()">✏️</button>
+          <button class="edit-btn" style="border-color:rgba(217,79,59,.3);color:var(--rd)" onclick="deleteBill(${b.id});event.stopPropagation()">🗑</button>
+        </div>
+      </div>
+      <div class="bm">
+        <span class="tag tgr">📋 ${b.c}</span>
+        <span class="tag tb">📍 ${b.s}</span>
+        ${b.t.map(t=>`<span class="tag tg">${t}</span>`).join('')}
+      </div>
+      <div class="bd">${b.d}</div>
+      <div style="margin-top:6px">
+        <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--mt);margin-bottom:3px"><span>통과 예측 ${b.pr}%</span><span>영향도 ${b.imp}/10</span></div>
+        <div class="pb"><div class="pf" style="width:${b.pr}%;background:${b.r==='crit'?'var(--rd)':b.r==='high'?'var(--gd)':'var(--bl)'}"></div></div>
+      </div>
+    </div>`).join('');
+}
+
+function renderLegislators(){
+  const el=document.getElementById('llist');
+  el.innerHTML=DATA.legislators.map(l=>`
+    <div class="li">
+      <div class="la" style="background:${l.c}22;color:${l.c}">${l.av}</div>
+      <div style="flex:1">
+        <div style="font-size:12px;font-weight:600">${l.n} <span style="font-size:10px;color:${l.c}">${l.p}</span></div>
+        <div style="font-size:10px;color:var(--mt)">${l.r}</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:6px">
+        <div style="text-align:right">
+          <div style="font-size:12px;color:${l.rel>=4?'var(--g)':'var(--gd)'}">${'★'.repeat(l.rel)}${'☆'.repeat(5-l.rel)}</div>
+          <div style="font-size:9px;color:var(--mt)">관계도</div>
+        </div>
+        <button class="edit-btn" onclick="deleteLeg(${l.id})">🗑</button>
+      </div>
+    </div>`).join('');
+}
+
+function renderCalendar(){
+  const hd=document.getElementById('calHeaders');
+  hd.innerHTML=['일','월','화','수','목','금','토'].map(d=>`<div style="text-align:center;font-size:10px;color:var(--mt);padding:3px">${d}</div>`).join('');
+  const evMap={};DATA.events.forEach(e=>{if(e.day<=31)evMap[e.day]=e.date+' '+e.tt.substring(0,8);});
+  let html='';
+  for(let i=0;i<6;i++)html+=`<div style="height:46px"></div>`;
+  for(let d=1;d<=31;d++){
+    const today=d===22,ev=evMap[d];
+    html+=`<div class="cday${today?' today':''}${ev?' hev':''}">
+      <div class="cn" style="font-weight:${today?700:400};color:${today?'var(--g)':'var(--tx)'}">${d}</div>
+      ${ev?`<div class="cev">${ev.split(' ').slice(1).join(' ')}</div>`:''}
+    </div>`;
+  }
+  document.getElementById('cg').innerHTML=html;
+}
+
+function renderWeekTl(){
+  const weekEvs=DATA.events.filter(e=>e.day>=22&&e.day<=35);
+  document.getElementById('weekTl').innerHTML=weekEvs.map(e=>`
+    <div class="tli ${e.level}"><div class="td">${e.date}</div><div class="tt">${e.tt}</div><div class="ts">${e.ts}</div></div>`).join('');
+}
+
+// ═══════════════════════════════════════════════════════════
+// CHARTS
+// ═══════════════════════════════════════════════════════════
+const radar=new Chart(document.getElementById('rc'),{
+  type:'radar',
+  data:{
+    labels:['온플법','AI기본법','수수료규제','라인야후','구글지도','저작권','개인정보'],
+    datasets:[
+      {label:'리스크',data:[9.5,8,7.5,9,8.5,6,6.5],borderColor:'#D94F3B',backgroundColor:'rgba(217,79,59,.12)',borderWidth:2,pointBackgroundColor:'#D94F3B',pointRadius:4},
+      {label:'대응준비도',data:[7,6,7.5,5,8,6.5,8],borderColor:'#03C75A',backgroundColor:'rgba(3,199,90,.08)',borderWidth:2,pointBackgroundColor:'#03C75A',pointRadius:4},
+    ]
+  },
+  options:{responsive:true,maintainAspectRatio:false,scales:{r:{grid:{color:'#1E3048'},ticks:{display:false},pointLabels:{color:'#5A7A9A',font:{size:9}},min:0,max:10}},plugins:{legend:{labels:{color:'#5A7A9A',font:{size:9}}}}}
+});
+
+new Chart(document.getElementById('fc'),{
+  type:'bar',
+  data:{
+    labels:['발의','위원회배정','소위상정','소위통과','전체회의','본회의'],
+    datasets:[{data:[DATA.bills.length,Math.floor(DATA.bills.length*.85),8,3,1,0],backgroundColor:['#1C6EF2','#8B5CF6','#E8A838','#D94F3B','#03C75A','#03C75A'],borderRadius:5}]
+  },
+  options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:{display:false},ticks:{color:'#5A7A9A',font:{size:9}}},y:{grid:{color:'#1E3048'},ticks:{color:'#5A7A9A',font:{size:9}}}}}
+});
+
+new Chart(document.getElementById('tc'),{
+  type:'line',
+  data:{
+    labels:['10월','11월','12월','1월','2월','3월'],
+    datasets:[
+      {label:'온플법',data:[55,60,62,68,70,72],borderColor:'#D94F3B',backgroundColor:'rgba(217,79,59,.08)',fill:true,tension:.4,borderWidth:2,pointRadius:3},
+      {label:'AI기본법',data:[40,45,48,52,55,58],borderColor:'#E8A838',backgroundColor:'rgba(232,168,56,.06)',fill:true,tension:.4,borderWidth:2,pointRadius:3},
+    ]
+  },
+  options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:'#5A7A9A',font:{size:9}}}},scales:{x:{grid:{display:false},ticks:{color:'#5A7A9A',font:{size:9}}},y:{grid:{color:'#1E3048'},ticks:{color:'#5A7A9A',font:{size:9}},min:0,max:100}}}
+});
+
+function drawGauge(id,pct,color){
+  const c=document.getElementById(id);if(!c)return;
+  const ctx=c.getContext('2d'),cx=70,cy=70,r=54;
+  ctx.clearRect(0,0,140,140);
+  ctx.beginPath();ctx.arc(cx,cy,r,Math.PI,2*Math.PI);ctx.strokeStyle='#1E3048';ctx.lineWidth=11;ctx.stroke();
+  ctx.beginPath();ctx.arc(cx,cy,r,Math.PI,Math.PI+(pct/100)*Math.PI);ctx.strokeStyle=color;ctx.lineWidth=11;ctx.lineCap='round';ctx.stroke();
+}
+function drawGauges(){drawGauge('g1',72,'#D94F3B');drawGauge('g2',58,'#E8A838');drawGauge('g3',61,'#E8A838');}
+
+setTimeout(()=>{
+  if(document.getElementById('ic'))new Chart(document.getElementById('ic'),{
+    type:'bar',
+    data:{labels:['온플법','AI기본법','수수료','개인정보','저작권'],datasets:[{label:'민주',data:[5,3,4,2,2],backgroundColor:'#2196F3'},{label:'국힘',data:[2,2,1,1,1],backgroundColor:'#F44336'},{label:'기타',data:[1,1,1,0,0],backgroundColor:'#9C27B0'}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:'#5A7A9A',font:{size:9}}}},scales:{x:{stacked:true,grid:{display:false},ticks:{color:'#5A7A9A',font:{size:9}}},y:{stacked:true,grid:{color:'#1E3048'},ticks:{color:'#5A7A9A',font:{size:9}}}}}
+  });
+},300);
+
+// ═══════════════════════════════════════════════════════════
+// NAV
+// ═══════════════════════════════════════════════════════════
+function go(id,el){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('on'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('on'));
+  document.getElementById('p-'+id).classList.add('on');
+  el.classList.add('on');
+  if(id==='pred')setTimeout(drawGauges,50);
+  if(id==='leg')renderLegislators();
+  if(id==='cal'){renderCalendar();renderWeekTl();}
+}
+
+// ═══════════════════════════════════════════════════════════
+// FILTER
+// ═══════════════════════════════════════════════════════════
+function filterB(q){renderBills(q?DATA.bills.filter(b=>b.n.includes(q)||b.a.includes(q)||b.d.includes(q)||b.t.some(t=>t.includes(q))):DATA.bills);}
+function filterR(r,el){
+  document.querySelectorAll('.fb').forEach(b=>b.classList.remove('on'));
+  el.classList.add('on');
+  renderBills(r==='all'?DATA.bills:DATA.bills.filter(b=>b.r===r));
+}
+
+// ═══════════════════════════════════════════════════════════
+// CRUD
+// ═══════════════════════════════════════════════════════════
+function openAddBill(){
+  document.getElementById('modalContent').innerHTML=`
+    <div class="mh"><div style="font-size:15px;font-weight:700">법안 추가</div><button class="mx" onclick="closeModal()">✕</button></div>
+    <div class="field"><label class="flabel">법안명</label><input class="finput" id="f-name" placeholder="예: 온라인플랫폼공정화법"></div>
+    <div class="field"><label class="flabel">발의 의원</label><input class="finput" id="f-author" placeholder="예: 이정문 의원 (더불어민주당)"></div>
+    <div class="field"><label class="flabel">소관 위원회</label><input class="finput" id="f-committee" placeholder="예: 정무위원회 법안심사제2소위"></div>
+    <div class="field"><label class="flabel">심사 단계</label><input class="finput" id="f-stage" placeholder="예: 소위 상정"></div>
+    <div class="field"><label class="flabel">핵심 내용</label><textarea class="finput" id="f-desc" rows="2" placeholder="법안 핵심 내용 요약..."></textarea></div>
+    <div class="field">
+      <label class="flabel">리스크 등급</label>
+      <select class="finput" id="f-risk"><option value="crit">🔴 Critical</option><option value="high">🟡 High</option><option value="med">🔵 Medium</option><option value="low">🟢 Low</option></select>
+    </div>
+    <div class="field"><label class="flabel">통과 예측 확률 (%)</label><input class="finput" id="f-pred" type="number" min="0" max="100" value="50"></div>
+    <div class="field"><label class="flabel">사업 영향도 (1-10)</label><input class="finput" id="f-imp" type="number" min="1" max="10" value="7"></div>
+    <div class="field"><label class="flabel">태그 (쉼표로 구분)</label><input class="finput" id="f-tags" placeholder="예: 공정거래, 플랫폼, BM직격"></div>
+    <button class="btn-p" onclick="addBill()">추가하기</button>`;
+  document.getElementById('ov').classList.add('on');
+}
+
+function addBill(){
+  const id=Date.now();
+  const tags=document.getElementById('f-tags').value.split(',').map(t=>t.trim()).filter(Boolean);
+  DATA.bills.push({id,n:document.getElementById('f-name').value,a:document.getElementById('f-author').value,c:document.getElementById('f-committee').value,s:document.getElementById('f-stage').value,d:document.getElementById('f-desc').value,r:document.getElementById('f-risk').value,pr:+document.getElementById('f-pred').value,imp:+document.getElementById('f-imp').value,t:tags});
+  saveData();renderAll();closeModal();showToast('법안이 추가되었습니다');
+}
+
+function editBill(id){
+  const b=DATA.bills.find(x=>x.id===id);if(!b)return;
+  document.getElementById('modalContent').innerHTML=`
+    <div class="mh"><div style="font-size:15px;font-weight:700">법안 수정</div><button class="mx" onclick="closeModal()">✕</button></div>
+    <div class="field"><label class="flabel">법안명</label><input class="finput" id="f-name" value="${b.n}"></div>
+    <div class="field"><label class="flabel">발의 의원</label><input class="finput" id="f-author" value="${b.a}"></div>
+    <div class="field"><label class="flabel">심사 단계</label><input class="finput" id="f-stage" value="${b.s}"></div>
+    <div class="field"><label class="flabel">핵심 내용</label><textarea class="finput" id="f-desc" rows="2">${b.d}</textarea></div>
+    <div class="field"><label class="flabel">리스크 등급</label><select class="finput" id="f-risk"><option value="crit" ${b.r==='crit'?'selected':''}>🔴 Critical</option><option value="high" ${b.r==='high'?'selected':''}>🟡 High</option><option value="med" ${b.r==='med'?'selected':''}>🔵 Medium</option><option value="low" ${b.r==='low'?'selected':''}>🟢 Low</option></select></div>
+    <div class="field"><label class="flabel">통과 예측 확률 (%)</label><input class="finput" id="f-pred" type="number" value="${b.pr}"></div>
+    <div class="field"><label class="flabel">사업 영향도 (1-10)</label><input class="finput" id="f-imp" type="number" value="${b.imp}"></div>
+    <button class="btn-p" onclick="updateBill(${id})">저장하기</button>`;
+  document.getElementById('ov').classList.add('on');
+}
+
+function updateBill(id){
+  const idx=DATA.bills.findIndex(x=>x.id===id);if(idx<0)return;
+  DATA.bills[idx]={...DATA.bills[idx],n:document.getElementById('f-name').value,a:document.getElementById('f-author').value,s:document.getElementById('f-stage').value,d:document.getElementById('f-desc').value,r:document.getElementById('f-risk').value,pr:+document.getElementById('f-pred').value,imp:+document.getElementById('f-imp').value};
+  saveData();renderAll();closeModal();showToast('법안이 수정되었습니다');
+}
+
+function deleteBill(id){
+  if(!confirm('이 법안을 삭제하시겠습니까?'))return;
+  DATA.bills=DATA.bills.filter(b=>b.id!==id);
+  saveData();renderAll();showToast('법안이 삭제되었습니다');
+}
+
+function openAddLeg(){
+  document.getElementById('modalContent').innerHTML=`
+    <div class="mh"><div style="font-size:15px;font-weight:700">의원실 추가</div><button class="mx" onclick="closeModal()">✕</button></div>
+    <div class="field"><label class="flabel">의원 이름</label><input class="finput" id="l-name" placeholder="예: 이정문"></div>
+    <div class="field"><label class="flabel">정당</label><input class="finput" id="l-party" placeholder="예: 민주"></div>
+    <div class="field"><label class="flabel">역할/담당 이슈</label><input class="finput" id="l-role" placeholder="예: 온플법 대표발의"></div>
+    <div class="field"><label class="flabel">관계도 (1-5)</label><input class="finput" id="l-rel" type="number" min="1" max="5" value="3"></div>
+    <button class="btn-p" onclick="addLeg()">추가하기</button>`;
+  document.getElementById('ov').classList.add('on');
+}
+
+function addLeg(){
+  const name=document.getElementById('l-name').value;
+  const party=document.getElementById('l-party').value;
+  const colors={'민주':'#2196F3','국힘':'#F44336','조국':'#9C27B0','정의':'#FF6F00','개혁':'#FF9800'};
+  DATA.legislators.push({id:Date.now(),n:name,p:party,c:colors[party]||'#607D8B',r:document.getElementById('l-role').value,rel:+document.getElementById('l-rel').value,av:name[0]});
+  saveData();renderAll();renderLegislators();closeModal();showToast('의원실이 추가되었습니다');
+}
+
+function deleteLeg(id){
+  if(!confirm('이 의원실을 삭제하시겠습니까?'))return;
+  DATA.legislators=DATA.legislators.filter(l=>l.id!==id);
+  saveData();renderAll();renderLegislators();showToast('의원실이 삭제되었습니다');
+}
+
+function openEventEditor(){
+  document.getElementById('modalContent').innerHTML=`
+    <div class="mh"><div style="font-size:15px;font-weight:700">일정 추가</div><button class="mx" onclick="closeModal()">✕</button></div>
+    <div class="field"><label class="flabel">날짜 표시</label><input class="finput" id="e-date" placeholder="예: 3.24(월)"></div>
+    <div class="field"><label class="flabel">일정 제목</label><input class="finput" id="e-tt" placeholder="예: 정무위 법안2소위"></div>
+    <div class="field"><label class="flabel">세부 내용</label><input class="finput" id="e-ts" placeholder="예: 온플법 상정 · 10:00"></div>
+    <div class="field"><label class="flabel">달력 날짜 (일)</label><input class="finput" id="e-day" type="number" min="1" max="60" value="24"></div>
+    <div class="field"><label class="flabel">긴급도</label><select class="finput" id="e-level"><option value="al">🔴 긴급</option><option value="sn">🟡 예정</option><option value="">⬜ 일반</option></select></div>
+    <button class="btn-p" onclick="addEvent()">추가하기</button>`;
+  document.getElementById('ov').classList.add('on');
+}
+
+function addEvent(){
+  DATA.events.push({id:Date.now(),date:document.getElementById('e-date').value,level:document.getElementById('e-level').value,tt:document.getElementById('e-tt').value,ts:document.getElementById('e-ts').value,day:+document.getElementById('e-day').value});
+  saveData();renderAll();closeModal();showToast('일정이 추가되었습니다');
+}
+
+function openAlertEditor(){
+  document.getElementById('modalContent').innerHTML=`
+    <div class="mh"><div style="font-size:15px;font-weight:700">알림 추가</div><button class="mx" onclick="closeModal()">✕</button></div>
+    <div class="field"><label class="flabel">긴급도</label><select class="finput" id="a-type"><option value="ac">🔴 Critical</option><option value="aw">⚠️ Warning</option><option value="ai-a">ℹ️ Info</option></select></div>
+    <div class="field"><label class="flabel">제목</label><input class="finput" id="a-title" placeholder="알림 제목"></div>
+    <div class="field"><label class="flabel">내용</label><textarea class="finput" id="a-body" rows="2" placeholder="알림 세부 내용"></textarea></div>
+    <button class="btn-p" onclick="addAlert()">추가하기</button>`;
+  document.getElementById('ov').classList.add('on');
+}
+
+function addAlert(){
+  const icons={'ac':'🚨','aw':'⚠️','ai-a':'ℹ️'};
+  const t=document.getElementById('a-type').value;
+  DATA.alerts.push({id:Date.now(),type:t,icon:icons[t],title:document.getElementById('a-title').value,body:document.getElementById('a-body').value});
+  saveData();renderAll();closeModal();showToast('알림이 추가되었습니다');
+}
+
+// ═══════════════════════════════════════════════════════════
+// MODAL
+// ═══════════════════════════════════════════════════════════
+function closeModal(){document.getElementById('ov').classList.remove('on');}
+
+// ═══════════════════════════════════════════════════════════
+// AI CHAT — 실제 Anthropic API 연결
+// ═══════════════════════════════════════════════════════════
+let chatHistory=[];
+let isLoading=false;
+
+const SYSTEM_PROMPT=`당신은 NAVER 대관(Government Relations) 전문 AI 어시스턴트입니다.
+사용자는 네이버 대관 담당 실무자로, 법안 대응·의원실 관계·규제 분석·논거 개발을 담당합니다.
+
+현재 주요 이슈:
+- 온플법(온라인플랫폼공정화법): 정무위 법안2소위 계류. 자사우대·끼워팔기 금지, 과징금 매출 10%. 72% 통과 예측.
+- AI기본법: 과방위 심사 중. 고위험 AI 사전 지정 핵심 쟁점. 58% 통과 예측.
+- 라인야후: 일본 총무성 행정지도. 소프트뱅크 지분 인수 협상. 3.31 마감.
+- 구글 지도 반출: 정부 재검토 중. 플레이스 광고 수천억 위협.
+- 수수료 규제: 61% 통과 예측. 커머스 BM 위협.
+
+답변 원칙:
+1. 대관 실무 관점에서 구체적이고 즉시 활용 가능한 답변
+2. 논거는 항상 ①②③ 번호 구조로 정리
+3. 수치와 근거를 포함한 실무형 답변
+4. 한국어로 답변, 정책·법령 용어 정확하게 사용`;
+
+async function ask(q){
+  if(isLoading)return;
+  const inp=document.getElementById('ai-in');
+  const query=q||inp.value.trim();
+  if(!query)return;
+  
+  const msgs=document.getElementById('msgs');
+  msgs.innerHTML+=`<div class="msg-me"><div class="b-me">${query.replace(/\n/g,'<br>')}</div></div>`;
+  inp.value='';
+  msgs.scrollTop=msgs.scrollHeight;
+  
+  // 로딩 표시
+  const thinkId='think-'+Date.now();
+  msgs.innerHTML+=`<div class="msg-ai" id="${thinkId}"><div class="av">N</div><div class="b-ai"><div class="thinking"><span></span><span></span><span></span></div></div></div>`;
+  msgs.scrollTop=msgs.scrollHeight;
+  
+  isLoading=true;
+  document.getElementById('sendBtn').disabled=true;
+  document.getElementById('aiStatus').innerHTML=`<div class="dot"></div>응답 중...`;
+  
+  chatHistory.push({role:'user',content:query});
+  
+  if(!API_KEY){
+    // API 키 없으면 로컬 응답
+    await new Promise(r=>setTimeout(r,800));
+    document.getElementById(thinkId)?.remove();
+    const resp=getLocalResp(query);
+    msgs.innerHTML+=`<div class="msg-ai"><div class="av">N</div><div class="b-ai"><span class="ai-tag">GR AI (로컬)</span><br>${resp}<br><br><span style="color:var(--gd);font-size:10px">⚠️ API 키 입력 시 실제 Claude와 연결됩니다</span></div></div>`;
+    chatHistory.push({role:'assistant',content:resp.replace(/<[^>]*>/g,'')});
+  } else {
+    try {
+      const res=await fetch('https://api.anthropic.com/v1/messages',{
+        method:'POST',
+        headers:{'Content-Type':'application/json','x-api-key':API_KEY,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+        body:JSON.stringify({
+          model:'claude-sonnet-4-20250514',
+          max_tokens:1500,
+          system:SYSTEM_PROMPT,
+          messages:chatHistory.slice(-10)
+        })
+      });
+      const data=await res.json();
+      document.getElementById(thinkId)?.remove();
+      if(data.content&&data.content[0]){
+        const text=data.content[0].text.replace(/\n/g,'<br>');
+        msgs.innerHTML+=`<div class="msg-ai"><div class="av">N</div><div class="b-ai"><span class="ai-tag">GR AI · Claude</span><br>${text}</div></div>`;
+        chatHistory.push({role:'assistant',content:data.content[0].text});
+      } else {
+        throw new Error(data.error?.message||'API 오류');
+      }
+    } catch(e){
+      document.getElementById(thinkId)?.remove();
+      msgs.innerHTML+=`<div class="msg-ai"><div class="av">N</div><div class="b-ai" style="color:var(--rd)">⚠️ API 오류: ${e.message}<br><span style="font-size:10px;color:var(--mt)">API 키를 확인하거나 잠시 후 다시 시도해주세요.</span></div></div>`;
+    }
+  }
+  
+  isLoading=false;
+  document.getElementById('sendBtn').disabled=false;
+  document.getElementById('aiStatus').innerHTML=`<div class="dot"></div>연결됨`;
+  msgs.scrollTop=msgs.scrollHeight;
+}
+
+function getLocalResp(q){
+  if(q.includes('온플법'))return `📋 <b>온플법 핵심 반론 논거</b><br><br>① <b>역차별</b> — 구글·알리는 규제 불가. 국내 플랫폼만 역차별.<br>② <b>대법원 선례</b> — 2024.10 쇼핑 자사우대 파기환송 승소.<br>③ <b>통상 마찰</b> — 미 USTR이 비관세 장벽으로 공식 문제 제기.<br>④ <b>자율규제 실적</b> — 자율규제위원회 연간 보고서 운영 중.<br>⑤ <b>과징금 위헌</b> — 매출 10%는 비례원칙 위반. 3~5% 조정 요구.`;
+  if(q.includes('라인야후'))return `🌐 <b>라인야후 현황</b><br><br>📍 총무성 2차 행정지도 후 소프트뱅크 지분 인수 협상 진행 중<br>📍 3.31 소프트뱅크 최종 답변 기한<br><br><b>대관 대응</b>: 과기정통부·외교부 공조, 과방위·외통위 "한국 기업 역차별" 브리핑, 총무성 행정지도 법적 근거 이의`;
+  if(q.includes('AI기본법')||q.includes('AI법'))return `🤖 <b>AI기본법 영향 분석</b><br><br>① 고위험 AI → 검색·뉴스 추천 알고리즘 포함 우려<br>② 영향평가 의무 → 연간 수십억 비용<br><br><b>대응</b>: 고위험 범위 최소화, 자율 영향평가 인정 요청, EU AI법 대비 과잉규제 논거`;
+  if(q.includes('구글'))return `🗺 <b>구글 지도 반출 반대 논거</b><br><br>① 국가 안보 — 군사시설 포함 정밀지도<br>② 데이터 주권 — 이용자 동선 해외 이전<br>③ 역차별 — 구글 세금·망이용대가 회피<br>④ 소상공인 보호 — 450만+ 플레이스 업체<br>⑤ 상호주의 — 동등 납세 조건 재검토`;
+  return `대관 이슈를 분석 중입니다. API 키를 입력하시면 실제 Claude가 "${q}"에 대해 상세 분석을 제공합니다.`;
+}
+
+// ═══════════════════════════════════════════════════════════
+// IMPORT / EXPORT
+// ═══════════════════════════════════════════════════════════
+function exportData(){
+  const blob=new Blob([JSON.stringify(DATA,null,2)],{type:'application/json'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);
+  a.download=`gr-data-${new Date().toISOString().slice(0,10)}.json`;a.click();
+  showToast('데이터가 내보내졌습니다');
+}
+
+function importData(e){
+  const file=e.target.files[0];if(!file)return;
+  const reader=new FileReader();
+  reader.onload=ev=>{
+    try{DATA=JSON.parse(ev.target.result);saveData();renderAll();showToast('데이터를 가져왔습니다');}
+    catch{showToast('파일 형식이 올바르지 않습니다');}
+  };reader.readAsText(file);
+}
+
+function resetData(){
+  if(!confirm('모든 데이터를 초기화하시겠습니까?'))return;
+  DATA=JSON.parse(JSON.stringify(DEFAULT_DATA));saveData();renderAll();showToast('데이터가 초기화되었습니다');
+}
+
+// ═══════════════════════════════════════════════════════════
+// TOAST
+// ═══════════════════════════════════════════════════════════
+function showToast(msg){
+  const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2500);
+}
+
+// ═══════════════════════════════════════════════════════════
+// INIT ALL
+// ═══════════════════════════════════════════════════════════
+renderAll();
+</script>
+</body>
+</html>
