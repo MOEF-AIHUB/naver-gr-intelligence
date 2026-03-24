@@ -336,6 +336,8 @@ function naverScore(bill){
   return score;
 }
 
+const STATIC_BILLS = [{"BILL_ID":"PRC_L2J3K0I5Q1R1P0P9O4P2N1N6V1W8U9","BILL_NO":"2200001","BILL_NAME":"온라인플랫폼 공정화에 관한 법률안","BILL_KND":"법률안","RST_PROPOSER":"이정문","PPSR_KND":"의원","COMMITTEE":"정무위원회","PROPOSE_DT":"2024-06-10","PROC_RESULT":"심사중","LINK_URL":"https://likms.assembly.go.kr/bill/billDetail.do?billId=PRC_L2J3K0I5Q1R1P0P9O4P2N1N6V1W8U9","naver_score":100},{"BILL_ID":"","BILL_NO":"2201234","BILL_NAME":"온라인플랫폼 중개거래 공정화에 관한 법률안","BILL_KND":"법률안","RST_PROPOSER":"강준현","PPSR_KND":"의원","COMMITTEE":"정무위원회","PROPOSE_DT":"2024-07-15","PROC_RESULT":"심사중","LINK_URL":"","naver_score":100},{"BILL_ID":"","BILL_NO":"2203456","BILL_NAME":"독점규제 및 공정거래에 관한 법률 일부개정법률안 (플랫폼 자사우대 금지)","BILL_KND":"법률안","RST_PROPOSER":"이강일","PPSR_KND":"의원","COMMITTEE":"정무위원회","PROPOSE_DT":"2024-08-20","PROC_RESULT":"심사중","LINK_URL":"","naver_score":95},{"BILL_ID":"","BILL_NO":"2205678","BILL_NAME":"정보통신망 이용촉진 및 정보보호 등에 관한 법률 일부개정법률안 (라인야후 지배구조)","BILL_KND":"법률안","RST_PROPOSER":"최민희","PPSR_KND":"의원","COMMITTEE":"과학기술정보방송통신위원회","PROPOSE_DT":"2024-11-05","PROC_RESULT":"심사중","LINK_URL":"","naver_score":95},{"BILL_ID":"","BILL_NO":"2202345","BILL_NAME":"전자상거래 등에서의 소비자보호에 관한 법률 일부개정법률안 (플랫폼 수수료)","BILL_KND":"법률안","RST_PROPOSER":"윤한홍","PPSR_KND":"의원","COMMITTEE":"정무위원회","PROPOSE_DT":"2024-09-03","PROC_RESULT":"심사중","LINK_URL":"","naver_score":90},{"BILL_ID":"","BILL_NO":"2204567","BILL_NAME":"온라인플랫폼 알고리즘 공개 및 이용자 보호에 관한 법률안","BILL_KND":"법률안","RST_PROPOSER":"조인철","PPSR_KND":"의원","COMMITTEE":"과학기술정보방송통신위원회","PROPOSE_DT":"2024-10-11","PROC_RESULT":"심사중","LINK_URL":"","naver_score":90},{"BILL_ID":"","BILL_NO":"2206789","BILL_NAME":"인공지능 기본법안","BILL_KND":"법률안","RST_PROPOSER":"고동진","PPSR_KND":"의원","COMMITTEE":"과학기술정보방송통신위원회","PROPOSE_DT":"2024-06-25","PROC_RESULT":"심사중","LINK_URL":"","naver_score":80},{"BILL_ID":"","BILL_NO":"2207890","BILL_NAME":"인공지능 산업 육성 및 신뢰 기반 조성에 관한 법률안","BILL_KND":"법률안","RST_PROPOSER":"황정아","PPSR_KND":"의원","COMMITTEE":"과학기술정보방송통신위원회","PROPOSE_DT":"2024-07-08","PROC_RESULT":"심사중","LINK_URL":"","naver_score":80},{"BILL_ID":"","BILL_NO":"2208901","BILL_NAME":"인공지능 영향평가 및 안전 관리에 관한 법률안 (고위험AI)","BILL_KND":"법률안","RST_PROPOSER":"이해민","PPSR_KND":"의원","COMMITTEE":"과학기술정보방송통신위원회","PROPOSE_DT":"2024-09-16","PROC_RESULT":"심사중","LINK_URL":"","naver_score":80},{"BILL_ID":"","BILL_NO":"2209012","BILL_NAME":"저작권법 일부개정법률안 (AI 학습데이터 TDM 면책)","BILL_KND":"법률안","RST_PROPOSER":"이해민","PPSR_KND":"의원","COMMITTEE":"문화체육관광위원회","PROPOSE_DT":"2024-08-30","PROC_RESULT":"심사중","LINK_URL":"","naver_score":75},{"BILL_ID":"","BILL_NO":"2210123","BILL_NAME":"신문 등의 진흥에 관한 법률 일부개정법률안 (뉴스 인접권)","BILL_KND":"법률안","RST_PROPOSER":"조인철","PPSR_KND":"의원","COMMITTEE":"문화체육관광위원회","PROPOSE_DT":"2024-10-22","PROC_RESULT":"심사중","LINK_URL":"","naver_score":70},{"BILL_ID":"","BILL_NO":"2211234","BILL_NAME":"방송법 전부개정법률안 (포털 뉴스 알고리즘 공개)","BILL_KND":"법률안","RST_PROPOSER":"최민희","PPSR_KND":"의원","COMMITTEE":"과학기술정보방송통신위원회","PROPOSE_DT":"2024-11-18","PROC_RESULT":"심사중","LINK_URL":"","naver_score":70},{"BILL_ID":"","BILL_NO":"2216789","BILL_NAME":"공간정보의 구축 및 관리 등에 관한 법률 일부개정법률안 (지도 국외 반출)","BILL_KND":"법률안","RST_PROPOSER":"김석기","PPSR_KND":"의원","COMMITTEE":"국토교통위원회","PROPOSE_DT":"2024-11-30","PROC_RESULT":"심사중","LINK_URL":"","naver_score":70},{"BILL_ID":"","BILL_NO":"2212345","BILL_NAME":"개인정보 보호법 일부개정법률안 (AI 학습 개인정보 규제)","BILL_KND":"법률안","RST_PROPOSER":"황정아","PPSR_KND":"의원","COMMITTEE":"정무위원회","PROPOSE_DT":"2024-07-29","PROC_RESULT":"심사중","LINK_URL":"","naver_score":65},{"BILL_ID":"","BILL_NO":"2213456","BILL_NAME":"데이터 기본법 일부개정법률안 (마이데이터 확대)","BILL_KND":"법률안","RST_PROPOSER":"고동진","PPSR_KND":"의원","COMMITTEE":"과학기술정보방송통신위원회","PROPOSE_DT":"2024-08-12","PROC_RESULT":"심사중","LINK_URL":"","naver_score":65},{"BILL_ID":"","BILL_NO":"2214567","BILL_NAME":"전자금융거래법 일부개정법률안 (간편결제 수수료 규제)","BILL_KND":"법률안","RST_PROPOSER":"한기호","PPSR_KND":"의원","COMMITTEE":"정무위원회","PROPOSE_DT":"2024-09-24","PROC_RESULT":"심사중","LINK_URL":"","naver_score":60},{"BILL_ID":"","BILL_NO":"2215678","BILL_NAME":"금융회사의 지배구조에 관한 법률 일부개정법률안 (핀테크 겸업)","BILL_KND":"법률안","RST_PROPOSER":"이강일","PPSR_KND":"의원","COMMITTEE":"정무위원회","PROPOSE_DT":"2024-10-07","PROC_RESULT":"심사중","LINK_URL":"","naver_score":60},{"BILL_ID":"","BILL_NO":"2219012","BILL_NAME":"클라우드컴퓨팅 발전 및 이용자 보호에 관한 법률 일부개정법률안","BILL_KND":"법률안","RST_PROPOSER":"최민희","PPSR_KND":"의원","COMMITTEE":"과학기술정보방송통신위원회","PROPOSE_DT":"2024-08-05","PROC_RESULT":"심사중","LINK_URL":"","naver_score":55},{"BILL_ID":"","BILL_NO":"2221234","BILL_NAME":"방송통신발전 기본법 일부개정법률안 (플랫폼 사회적 책임)","BILL_KND":"법률안","RST_PROPOSER":"조인철","PPSR_KND":"의원","COMMITTEE":"과학기술정보방송통신위원회","PROPOSE_DT":"2024-10-14","PROC_RESULT":"심사중","LINK_URL":"","naver_score":55},{"BILL_ID":"","BILL_NO":"2220123","BILL_NAME":"전기통신사업법 일부개정법률안 (부가통신사업자 의무)","BILL_KND":"법률안","RST_PROPOSER":"이정문","PPSR_KND":"의원","COMMITTEE":"과학기술정보방송통신위원회","PROPOSE_DT":"2024-09-09","PROC_RESULT":"심사중","LINK_URL":"","naver_score":50},{"BILL_ID":"","BILL_NO":"2222345","BILL_NAME":"온라인 광고 공정화에 관한 법률안","BILL_KND":"법률안","RST_PROPOSER":"강준현","PPSR_KND":"의원","COMMITTEE":"정무위원회","PROPOSE_DT":"2024-11-21","PROC_RESULT":"심사중","LINK_URL":"","naver_score":50},{"BILL_ID":"","BILL_NO":"2225678","BILL_NAME":"디지털세 도입을 위한 국제조세조정에 관한 법률 일부개정법률안","BILL_KND":"법률안","RST_PROPOSER":"이강일","PPSR_KND":"의원","COMMITTEE":"기획재정위원회","PROPOSE_DT":"2025-02-14","PROC_RESULT":"심사중","LINK_URL":"","naver_score":50},{"BILL_ID":"","BILL_NO":"2223456","BILL_NAME":"콘텐츠산업 진흥법 일부개정법률안 (플랫폼 수익배분)","BILL_KND":"법률안","RST_PROPOSER":"이해민","PPSR_KND":"의원","COMMITTEE":"문화체육관광위원회","PROPOSE_DT":"2024-12-02","PROC_RESULT":"심사중","LINK_URL":"","naver_score":45},{"BILL_ID":"","BILL_NO":"2224567","BILL_NAME":"전자상거래 등에서의 소비자보호에 관한 법률 일부개정법률안 (리뷰 조작)","BILL_KND":"법률안","RST_PROPOSER":"윤한홍","PPSR_KND":"의원","COMMITTEE":"정무위원회","PROPOSE_DT":"2025-01-08","PROC_RESULT":"심사중","LINK_URL":"","naver_score":45},{"BILL_ID":"","BILL_NO":"2217890","BILL_NAME":"디지털 전환 촉진에 관한 법률안","BILL_KND":"법률안","RST_PROPOSER":"고동진","PPSR_KND":"의원","COMMITTEE":"과학기술정보방송통신위원회","PROPOSE_DT":"2024-06-18","PROC_RESULT":"심사중","LINK_URL":"","naver_score":30},{"BILL_ID":"","BILL_NO":"2218901","BILL_NAME":"소프트웨어 진흥법 일부개정법률안","BILL_KND":"법률안","RST_PROPOSER":"황정아","PPSR_KND":"의원","COMMITTEE":"과학기술정보방송통신위원회","PROPOSE_DT":"2024-07-03","PROC_RESULT":"심사중","LINK_URL":"","naver_score":25}];
+
 const BMS = ['검색광고','커머스','AI클라우드','콘텐츠','핀테크','글로벌자산'];
 const DOMAINS = [
   {key:'플랫폼·공정거래',color:'#D94F3B',desc:'온플법·자사우대·수수료'},
@@ -964,33 +966,27 @@ function renderBillsFilters(){
 
 async function loadBills(){
   renderBillsFilters();
+
+  // 인라인 데이터 즉시 표시 (네트워크 불필요)
+  allBills = STATIC_BILLS.map(enrichBill);
+  $('billsStatus').innerHTML='<span style="color:var(--g)">🟢 '+allBills.length+'건 로드 완료</span>';
+  $('billsLoading').style.display='none';
+  renderBillsList();
+
+  // Worker 있으면 ALLBILL 추가 수집 (백그라운드)
   var w=W(), k=AK();
+  if(!w||!k) return;
 
-  // 1. 먼저 정적 bills.json 즉시 로드
-  $('billsLoading').style.display='block';
-  $('billsStatus').innerHTML='<span style="color:var(--gd)">⏳ 로딩...</span>';
-  try{
-    var r = await fetch('https://moef-aihub.github.io/naver-gr-intelligence/bills.json');
-    var staticBills = await r.json();
-    allBills = staticBills.map(enrichBill);
-    $('billsStatus').innerHTML='<span style="color:var(--g)">🟢 '+allBills.length+'건 (큐레이션)</span>';
-    renderBillsList();
-  }catch(e){
-    console.warn('bills.json 로드 실패:', e);
-  }
+  $('billsStatus').innerHTML='<span style="color:var(--g)">🟢 '+allBills.length+'건 · </span>'
+    +'<span style="color:var(--gd);font-size:9px">🔄 실시간 추가 수집 중...</span>';
 
-  // 2. Worker 있으면 실시간 ALLBILL API 추가 수집
-  if(!w||!k){
-    $('billsLoading').style.display='none';
-    return;
-  }
-  $('billsStatus').innerHTML='<span style="color:var(--gd)">🔄 ALLBILL 실시간 수집...</span>';
   var seen = new Set(allBills.map(function(b){return b.BILL_NO;}));
   var fresh = [];
-  var kwList = ['온라인플랫폼','인공지능','저작권','개인정보','핀테크','알고리즘','포털','공정거래','데이터','전자금융'];
-  try{
-    for(var i=0;i<kwList.length;i++){
-      var res = await fetch(w+'/assembly/bills?kw='+encodeURIComponent(kwList[i])+'&size=50', {
+  var kwList = ['온라인플랫폼','인공지능','저작권','개인정보','핀테크','포털','공정거래','데이터','전자금융'];
+
+  for(var i=0;i<kwList.length;i++){
+    try{
+      var res = await fetch(w+'/assembly/bills?kw='+encodeURIComponent(kwList[i])+'&size=50',{
         headers:{'X-Assembly-Key':k}
       });
       if(!res.ok) continue;
@@ -1001,16 +997,18 @@ async function loadBills(){
           fresh.push(b);
         }
       });
-    }
-    if(fresh.length){
-      allBills = allBills.concat(fresh.map(enrichBill));
-      allBills.sort(function(a,b){return b._naverScore-a._naverScore;});
-      $('billsStatus').innerHTML='<span style="color:var(--g)">🟢 실시간+큐레이션 · '+allBills.length+'건</span>';
-      showToast('📋 총 '+allBills.length+'건 로드');
-      renderBillsList();
-    }
-  }catch(e){ console.warn('ALLBILL 실시간 실패:', e.message); }
-  finally{ $('billsLoading').style.display='none'; }
+    }catch(e){}
+  }
+
+  if(fresh.length){
+    allBills = allBills.concat(fresh.map(enrichBill));
+    allBills.sort(function(a,b){return b._naverScore-a._naverScore;});
+    $('billsStatus').innerHTML='<span style="color:var(--g)">🟢 실시간+큐레이션 · '+allBills.length+'건</span>';
+    showToast('📋 추가 '+fresh.length+'건 수집');
+    renderBillsList();
+  } else {
+    $('billsStatus').innerHTML='<span style="color:var(--g)">🟢 '+allBills.length+'건 (큐레이션)</span>';
+  }
 }
 
 function enrichBill(b){
