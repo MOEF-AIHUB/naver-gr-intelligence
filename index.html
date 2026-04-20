@@ -1109,5 +1109,13 @@ renderHome();
 updateRtStatus();
 setTimeout(loadRtNews, 1500);
 </script>
+<script src="./legi-ai/web/ai-panel.js"></script>
+<script>
+(function(){
+  var apiBase = localStorage.getItem('legi_ai_base') || 'http://localhost:8000';
+  var apiKey = localStorage.getItem('legi_ai_key') || '';
+  if (window.LegiAI) window.LegiAI.mount({ apiBase: apiBase, apiKey: apiKey });
+})();
+</script>
 </body>
 </html>

@@ -1,0 +1,20 @@
+{
+  "mcpServers": {
+    "legi-ai": {
+      "command": "uv",
+      "args": [
+        "--directory",
+        "/absolute/path/to/legi-ai",
+        "run",
+        "python",
+        "-m",
+        "legi_ai.mcp.server"
+      ],
+      "env": {
+        "ANTHROPIC_API_KEY": "sk-ant-...",
+        "QDRANT_URL": "http://localhost:6333",
+        "VOYAGE_API_KEY": ""
+      }
+    }
+  }
+}

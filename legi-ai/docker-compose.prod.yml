@@ -1,0 +1,45 @@
+services:
+  qdrant:
+    image: qdrant/qdrant:v1.12.4
+    volumes:
+      - ./qdrant_storage:/qdrant/storage
+    restart: unless-stopped
+    networks: [legi-net]
+
+  redis:
+    image: redis:7-alpine
+    command: ["redis-server", "--appendonly", "yes"]
+    volumes:
+      - ./redis_data:/data
+    restart: unless-stopped
+    networks: [legi-net]
+
+  legi-ai-api:
+    build: .
+    env_file: .env.prod
+    environment:
+      LEGI_ENV: production
+      QDRANT_URL: http://qdrant:6333
+      REDIS_URL: redis://redis:6379/0
+    depends_on:
+      - qdrant
+      - redis
+    restart: unless-stopped
+    networks: [legi-net]
+
+  caddy:
+    image: caddy:2-alpine
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - ./caddy_data:/data
+      - ./caddy_config:/config
+    depends_on:
+      - legi-ai-api
+    restart: unless-stopped
+    networks: [legi-net]
+
+networks:
+  legi-net:

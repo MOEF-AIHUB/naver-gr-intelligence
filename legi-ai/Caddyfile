@@ -1,0 +1,19 @@
+{$LEGI_DOMAIN:legi-ai.example.com} {
+    encode gzip zstd
+
+    @api path /api/* /health
+    handle @api {
+        reverse_proxy legi-ai-api:8000 {
+            header_up X-Real-IP {remote_host}
+        }
+    }
+
+    handle {
+        respond "LEGi-AI is up." 200
+    }
+
+    log {
+        output stdout
+        format json
+    }
+}
