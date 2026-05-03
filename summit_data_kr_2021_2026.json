@@ -1,0 +1,101 @@
+{
+  "metadata": {
+    "country": "대한민국",
+    "window_start": "2021-05-01",
+    "window_end": "2026-05-03",
+    "currency": "KRW 억원/미화 백만달러 병기",
+    "last_updated": "2026-05-03"
+  },
+  "summits": [
+    {
+      "id": "rok-us-2023-04-26",
+      "partner_country": "미국",
+      "city": "워싱턴 D.C.",
+      "lat": 38.9072,
+      "lng": -77.0369,
+      "date": "2023-04-26",
+      "leaders": ["윤석열 대통령", "조 바이든 대통령"],
+      "agenda": ["워싱턴선언", "NCG", "첨단기술/공급망"],
+      "money_commitments": [
+        {"label": "직접 금액 공약", "amount": "N/A", "status": "금액 미공표"}
+      ],
+      "progress": "green",
+      "followup": "NCG 회의 횟수/연합훈련 반영 지표를 분기 공개"
+    },
+    {
+      "id": "rok-jp-2023-03-16",
+      "partner_country": "일본",
+      "city": "도쿄",
+      "lat": 35.6762,
+      "lng": 139.6503,
+      "date": "2023-03-16",
+      "leaders": ["윤석열 대통령", "기시다 후미오 총리"],
+      "agenda": ["셔틀외교 복원", "수출규제/경제협력", "안보협력"],
+      "money_commitments": [
+        {"label": "직접 금액 공약", "amount": "N/A", "status": "프로그램 중심"}
+      ],
+      "progress": "yellow",
+      "followup": "공급망/투자/훈련 실적 KPI 공개"
+    },
+    {
+      "id": "rok-cn-2022-11-15",
+      "partner_country": "중국",
+      "city": "발리",
+      "lat": -8.4095,
+      "lng": 115.1889,
+      "date": "2022-11-15",
+      "leaders": ["윤석열 대통령", "시진핑 국가주석"],
+      "agenda": ["경제협력", "공급망", "한반도 정세"],
+      "money_commitments": [
+        {"label": "직접 금액 공약", "amount": "N/A", "status": "금액성 합의 제한"}
+      ],
+      "progress": "yellow",
+      "followup": "실무경제대화 정례화 및 교역지표 모니터링"
+    },
+    {
+      "id": "rok-uae-2023-01-15",
+      "partner_country": "UAE",
+      "city": "아부다비",
+      "lat": 24.4539,
+      "lng": 54.3773,
+      "date": "2023-01-15",
+      "leaders": ["윤석열 대통령", "모하메드 빈 자이드 알 나흐얀 대통령"],
+      "agenda": ["300억달러 투자약속", "에너지", "방산"],
+      "money_commitments": [
+        {"label": "UAE 대한국 투자", "amount": "USD 30,000M", "status": "집행 추적 필요"}
+      ],
+      "progress": "orange",
+      "followup": "약정-계약-집행 단계별 금액 공개"
+    },
+    {
+      "id": "rok-id-2023-09-08",
+      "partner_country": "인도네시아",
+      "city": "자카르타",
+      "lat": -6.2088,
+      "lng": 106.8456,
+      "date": "2023-09-08",
+      "leaders": ["윤석열 대통령", "조코 위도도 대통령"],
+      "agenda": ["KF-21", "EV배터리", "인프라"],
+      "money_commitments": [
+        {"label": "KF-21 분담금(인니)", "amount": "기존 1.6조원 → 0.6조원(조정)", "status": "재조정"}
+      ],
+      "progress": "orange",
+      "followup": "분담금 이행·기술이전 범위·공동수출 성과 확인"
+    },
+    {
+      "id": "rok-vn-2023-06-23",
+      "partner_country": "베트남",
+      "city": "하노이",
+      "lat": 21.0278,
+      "lng": 105.8342,
+      "date": "2023-06-23",
+      "leaders": ["윤석열 대통령", "팜 민 찐 총리"],
+      "agenda": ["공급망", "에너지/원전", "인프라"],
+      "money_commitments": [
+        {"label": "프로젝트별 투자", "amount": "다건(집계필요)", "status": "개별사업 추적 필요"}
+      ],
+      "progress": "yellow",
+      "followup": "MOU→수주→금융종결 전환율 관리"
+    }
+  ]
+}

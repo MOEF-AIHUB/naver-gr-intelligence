@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>정상회담 이행 대시보드</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<style>
+body{margin:0;font-family:Arial,sans-serif;background:#0b1220;color:#e5e7eb}
+.wrap{display:grid;grid-template-columns:58% 42%;height:100vh}
+#map{height:100%}
+.panel{padding:16px;overflow:auto}
+.card{background:#111827;border:1px solid #374151;border-radius:10px;padding:12px;margin-bottom:10px}
+.badge{padding:2px 8px;border-radius:10px;font-size:12px}
+.green{background:#064e3b}.yellow{background:#78350f}.orange{background:#7c2d12}
+.small{font-size:12px;color:#9ca3af}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div id="map"></div>
+  <div class="panel">
+    <h2>대한민국 정상회담 이행 대시보드</h2>
+    <p class="small">기간: 2021-05 ~ 2026-05 / 데이터: summit_data_kr_2021_2026.json</p>
+    <div id="summary" class="card"></div>
+    <div id="list"></div>
+    <div class="card">
+      <h3>운영 가이드 (추가 수정 용이성)</h3>
+      <ol>
+        <li>신규 회담은 JSON에 1건 1객체로 추가</li>
+        <li>금액은 money_commitments 배열에 단계별(약정/계약/집행)로 입력</li>
+        <li>progress는 green/yellow/orange로 통일</li>
+        <li>월말에 last_updated 업데이트 후 이행보고서 PDF 생성</li>
+      </ol>
+    </div>
+  </div>
+</div>
+<script>
+const map = L.map('map').setView([25, 110], 2);
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:6}).addTo(map);
+
+fetch('summit_data_kr_2021_2026.json').then(r=>r.json()).then(data=>{
+  const counts={green:0,yellow:0,orange:0};
+  const list=document.getElementById('list');
+  data.summits.forEach(s=>{
+    counts[s.progress]++;
+    const color=s.progress==='green'?'#22c55e':s.progress==='yellow'?'#f59e0b':'#f97316';
+    L.circleMarker([s.lat,s.lng],{radius:8,color,fillColor:color,fillOpacity:0.9}).addTo(map)
+      .bindPopup(`<b>${s.partner_country}</b><br>${s.city}<br>${s.date}<br>${s.leaders.join(' · ')}`);
+
+    const c=document.createElement('div');
+    c.className='card';
+    c.innerHTML=`<div><b>${s.partner_country}</b> <span class="badge ${s.progress}">${s.progress}</span></div>
+      <div class="small">${s.date} / ${s.city}</div>
+      <div>정상: ${s.leaders.join(' · ')}</div>
+      <div>의제: ${s.agenda.join(', ')}</div>
+      <div>금액: ${s.money_commitments.map(m=>`${m.label}=${m.amount} (${m.status})`).join('; ')}</div>
+      <div><b>팔로우업:</b> ${s.followup}</div>`;
+    list.appendChild(c);
+  });
+  document.getElementById('summary').innerHTML =
+    `<h3>진행도 요약</h3><p>🟢 ${counts.green}건 / 🟡 ${counts.yellow}건 / 🟠 ${counts.orange}건</p>`;
+});
+</script>
+</body>
+</html>
